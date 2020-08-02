@@ -1,0 +1,14 @@
+﻿{
+  "Id": "ZHelper",
+  "DisplayName": "Z Helper",
+  "Author": "Senna",
+  "Version": "1.0",
+  "Dependencies": ["SMLHelper"],
+  "VersionDependencies": {"SMLHelper": "2.5.3"}, 
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "ZHelper.dll",
+  "EntryMethod": "ZHelper.Main.Load" 
+}

@@ -1,0 +1,14 @@
+﻿{
+  "Id": "SeaTruckSpeedUpgrades",
+  "DisplayName": "Seatruck Speed Upgrades",
+  "Author": "Senna",
+  "Version": "1.0",
+  "Dependencies": ["SMLHelper"],
+  "VersionDependencies": {"SMLHelper": "2.7.2"}, 
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "SeaTruckSpeedUpgrades.dll",
+  "EntryMethod": "SeaTruckSpeedUpgrades.Main.Load" 
+}

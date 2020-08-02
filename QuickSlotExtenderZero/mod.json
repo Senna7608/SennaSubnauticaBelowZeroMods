@@ -1,0 +1,14 @@
+﻿{
+  "Id": "QuickSlotExtenderZero",
+  "DisplayName": "QuickSlotExtenderZero",
+  "Author": "Senna",
+  "Version": "1.0",
+  "Dependencies": ["SMLHelper"],
+  "VersionDependencies": {"SMLHelper": "2.7.3"},
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "BelowZero",  
+  "AssemblyName": "QuickSlotExtenderZero.dll",
+  "EntryMethod": "QuickSlotExtenderZero.Main.Load" 
+}
