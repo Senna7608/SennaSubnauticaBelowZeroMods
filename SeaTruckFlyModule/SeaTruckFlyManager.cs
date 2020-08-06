@@ -92,9 +92,8 @@ namespace SeaTruckFlyModule
         private void OnFlyModeChanged(Utils.MonitoredValue<bool> newValue)
         {
             if (newValue.value)
-            {                
-                detachLever.SetActive(false);
-                SetWheelTriggers(false);
+            {
+                SetHandTargets(false);
 
                 engineSound.Stop();
                 engineSound.asset = engine;
@@ -106,11 +105,7 @@ namespace SeaTruckFlyModule
 
                 if (!landingFoots.activeSelf)
                 {
-                    landingFoots.SetActive(true);
-                    landingFootCollisions.SetActive(true);
-                    SetRearFoots();
-
-                    ErrorMessage.AddDebug("Landing foots extended");
+                    SetLandingFoots(true);                    
                 }
             }
             else
@@ -128,16 +123,50 @@ namespace SeaTruckFlyModule
                     StartCoroutine(OnLanding(rigidbody.velocity));                    
                 }
                 else
-                {                    
-                    landingFoots.SetActive(false);
-                    landingFootCollisions.SetActive(false);
-                    detachLever.SetActive(true);
-                    SetWheelTriggers(true);
-                    helper.thisSegment.exitPosition.localPosition = mainCabExitPoint;
-                    ErrorMessage.AddDebug("Landing foots retracted");
+                {
+                    SetLandingFoots(false);
+                    SetHandTargets(true);
+                    SetExitPosition();
                 }
             }
         }        
+
+        private void SetLandingFoots(bool value)
+        {
+            landingFoots.SetActive(value);
+            landingFootCollisions.SetActive(value);
+
+            if (value)
+            {
+                SetRearFoots();
+                ErrorMessage.AddDebug("Landing foots extended");
+            }
+            else
+            {
+                ErrorMessage.AddDebug("Landing foots retracted");
+            }
+        }
+        
+
+        private void SetExitPosition()
+        {
+            if (flyState == SeatruckFlyState.Landed && seatruckPosition == SeatruckPosition.OnSurface)
+            {
+                if (!helper.IsSeatruckChained())
+                {
+                    helper.thisSegment.exitPosition.localPosition = mainCabNewExitPoint1;
+                }
+                else
+                {
+                    helper.thisSegment.exitPosition.localPosition = mainCabNewExitPoint2;
+                }
+            }
+            else
+            {
+                helper.thisSegment.exitPosition.localPosition = mainCabExitPoint;
+            }
+        }
+
 
         IEnumerator OnLanding(Vector3 velocity)
         {
@@ -176,22 +205,17 @@ namespace SeaTruckFlyModule
             seatruckPosition = SeatruckPosition.OnSurface;
             flyState = SeatruckFlyState.Landed;
 
-            rigidbody.velocity = Vector3.zero;
+            rigidbody.velocity = new Vector3(0, -0.1f, 0);
 
             yield return new WaitForSeconds(1);
+
+            rigidbody.velocity = Vector3.zero;
 
             rigidbody.isKinematic = true;
 
             ErrorMessage.AddDebug("Seatruck has landed");
 
-            if (!helper.IsSeatruckChained())
-            {
-                helper.thisSegment.exitPosition.localPosition = mainCabNewExitPoint1;
-            }
-            else
-            {
-                helper.thisSegment.exitPosition.localPosition = mainCabNewExitPoint2;
-            }
+            SetExitPosition();
 
             yield break;            
         }
@@ -220,7 +244,24 @@ namespace SeaTruckFlyModule
                 if (techType == SeaTruckFlyModule.TechTypeID)
                 {
                     isEnabled = true;
-                    
+
+                    if (helper.MainCab.transform.position.y > 0)
+                    {
+                        if (rigidbody.velocity == Vector3.zero)
+                        {
+                            if (flyState != SeatruckFlyState.Landed)
+                            {
+                                flyState = SeatruckFlyState.Landed;
+                                seatruckPosition = SeatruckPosition.OnSurface;
+                                rigidbody.isKinematic = true;
+
+                                SetLandingFoots(true);
+                                SetHandTargets(false);
+                                SetExitPosition();
+                            }
+                        }
+                    }
+
                     break;
                 }
                 else
@@ -346,8 +387,10 @@ namespace SeaTruckFlyModule
         }
 
 
-        private void SetWheelTriggers(bool value)
+        private void SetHandTargets(bool value)
         {
+            detachLever.SetActive(value);
+
             if (!helper.IsSeatruckChained())
             {
                 return;
@@ -360,7 +403,7 @@ namespace SeaTruckFlyModule
                 wheelTrigger.SetActive(value);
             }
 
-            ErrorMessage.AddDebug($"Module wheel triggers {(value ? "enabled" : "disabled")}");
+            ErrorMessage.AddDebug($"Detach lever and module handtargets {(value ? "enabled" : "disabled")}");
         }
     }
 }

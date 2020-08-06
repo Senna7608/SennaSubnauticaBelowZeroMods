@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using CheatManagerZero.Configuration;
-using BZCommon;
 
 namespace CheatManagerZero
 {
@@ -19,8 +18,8 @@ namespace CheatManagerZero
         public static void Load()
         {
             try
-            {               
-                HarmonyInstance.Create("SubnauticaBelowZero.CheatManagerZero.mod").PatchAll(Assembly.GetExecutingAssembly());
+            {                
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.CheatManagerZero.mod");
                 DevConsole.disableConsole = false;
                 SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
 

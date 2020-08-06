@@ -4,7 +4,7 @@
   "Author": "Senna",
   "Version": "1.0",
   "Dependencies": ["SMLHelper", "SlotExtenderZero"],
-  "VersionDependencies": {"SMLHelper": "2.7.3", "SlotExtenderZero": "1.0"}, 
+  "VersionDependencies": {"SMLHelper": "2.8", "SlotExtenderZero": "1.0"}, 
   "LoadBefore": [],
   "LoadAfter": [],
   "Enable": true,

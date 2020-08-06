@@ -108,7 +108,7 @@ namespace BZCommon
         public PowerRelay powerRelay;
 
         private List<IItemsContainer> containers = new List<IItemsContainer>();
-        private List<GameObject> wheelTriggers = new List<GameObject>();
+        private List<GameObject> handTargets = new List<GameObject>();
 
         public bool isReady = false;
 
@@ -564,43 +564,35 @@ namespace BZCommon
 
         public List<GameObject> GetWheelTriggers()
         {
-            wheelTriggers.Clear();
+            handTargets.Clear();
 
             if (!IsSeatruckChained())
             {
-                return wheelTriggers;
+                return handTargets;
             }
 
             List<SeaTruckSegment> chain = new List<SeaTruckSegment>();
 
             thisSegment.GetTruckChain(chain);
-
-            SeaTruckSegment lastSegment = chain.GetLast();            
-
-            if (lastSegment != thisSegment)
+                        
+            foreach (SeaTruckSegment segment in chain)
             {
-                foreach (SeaTruckSegment segment in chain)
+                if (segment == thisSegment)
                 {
-                    if (segment == thisSegment)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    try
-                    {
-                        GameObject trigger = segment.gameObject.FindChild("wheelTriggerOld");
+                GenericHandTarget handtarget = segment.GetComponentInChildren<GenericHandTarget>(true);
 
-                        wheelTriggers.Add(trigger);
+                if (handtarget != null)
+                {
+                    handTargets.Add(handtarget.gameObject);
+                }                    
+            }            
 
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }                
-            }
+            DebugTriggers();
 
-            return wheelTriggers;
+            return handTargets;
         }
 
 
@@ -628,6 +620,17 @@ namespace BZCommon
             }
         }
 
+
+        [Conditional("DEBUG")]
+        void DebugTriggers()
+        {
+            BZLogger.Debug("SeatruckHelper", "Debug handTargets:");
+
+            foreach (GameObject trigger in handTargets)
+            {
+                BZLogger.Log($"handtarget name: {trigger.name}");
+            }
+        }
 
     }
 }

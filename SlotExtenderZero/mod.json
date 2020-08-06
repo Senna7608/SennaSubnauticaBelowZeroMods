@@ -4,7 +4,7 @@
   "Author": "Senna",
   "Version": "1.0",
   "Dependencies": ["SMLHelper"],
-  "VersionDependencies": {"SMLHelper": "2.7.3"},  
+  "VersionDependencies": {"SMLHelper": "2.8"},  
   "LoadBefore": [],
   "LoadAfter": [],
   "Enable": true,

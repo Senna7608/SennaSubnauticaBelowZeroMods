@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using Harmony;
+using HarmonyLib;
 using BZCommon;
 using QuickSlotExtenderZero.Configuration;
 
@@ -27,8 +27,8 @@ namespace QuickSlotExtenderZero
                 BZLogger.Log("QuickSlotExtenderZero", "SlotExtenderZero found! trying to work together..");            
 
             try
-            {        
-                HarmonyInstance.Create("BelowZero.QuickSlotExtenderZero.mod").PatchAll(Assembly.GetExecutingAssembly());
+            {
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.QuickSlotExtenderZero.mod");                
 
                 BZLogger.Log("QuickSlotExtenderZero", "Harmony Patches installed");
                 

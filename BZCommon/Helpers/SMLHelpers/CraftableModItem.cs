@@ -15,7 +15,7 @@ namespace BZCommon.Helpers.SMLHelpers
         protected readonly string Description;
         public GameObject _GameObject { get; private set; }
 
-        protected readonly TechType PrefabTemplate;        
+        protected readonly TechType PrefabTemplate;
         protected readonly TabNode NewTabNode;
         protected readonly CraftTree.Type[] FabricatorTypes;
         protected readonly string[][] FabricatorTabs;
@@ -26,7 +26,7 @@ namespace BZCommon.Helpers.SMLHelpers
         protected readonly QuickSlotType TypeForQuickslot;
         protected readonly CraftData.BackgroundType BackgroundType;
         protected readonly Vector2int ItemSize;
-        protected readonly string GameResourceFileName;
+        protected readonly string GameResourceFileName;        
 
         public class TabNode
         {
@@ -50,7 +50,7 @@ namespace BZCommon.Helpers.SMLHelpers
             TechType iconTechType,
             string friendlyName,
             string description,
-            TechType template,            
+            TechType template,
             TabNode newTabNode,
             CraftTree.Type[] fabricatorTypes,
             string[][] fabricatorTabs,
@@ -70,7 +70,7 @@ namespace BZCommon.Helpers.SMLHelpers
             IconTechType = iconTechType;
             FriendlyName = friendlyName;
             Description = description;
-            PrefabTemplate = template;            
+            PrefabTemplate = template;
             NewTabNode = newTabNode;
             FabricatorTypes = fabricatorTypes;
             FabricatorTabs = fabricatorTabs;
@@ -89,10 +89,12 @@ namespace BZCommon.Helpers.SMLHelpers
         private void OnQuitEvent()
         {
             Patch();
-        }
+        }        
 
         public virtual void Patch()
         {
+            PrefabHandler.Main.RegisterPrefab(this);
+
             Sprite sprite = null;
 
             if (IconFilePath != null)
@@ -103,7 +105,7 @@ namespace BZCommon.Helpers.SMLHelpers
                 }
                 catch
                 {
-                    BZLogger.Error(NameID, $"File [{IconFilePath}] not Found! ");
+                    BZLogger.Error(NameID, $"File [{IconFilePath}] not Found!");
                 }
             }
             else if (IconTechType != TechType.None)
@@ -114,7 +116,7 @@ namespace BZCommon.Helpers.SMLHelpers
                 }
                 catch
                 {
-                    BZLogger.Error(NameID, $"Resource TechType icon [{IconTechType.ToString()}] not Found! ");
+                    BZLogger.Error(NameID, $"Resource TechType icon [{IconTechType.ToString()}] not Found!");
                 }
             }
             else
@@ -125,7 +127,7 @@ namespace BZCommon.Helpers.SMLHelpers
                 }
                 catch
                 {
-                    BZLogger.Error(NameID, $"Resource template icon [{PrefabTemplate.ToString()}] not Found! ");
+                    BZLogger.Error(NameID, $"Resource template icon [{PrefabTemplate.ToString()}] not Found!");
                 }
             }
 
@@ -149,9 +151,7 @@ namespace BZCommon.Helpers.SMLHelpers
             CraftDataHandler.Main.SetQuickSlotType(TechType, TypeForQuickslot);
             CraftDataHandler.Main.SetItemSize(TechType, ItemSize);
             CraftDataHandler.Main.SetBackgroundType(TechType, BackgroundType);
-            KnownTechHandler.Main.SetAnalysisTechEntry(RequiredForUnlock, new TechType[1] { TechType }, $"{FriendlyName} blueprint discovered!");
-
-            PrefabHandler.Main.RegisterPrefab(this);
+            KnownTechHandler.Main.SetAnalysisTechEntry(RequiredForUnlock, new TechType[1] { TechType }, $"{FriendlyName} blueprint discovered!");                        
         }
 
         protected abstract RecipeData GetRecipe();
@@ -181,11 +181,9 @@ namespace BZCommon.Helpers.SMLHelpers
                     _GameObject = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
                     BZLogger.Warn(NameID, "Cannot instantiate prefab from resource! Replacing this item to Titanium!");
                 }
-            }
+            }            
 
-            _GameObject.name = NameID;
-
-            //_GameObject.AddComponent<SelfDestruct>();
+            _GameObject.name = NameID;            
 
             return _GameObject;
         }

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 
 namespace SeaTruckFlyModule
 {
@@ -16,7 +16,7 @@ namespace SeaTruckFlyModule
             {
                 new SeaTruckFlyModule().Patch();
 
-                HarmonyInstance.Create("BelowZero.SeaTruckFlyModule.mod").PatchAll(Assembly.GetExecutingAssembly());                
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.SeaTruckFlyModule.mod");                                
             }
             catch (Exception ex)
             {

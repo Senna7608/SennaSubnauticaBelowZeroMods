@@ -14,8 +14,8 @@ namespace ZHelper
         public static void Load()
         {
             try
-            {
-                //HarmonyInstance.Create("SubnauticaBelowZero.ZHelper.mod").PatchAll(Assembly.GetExecutingAssembly());
+            {                
+                //Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "SubnauticaBelowZero.ZHelper.mod");
 
                 commandRoot = new CommandRoot("zhelperBase");
 

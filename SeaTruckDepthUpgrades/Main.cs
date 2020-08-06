@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using System.Reflection;
 using System.IO;
 
@@ -18,7 +18,7 @@ namespace SeaTruckDepthUpgrades
                 new SeaTruckDepthMK5().Patch();
                 new SeaTruckDepthMK6().Patch();
 
-                HarmonyInstance.Create("BelowZero.SeaTruckDepthUpgrades.mod").PatchAll(Assembly.GetExecutingAssembly());                
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.SeaTruckDepthUpgrades.mod");                                
             }
             catch (Exception ex)
             {

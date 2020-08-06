@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SeaTruckArms.ArmPrefabs;
 
 namespace SeaTruckArms
@@ -26,7 +26,7 @@ namespace SeaTruckArms
                 new SeaTruckGrapplingArmPrefab().Patch();                
                 new SeaTruckTorpedoArmPrefab().Patch();
 
-                HarmonyInstance.Create("BelowZero.SeaTruckArms.mod").PatchAll(Assembly.GetExecutingAssembly());                
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.SeaTruckArms.mod");                               
             }
             catch (Exception ex)
             {

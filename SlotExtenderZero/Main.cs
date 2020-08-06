@@ -1,21 +1,21 @@
-﻿using Harmony;
-using System;
+﻿using System;
+using System.Reflection;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using SlotExtenderZero.Configuration;
-using System.Reflection;
-using System.Collections.Generic;
-using SlotExtenderZero.Patches;
-using BZCommon;
+using HarmonyLib;
 using SMLHelper.V2.Handlers;
+using BZCommon;
+using SlotExtenderZero.Configuration;
+using SlotExtenderZero.Patches;
 
 namespace SlotExtenderZero
 {
     public static class Main
     {
         public static CommandRoot commandRoot = null;            
-        public static HarmonyInstance hInstance;
+        public static Harmony hInstance;
         internal static InputFieldListener ListenerInstance { get; set; }
 
         public static bool isConsoleActive;
@@ -36,7 +36,7 @@ namespace SlotExtenderZero
                 SEzConfig.Config_Load();
                 SlotHelper.InitSlotIDs();                
 
-                hInstance = HarmonyInstance.Create("BelowZero.SlotExtenderZero.mod");
+                hInstance = new Harmony("BelowZero.SlotExtenderZero.mod");
                                               
                 BZLogger.Debug("SlotExtenderZero", $"Harmony instance created, Name = [{hInstance.Id}]");
 

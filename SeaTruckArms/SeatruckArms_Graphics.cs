@@ -112,6 +112,8 @@ namespace SeaTruckArms
 
             ArmSocket = Object.Instantiate(pipes_end_cap, GraphicsRoot.transform);
 
+            ArmSocket.SetActive(false);
+
             ArmSocket.name = "ArmSocket";
 
             GameObject exoStorage = objectHelper.FindDeepChild(ExosuitResource.transform, "Exosuit_01_storage");
@@ -145,19 +147,17 @@ namespace SeaTruckArms
 
         private void InitializeArmsGraphics()
         {
-            var exosuit = Resources.Load<GameObject>("worldentities/tools/exosuit").GetComponent<Exosuit>();
+            TorpedoTypes = (TorpedoType[])ExosuitResource.torpedoTypes.Clone();
 
-            TorpedoTypes = (TorpedoType[])exosuit.torpedoTypes.Clone();
-
-            for (int i = 0; i < exosuit.armPrefabs.Length; i++)
+            for (int i = 0; i < ExosuitResource.armPrefabs.Length; i++)
             {
-                GameObject prefab = objectHelper.GetPrefabClone(exosuit.armPrefabs[i].prefab, GraphicsRoot.transform, false);
+                GameObject prefab = objectHelper.GetPrefabClone(ExosuitResource.armPrefabs[i].prefab, GraphicsRoot.transform, false);
 
                 prefab.FindChild("exosuit_01_armRight").name = "seatruck_armRight";
 
                 Object.DestroyImmediate(prefab.GetComponent<ColorCustomizer>());
 
-                switch (exosuit.armPrefabs[i].techType)
+                switch (ExosuitResource.armPrefabs[i].techType)
                 {
                     case TechType.ExosuitDrillArmModule:
 

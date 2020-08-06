@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 
 namespace SeaTruckArmorUpgrades
 {
@@ -18,7 +18,7 @@ namespace SeaTruckArmorUpgrades
                 new SeaTruckArmorMK2().Patch();
                 new SeaTruckArmorMK3().Patch();
 
-                HarmonyInstance.Create("BelowZero.SeaTruckArmorUpgrades.mod").PatchAll(Assembly.GetExecutingAssembly());
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.SeaTruckArmorUpgrades.mod");                
             }
             catch (Exception ex)
             {

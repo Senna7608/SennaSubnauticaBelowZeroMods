@@ -1,5 +1,5 @@
 ﻿using BZCommon;
-using Harmony;
+using HarmonyLib;
 using System.Collections.Generic;
 
 namespace SeaTruckSpeedUpgrades

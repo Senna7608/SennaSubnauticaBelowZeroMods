@@ -1,6 +1,6 @@
 ﻿using System;
 using BZCommon;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 
 namespace SlotExtenderZero.Patches

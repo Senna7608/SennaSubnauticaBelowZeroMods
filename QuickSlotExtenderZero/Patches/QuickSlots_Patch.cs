@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using BZCommon;
 using QuickSlotExtenderZero.Configuration;
 

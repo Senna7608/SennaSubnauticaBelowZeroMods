@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using System.Reflection;
 using System.IO;
 
@@ -16,7 +16,7 @@ namespace SeaTruckStorage
             {
                 new SeaTruckStorage().Patch();
 
-                HarmonyInstance.Create("BelowZero.SeaTruckStorage.mod").PatchAll(Assembly.GetExecutingAssembly());
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.SeaTruckStorage.mod");
             }
             catch (Exception ex)
             {

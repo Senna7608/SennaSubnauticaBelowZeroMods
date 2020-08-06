@@ -1,5 +1,5 @@
 ﻿using BZCommon;
-using Harmony;
+using HarmonyLib;
 
 namespace SeaTruckArms.Patches
 {

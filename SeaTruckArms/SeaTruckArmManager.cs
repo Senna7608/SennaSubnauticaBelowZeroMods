@@ -61,8 +61,8 @@ namespace SeaTruckArms
             leftArmAttachPoint = objectHelper.CreateGameObject("leftArmAttachPoint", transform, new Vector3(-1.06f, -0.52f, 1.82f), new Vector3(350, 7, 0));
             leftArmAttach = leftArmAttachPoint.transform;
 
-            GameObject armSocketLeft = Instantiate(Main.graphics.ArmSocket, leftArmAttach, false);
-
+            GameObject armSocketLeft = Instantiate(Main.graphics.ArmSocket, leftArmAttach);
+            armSocketLeft.SetActive(true);
             armSocketLeft.name = "armSocketLeft";
 
             LeftSocketMat = armSocketLeft.GetComponent<Renderer>().material;            

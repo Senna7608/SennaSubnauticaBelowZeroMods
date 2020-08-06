@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using System.Reflection;
 
 namespace BZTestMOD
@@ -10,9 +10,8 @@ namespace BZTestMOD
         public static void Load()
         {
             try
-            {                
-
-                HarmonyInstance.Create("SubnauticaBelowZero.BZTestMOD.mod").PatchAll(Assembly.GetExecutingAssembly());
+            {
+                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "SubnauticaBelowZero.BZTestMOD.mod");
             }
             catch (Exception ex)
             {

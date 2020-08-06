@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Harmony;
+using HarmonyLib;
 
 namespace SeaTruckFlyModule
 {

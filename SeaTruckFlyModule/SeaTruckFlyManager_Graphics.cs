@@ -49,19 +49,19 @@ namespace SeaTruckFlyModule
 
             objectHelper.GetPrefabClone(ref biodome_robot_arm, frontFoots.transform, true, "frontFootLeft", out GameObject frontFootLeft);
 
-            frontFootLeft.transform.localPosition = new Vector3(-1.79f, -3.23f, 0.94f);
+            frontFootLeft.transform.localPosition = new Vector3(-1.79f, -3.23f, 0.75f);
             frontFootLeft.transform.localScale = new Vector3(2f, 0.60f, 1f);
             frontFootLeft.transform.localRotation = Quaternion.Euler(0, 90, 180);
 
             objectHelper.GetPrefabClone(ref biodome_robot_arm, frontFoots.transform, true, "frontFootRight", out GameObject frontFootRight);
 
-            frontFootRight.transform.localPosition = new Vector3(1.79f, -3.23f, 0.94f);
+            frontFootRight.transform.localPosition = new Vector3(1.79f, -3.23f, 0.75f);
             frontFootRight.transform.localScale = new Vector3(2f, 0.60f, 1f);
             frontFootRight.transform.localRotation = Quaternion.Euler(0, 270, 180);
 
             objectHelper.GetPrefabClone(ref biodome_robot_arm, frontFoots.transform, true, "frontFootCenter", out GameObject frontFootCenter);
 
-            frontFootCenter.transform.localPosition = new Vector3(0f, -3.23f, 2.68f);
+            frontFootCenter.transform.localPosition = new Vector3(0f, -3.23f, 2.84f);
             frontFootCenter.transform.localScale = new Vector3(2f, 0.60f, 1f);
             frontFootCenter.transform.localRotation = Quaternion.Euler(0, 180, 180);
 
@@ -92,18 +92,21 @@ namespace SeaTruckFlyModule
             frontFootCollisions = objectHelper.CreateGameObject("frontFootCollisions", landingFootCollisions.transform);
 
             BoxCollider frontLeftCollider = frontFootCollisions.AddComponent<BoxCollider>();
-            frontLeftCollider.center = new Vector3(-1.52f, 0.10f, 0f);
+            frontLeftCollider.center = new Vector3(-1.52f, 0.10f, -0.19f);
             frontLeftCollider.size = new Vector3(0.54f, 0.15f, 0.95f);
+            frontLeftCollider.contactOffset = 0.01f;
             footCollisions.Add(frontLeftCollider);
 
             BoxCollider frontRightCollider = frontFootCollisions.AddComponent<BoxCollider>();
-            frontRightCollider.center = new Vector3(1.52f, 0.10f, 0f);
+            frontRightCollider.center = new Vector3(1.52f, 0.10f, -0.19f);
             frontRightCollider.size = new Vector3(0.54f, 0.15f, 0.95f);
+            frontRightCollider.contactOffset = 0.01f;
             footCollisions.Add(frontRightCollider);
 
             BoxCollider frontCenterCollider = frontFootCollisions.AddComponent<BoxCollider>();
-            frontCenterCollider.center = new Vector3(0f, 0.10f, 1.48f);
+            frontCenterCollider.center = new Vector3(0f, 0.10f, 1.63f);
             frontCenterCollider.size = new Vector3(0.95f, 0.15f, 0.54f);
+            frontCenterCollider.contactOffset = 0.01f;
             footCollisions.Add(frontCenterCollider);
                        
             rearFootCollisions = objectHelper.CreateGameObject("rearFootCollisions", landingFootCollisions.transform);
