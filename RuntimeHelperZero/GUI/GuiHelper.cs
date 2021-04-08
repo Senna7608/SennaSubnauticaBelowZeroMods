@@ -22,20 +22,7 @@ namespace RuntimeHelperZero
                     guiItem.ItemColor = new GuiItemColor(GuiColor.Green);
                 }
             }
-        }
-
-        public static void SetComponentScrollView(this List<GuiItem> targetList, List<string> itemNames, float width)
-        {
-
-        }
-
-
-
-
-
-
-
-
+        }        
 
         public static List<string> InitTransformNamesList(this List<Transform> transformsList)
         {
@@ -71,8 +58,6 @@ namespace RuntimeHelperZero
             }          
 
             return names;
-        }
-
-        
+        }        
     }
 }

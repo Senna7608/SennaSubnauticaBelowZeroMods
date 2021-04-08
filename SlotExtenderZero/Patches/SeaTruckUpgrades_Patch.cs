@@ -1,40 +1,40 @@
-﻿using HarmonyLib;
-using BZCommon;
+﻿using BZCommon;
+using HarmonyLib;
 using System.Reflection;
 
 namespace SlotExtenderZero.Patches
 {
     [HarmonyPatch(typeof(SeaTruckUpgrades))]
     [HarmonyPatch(MethodType.Constructor)]
-    public class SeaTruckUpgrades_Constructor_Patch
+    internal class SeaTruckUpgrades_Constructor_Patch
     {
         [HarmonyPrefix]
-        public static void Prefix(SeaTruckUpgrades __instance)
+        internal static void Prefix(SeaTruckUpgrades __instance)
         {
-            if (Main.SeatruckUpgradesPatched)
+            if (Main.SeatruckUpgradesCtorPatched)
             {
-                BZLogger.Debug("SlotExtenderZero", "SeaTruck constructor already patched. Exit method.");
+                BZLogger.Debug("SeaTruck constructor already patched. Exit method.");
                 return;
-            }
-       
+            }                        
+
             __instance.SetPrivateField("slotIDs", SlotHelper.SessionSeatruckSlotIDs, BindingFlags.Static);
 
-            BZLogger.Debug("SlotExtenderZero", $"SeaTruck constructor patched. ID: {__instance.GetInstanceID()}");
+            BZLogger.Debug($"SeaTruck constructor patched. ID: {__instance.GetInstanceID()}");
 
-            Main.SeatruckUpgradesPatched = true;
+            Main.SeatruckUpgradesCtorPatched = true;
         }
     }    
     
     [HarmonyPatch(typeof(SeaTruckUpgrades))]
     [HarmonyPatch("Start")]
-    public class SeaTruckUpgrades_Start_Patch
+    internal class SeaTruckUpgrades_Start_Patch
     {
         [HarmonyPostfix]
-        public static void Postfix(SeaTruckUpgrades __instance)
+        internal static void Postfix(SeaTruckUpgrades __instance)
         {            
-            __instance.gameObject.EnsureComponent<SlotExtenderZero>();
+            __instance.gameObject.EnsureComponent<SlotExtenderZero>();            
 
-            BZLogger.Debug("SlotExtenderZero", $"SlotExtenderZero added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
+            BZLogger.Debug($"SlotExtenderZero added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
         }
     }
     

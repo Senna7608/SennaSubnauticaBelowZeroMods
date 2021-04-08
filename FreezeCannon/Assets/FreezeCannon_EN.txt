@@ -1,0 +1,9 @@
+﻿FreezeCannonFragment:Freeze Cannon Fragment
+FreezeCannon:Freeze Cannon
+Tooltip_FreezeCannon:Freeze the creatures for a while.
+Ency_FreezeCannon:Freeze Cannon
+EncyDesc_FreezeCannon:This cannon freezes the water or humidity around the living creature, making the creature incapable of moving for a while.\n\n'Alterra Freeze Cannon - Warning! It doesn't work in the desert!'
+FreezeCannon_Targeting:Targeting...
+FreezeCannon_Lock:Lock target
+FreezeCannon_Release:Release target
+FreezeCannon_Freeze:Freeze target

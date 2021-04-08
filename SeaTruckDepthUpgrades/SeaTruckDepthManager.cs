@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿extern alias SEZero;
+
+using UnityEngine;
 using BZCommon;
 using System.Collections.Generic;
+using SEZero::SlotExtenderZero.API;
 
 namespace SeaTruckDepthUpgrades
 {
@@ -8,9 +11,7 @@ namespace SeaTruckDepthUpgrades
     {
         private SeaTruckHelper helper;
 
-        public Dictionary<TechType, float> CrushDepths => crushDepths;
-
-        private bool isFirstCheckComplete = false;
+        public Dictionary<TechType, float> CrushDepths => crushDepths;        
         
         private static readonly Dictionary<TechType, float> crushDepths = new Dictionary<TechType, float>
         {
@@ -20,47 +21,66 @@ namespace SeaTruckDepthUpgrades
             },
             {
                 TechType.SeaTruckUpgradeHull2,
-                350f
+                500f
             },
             {
                 TechType.SeaTruckUpgradeHull3,
-                750f
+                850f
             },
             {
-                SeaTruckDepthMK4.TechTypeID,
-                950f
+                SeaTruckDepthMK4_Prefab.TechTypeID,
+                1200f
             },
             {
-                SeaTruckDepthMK5.TechTypeID,
-                1350f
+                SeaTruckDepthMK5_Prefab.TechTypeID,
+                1550f
             },
             {
-                SeaTruckDepthMK6.TechTypeID,
-                1750f
+                SeaTruckDepthMK6_Prefab.TechTypeID,
+                1900f
             }
         };
 
         public void Awake()
-        {            
-            helper = new SeaTruckHelper(gameObject, false, false, false);
-        }
-
-        public void Update()
         {
-            if (!isFirstCheckComplete && helper != null)
+            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
+            
+            BZLogger.Debug("Adding slot listener handlers...");
+
+            helper.onUpgradeModuleEquip += OnUpgradeModuleChanged;
+            helper.onUpgradeModuleUnEquip += OnUpgradeModuleChanged;
+        }       
+
+        private void OnUpgradeModuleChanged(int slotID, TechType techType)
+        {
+            if (crushDepths.ContainsKey(techType))
             {
                 CheckSlotsForDepthUpgrades();
-                isFirstCheckComplete = true;
             }
+        }
+
+        private void OnDestroy()
+        {
+            BZLogger.Debug("Removing unused handlers...");
+
+            helper.onUpgradeModuleEquip -= OnUpgradeModuleChanged;
+            helper.onUpgradeModuleUnEquip -= OnUpgradeModuleChanged;           
+        }
+
+        public void WakeUp()
+        {
+            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
+
+            CheckSlotsForDepthUpgrades();
         }
 
         public void CheckSlotsForDepthUpgrades()
         {
             float extraCrushDepth = 0f;
 
-            foreach (string slot in helper.slotIDs)
+            foreach (string slot in helper.TruckSlotIDs)
             {
-                TechType techType = helper.modules.GetTechTypeInSlot(slot);
+                TechType techType = helper.TruckEquipment.GetTechTypeInSlot(slot);
 
                 if (crushDepths.TryGetValue(techType, out float crushDepth) && crushDepth > extraCrushDepth)
                 {
@@ -68,7 +88,7 @@ namespace SeaTruckDepthUpgrades
                 }
             }
 
-            helper.thisUpgrades.crushDamage.SetExtraCrushDepth(extraCrushDepth);
+            helper.TruckUpgrades.crushDamage.SetExtraCrushDepth(extraCrushDepth);
         }        
     }
 }

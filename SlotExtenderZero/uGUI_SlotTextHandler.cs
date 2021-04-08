@@ -6,7 +6,7 @@ using BZCommon;
 
 namespace SlotExtenderZero
 {
-    public class uGUI_SlotTextHandler : MonoBehaviour
+    internal class uGUI_SlotTextHandler : MonoBehaviour
     {
         public static uGUI_SlotTextHandler Instance { get; private set; }
 
@@ -22,8 +22,12 @@ namespace SlotExtenderZero
 
             Dictionary<string, uGUI_EquipmentSlot> ALLSLOTS = (Dictionary<string, uGUI_EquipmentSlot>)uGUIequipment.GetPrivateField("allSlots");
 
+            BZLogger.Debug("uGUI_SlotTextHandler processing ALLSLOTS");
+
             foreach (KeyValuePair<string, uGUI_EquipmentSlot> item in ALLSLOTS)
             {
+                BZLogger.Debug($"slot name: {item.Key}");
+
                 if (SlotHelper.ALLSLOTS.TryGetValue(item.Key, out SlotData slotData))
                 {
                     TextMeshProUGUI TMProText = AddTextToSlot(item.Value.transform, slotData);
@@ -32,7 +36,7 @@ namespace SlotExtenderZero
                 }
             }
 
-            BZLogger.Log("SlotExtenderZero", "uGUI_SlotTextHandler added.");
+            BZLogger.Log("uGUI_SlotTextHandler added.");
         }
 
         public void UpdateSlotText()
@@ -42,10 +46,7 @@ namespace SlotExtenderZero
                 ALLSLOTS_Text[kvp.Key].text = kvp.Value.KeyCodeName;
             }
         }
-
-        // based on RandyKnapp's MoreQuickSlots Subnautica mod: "CreateNewText()" method
-        // found on GitHub:https://github.com/RandyKnapp/SubnauticaModSystem
-
+        
         private TextMeshProUGUI AddTextToSlot(Transform parent, SlotData slotData)
         {
             TextMeshProUGUI TMProText = Instantiate(HandReticle.main.compTextHand);

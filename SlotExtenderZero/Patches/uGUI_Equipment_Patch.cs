@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using HarmonyLib;
 using BZCommon;
+using SlotExtenderZero.Configuration;
 
 namespace SlotExtenderZero.Patches
 {
     [HarmonyPatch(typeof(uGUI_Equipment), "Awake")]
-    public class uGUI_Equipment_Awake_Patch
+    internal class uGUI_Equipment_Awake_Patch
     {
         [HarmonyPrefix]
-        public static void Prefix(uGUI_Equipment __instance)
+        internal static void Prefix(uGUI_Equipment __instance)
         {
             if (Main.uGUI_PrefixComplete)
                 return;
 
-            GameObject Equipment = __instance.gameObject;
+            Transform transform = __instance.gameObject.transform;
 
             void _setSlotPos(GameObject slot, Vector2 pos)
             {
@@ -24,6 +25,9 @@ namespace SlotExtenderZero.Patches
             {
                 switch (slotData.SlotType)
                 {
+                    case SlotType.CloneChip:
+                        _processCloneSlot(slotData, normal);
+                        break;
                     case SlotType.OriginalNormal:
                     case SlotType.OriginalArmLeft:
                     case SlotType.OriginalArmRight:
@@ -40,20 +44,20 @@ namespace SlotExtenderZero.Patches
 
                     case SlotType.CloneArmRight:
                         _processCloneSlot(slotData, ArmRight);
-                        break;
+                        break;                    
                 }
             }
 
             void _processOriginalSlot(SlotData slotData)
             {
-                GameObject originalSlot = Equipment.FindChild(slotData.SlotID);
+                GameObject originalSlot = transform.Find(slotData.SlotID).gameObject;
 
                 _setSlotPos(originalSlot, slotData.SlotPos);
             }
 
             void _processCloneSlot(SlotData slotData, GameObject prefab)
             {
-                GameObject temp_slot = Object.Instantiate(prefab, Equipment.transform, false);
+                GameObject temp_slot = Object.Instantiate(prefab, transform, false);
 
                 temp_slot.name = slotData.SlotID;
 
@@ -63,30 +67,56 @@ namespace SlotExtenderZero.Patches
             }
 
             // initializing GameObject variables for cloning
-            GameObject NormalModuleSlot = Equipment.FindChild("SeaTruckModule2");
-            GameObject ArmLeftSlot = Equipment.FindChild("ExosuitArmLeft");
-            GameObject ArmRightSlot = Equipment.FindChild("ExosuitArmRight");
+            GameObject NormalModuleSlot = transform.Find("SeaTruckModule2").gameObject;
+            GameObject ArmLeftSlot = transform.Find("ExosuitArmLeft").gameObject;
+            GameObject ArmRightSlot = transform.Find("ExosuitArmRight").gameObject;
+            GameObject ChipSlot = transform.Find("Chip1").gameObject;            
 
-            // repositioning Exosuit background picture
-            Equipment.transform.Find("ExosuitModule1/Exosuit").localPosition = SlotHelper.VehicleImgPos;
+            // processing player chip slots            
+            SlotHelper.NewChipSlots.ForEach(slotData => _processSlot(slotData, ChipSlot, null, null));
+            
+            // processing Hoverbike slots            
+            SlotHelper.NewHoverbikeSlots.ForEach(slotData => _processSlot(slotData, NormalModuleSlot, null, null));
 
-            // processing exosuit slots
+            // repositioning Hoverbike background picture
+            transform.Find("HoverbikeModule1/Hoverbike").localPosition = SlotHelper.HoverbikeSlotPosLayout.VehicleImgPos;
+
+            // processing Exosuit slots
             SlotHelper.SessionExosuitSlots.ForEach(slotData => _processSlot(slotData, NormalModuleSlot, ArmLeftSlot, ArmRightSlot));
+            
+            // repositioning Exosuit background picture
+            transform.Find("ExosuitModule1/Exosuit").localPosition = SlotHelper.VehicleImgPos;
 
-            // processing seatruck slots            
-            SlotHelper.SessionSeatruckSlots.ForEach(slotData => _processSlot(slotData, NormalModuleSlot, ArmLeftSlot, ArmRightSlot));
+            // processing Seatruck slots            
+            SlotHelper.SessionSeatruckSlots.ForEach(slotData => _processSlot(slotData, NormalModuleSlot, ArmLeftSlot, ArmRightSlot));            
 
             // repositioning Seatruck background picture
-            Equipment.transform.Find("SeaTruckModule1/SeaTruck").localPosition = SlotHelper.VehicleImgPos;
+            transform.Find("SeaTruckModule1/SeaTruck").localPosition = SlotHelper.VehicleImgPos;
+
+            if (SEzConfig.isSeatruckScannerModuleExists)                
+            {
+                GameObject original = null;
+
+                for (int i = 1; i < 5; i++)
+                {
+                    original = transform.Find($"BatteryCharger{i}").gameObject;
+
+                    GameObject clone = Object.Instantiate(original, transform, false);
+
+                    clone.name = $"ScannerModuleBattery{i}";
+
+                    clone.GetComponent<uGUI_EquipmentSlot>().slot = clone.name;
+                }
+            }
 
             Main.uGUI_PrefixComplete = true;
 
-            BZLogger.Log("SlotExtenderZero", "uGUI_Equipment Slots Patched.");
+            BZLogger.Log("uGUI_Equipment Slots Patched.");
         }
 
 
         [HarmonyPostfix]
-        public static void Postfix(ref uGUI_Equipment __instance)
+        internal static void Postfix(ref uGUI_Equipment __instance)
         {
             if (Main.uGUI_PostfixComplete)
                 return;
@@ -95,6 +125,5 @@ namespace SlotExtenderZero.Patches
 
             Main.uGUI_PostfixComplete = true;
         }
-
     }
 }

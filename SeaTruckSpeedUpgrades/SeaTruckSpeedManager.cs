@@ -1,6 +1,9 @@
-﻿using UnityEngine;
-using BZCommon;
+﻿extern alias SEZero;
+
+using UnityEngine;
 using System.Collections.Generic;
+using SEZero::SlotExtenderZero.API;
+using BZCommon;
 
 namespace SeaTruckSpeedUpgrades
 {
@@ -8,48 +11,63 @@ namespace SeaTruckSpeedUpgrades
     {
         private SeaTruckHelper helper;
 
-        public Dictionary<TechType, float> Accelerations => accelerations;
-
-        private bool isFirstCheckComplete = false;
+        public Dictionary<TechType, float> Accelerations => accelerations;        
 
         private static readonly Dictionary<TechType, float> accelerations = new Dictionary<TechType, float>
         {
             {
-                SeaTruckSpeedMK1.TechTypeID,
+                SeaTruckSpeedMK1_Prefab.TechTypeID,
                 1.5f
             },
             {
-                SeaTruckSpeedMK2.TechTypeID,
+                SeaTruckSpeedMK2_Prefab.TechTypeID,
                 2f
             },
             {
-                SeaTruckSpeedMK3.TechTypeID,
+                SeaTruckSpeedMK3_Prefab.TechTypeID,
                 2.5f
             },
 
         };
 
         public void Awake()
-        {            
-            helper = new SeaTruckHelper(gameObject, false, false, false);
+        {
+            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
+
+            helper.onUpgradeModuleEquip += OnUpgradeModuleChanged;
+            helper.onUpgradeModuleUnEquip += OnUpgradeModuleChanged;
         }
 
-        public void Update()
+        private void OnUpgradeModuleChanged(int slotID, TechType techType)
         {
-            if (!isFirstCheckComplete && helper != null)
+            if (accelerations.ContainsKey(techType))
             {
                 CheckSlotsForSpeedUpgrades();
-                isFirstCheckComplete = true;
             }
+        }
+
+        private void OnDestroy()
+        {
+            BZLogger.Debug("Removing unused handlers...");
+
+            helper.onUpgradeModuleEquip -= OnUpgradeModuleChanged;
+            helper.onUpgradeModuleUnEquip -= OnUpgradeModuleChanged;
+        }
+
+        public void WakeUp()
+        {
+            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
+
+            CheckSlotsForSpeedUpgrades();
         }
 
         public void CheckSlotsForSpeedUpgrades()
         {
             float extraAcceleration = 1f;
 
-            foreach (string slot in helper.slotIDs)
+            foreach (string slot in helper.TruckSlotIDs)
             {
-                TechType techType = helper.modules.GetTechTypeInSlot(slot);
+                TechType techType = helper.TruckEquipment.GetTechTypeInSlot(slot);
 
                 if (accelerations.TryGetValue(techType, out float _acceleration) && _acceleration > extraAcceleration)
                 {
@@ -57,7 +75,7 @@ namespace SeaTruckSpeedUpgrades
                 }                
             }
 
-            helper.thisMotor.acceleration = 17.5f * extraAcceleration;
+            helper.TruckMotor.acceleration = 17.5f * extraAcceleration;
 
             ErrorMessage.AddDebug($"Seatruck speed now: {extraAcceleration * 100} %");
         }        

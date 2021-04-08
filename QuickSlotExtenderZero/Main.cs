@@ -4,35 +4,47 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using HarmonyLib;
+using QModManager.API.ModLoading;
 using BZCommon;
 using QuickSlotExtenderZero.Configuration;
+using System.Collections;
+using UWE;
+using SMLHelper.V2.Handlers;
 
 namespace QuickSlotExtenderZero
 {
+    [QModCore]
     public static class Main
     {        
-        public static bool isExists_SlotExdenerZero = false;
+        public static bool isExists_SlotExtenderZero = false;
         public static bool isKeyBindigsUpdate = false;
-        public static QSHandler Instance { get; internal set; }
-        public static bool isPatched;
+        public static QSEzHandler Instance { get; internal set; }
+        public static bool isPatched = false;
 
+        [QModPatch]
         public static void Load()
         {
             //load and init config from file   
             QSEzConfig.LoadConfig();            
 
-            isExists_SlotExdenerZero = ReflectionHelper.IsNamespaceExists("SlotExtenderZero");
+            isExists_SlotExtenderZero = ReflectionHelper.IsNamespaceExists("SlotExtenderZero");
 
-            if (isExists_SlotExdenerZero)
-                BZLogger.Log("QuickSlotExtenderZero", "SlotExtenderZero found! trying to work together..");            
+            if (isExists_SlotExtenderZero)
+                BZLogger.Log("SlotExtenderZero found! trying to work together..");            
 
             try
             {
-                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.QuickSlotExtenderZero.mod");                
+                Assembly assembly = Assembly.GetExecutingAssembly();
 
-                BZLogger.Log("QuickSlotExtenderZero", "Harmony Patches installed");
-                
-                SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);                
+                Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");
+
+                BZLogger.Log("Harmony Patches installed");
+
+                //SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
+
+                CoroutineHost.StartCoroutine(WaitForUGUI());
+
+                IngameMenuHandler.Main.RegisterOnQuitEvent(OnQuitEvent);
             }
             catch (Exception ex)
             {
@@ -40,20 +52,25 @@ namespace QuickSlotExtenderZero
             }                        
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        private static void OnQuitEvent()
         {
-            if (scene.name == "StartScreen")
+            isPatched = false;
+        }
+
+        public static IEnumerator WaitForUGUI()
+        {
+            while (!uGUI.isInitialized)
             {
-                isPatched = false;
-                //enabling game console
-                DevConsole.disableConsole = false;
-                //init config
-                QSEzConfig.InitConfig();
-                //add console commad for configuration window
-                new QSEzCommand();
-                //add an action if changed controls
-                GameInput.OnBindingsChanged += GameInput_OnBindingsChanged;                
+                yield return new WaitForSeconds(1);
             }
+            
+            QSEzConfig.InitConfig();
+            
+            new QSEzCommand();
+            
+            GameInput.OnBindingsChanged += GameInput_OnBindingsChanged;
+
+            yield break;
         }
 
         internal static void GameInput_OnBindingsChanged()

@@ -39,7 +39,7 @@ namespace QuickSlotExtenderZero.Patches
 
             slotCount = QSEzConfig.MAXSLOTS;
 
-            BZLogger.Log("QuickSlotExtenderZero", "QuickSlots constructor Patched.");
+            BZLogger.Log("QuickSlots constructor Patched.");
 
             Main.isPatched = true;
         }
@@ -52,7 +52,7 @@ namespace QuickSlotExtenderZero.Patches
         [HarmonyPostfix]
         internal static void Postfix(uGUI_QuickSlots __instance)
         {
-            Main.Instance = __instance.gameObject.EnsureComponent<QSHandler>();
+            Main.Instance = __instance.gameObject.EnsureComponent<QSEzHandler>();
             Main.Instance.AddQuickSlotText(__instance);
         }
     }

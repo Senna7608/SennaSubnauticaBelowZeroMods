@@ -6,9 +6,9 @@ using BZCommon.Helpers.GUIHelper;
 
 namespace CheatManagerZero.Configuration
 {
-    internal class CMZConfigUI : MonoBehaviour
+    internal class CmZConfigUI : MonoBehaviour
     {
-        public CMZConfigUI Instance;
+        public CmZConfigUI Instance;
         private Rect windowRect = new Rect(0, 0, 310, 240);
         private Rect drawRect;
         private List<Rect> buttonsRect;
@@ -32,13 +32,13 @@ namespace CheatManagerZero.Configuration
 
         private void InitItems()
         {
-            foreach (KeyValuePair<string, string> key in Config.Section_hotkeys)
+            foreach (KeyValuePair<string, string> key in CmZConfig.Section_hotkeys)
             {
                 HotkeyLabels.Add(key.Key);
                 HotkeyButtons.Add(key.Value);
             }
 
-            foreach (KeyValuePair<string, string> key in Config.Section_settings)
+            foreach (KeyValuePair<string, string> key in CmZConfig.Section_settings)
             {
                 SettingLabels.Add(key.Key);                
             }
@@ -119,7 +119,7 @@ namespace CheatManagerZero.Configuration
 
             if (keyCount > 0 && isFirst != selected)
             {
-                BZLogger.Log($"[{Config.PROGRAM_NAME}] Error! Duplicate keybind found, swapping keys...");
+                BZLogger.Log($"[{CmZConfig.PROGRAM_NAME}] Error! Duplicate keybind found, swapping keys...");
                 HotkeyButtons[isFirst] = HotkeyButtons[selected];
                 buttonInfo[isFirst].Name = HotkeyButtons[selected];
             }
@@ -140,24 +140,24 @@ namespace CheatManagerZero.Configuration
         {
             for (int i = 0; i < HotkeyLabels.Count; i++)
             {
-                Config.Section_hotkeys[HotkeyLabels[i]] = HotkeyButtons[i];
+                CmZConfig.Section_hotkeys[HotkeyLabels[i]] = HotkeyButtons[i];
             }
 
-            Config.WriteConfig();
-            Config.SetKeyBindings();            
+            CmZConfig.WriteConfig();
+            CmZConfig.SetKeyBindings();            
             Destroy(gameObject);
         }
         
-        public CMZConfigUI()
+        public CmZConfigUI()
         {
             if (Instance == null)
             {
-                Instance = FindObjectOfType(typeof(CMZConfigUI)) as CMZConfigUI;
+                Instance = FindObjectOfType(typeof(CmZConfigUI)) as CmZConfigUI;
 
                 if (Instance == null)
                 {
                     GameObject cmz_configUI = new GameObject("CMZConfigUI");
-                    Instance = cmz_configUI.AddComponent<CMZConfigUI>();
+                    Instance = cmz_configUI.AddComponent<CmZConfigUI>();
                 }
             }
             else

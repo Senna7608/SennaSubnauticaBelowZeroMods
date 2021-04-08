@@ -1,10 +1,10 @@
-﻿using System;
+﻿/*
 using BZCommon;
 using HarmonyLib;
-using UnityEngine;
 
 namespace SlotExtenderZero.Patches
 {
+    
     [HarmonyPatch(typeof(Equipment))]
     [HarmonyPatch("GetSlotType")]
     public class Equipment_GetSlotType_Patch
@@ -16,23 +16,18 @@ namespace SlotExtenderZero.Patches
         {
             if (!isPatched)
             {
-#if DEBUG
-                BZLogger.Log($"[SlotExtenderZero] Equipment.GetSlotType() Prefix patch start.\n" +
+                BZLogger.Debug("SlotExtenderZero", $"Equipment.GetSlotType() Prefix patch start.\n" +
                 $"slot = [{slot}]");
-#endif
 
                 SlotHelper.ExpandSlotMapping();
 
                 isPatched = true;
-
-#if DEBUG
-                BZLogger.Log("[SlotExtenderZero] Equipment.GetSlotType() Prefix patch end.");
-#endif
+                
+                BZLogger.Debug("SlotExtenderZero", "Equipment.GetSlotType() Prefix patch end.");
             }
         }
     }
-
-
+    */
     /*
     [HarmonyPatch(typeof(Equipment))]
     [HarmonyPatch(MethodType.Constructor)]
@@ -55,7 +50,7 @@ namespace SlotExtenderZero.Patches
         }
     }
     */
-
+    /*
     [HarmonyPatch(typeof(Equipment))]
     [HarmonyPatch("AllowedToAdd")]
     [HarmonyPatch(new Type[] { typeof(string), typeof(Pickupable), typeof(bool) })]
@@ -83,4 +78,6 @@ namespace SlotExtenderZero.Patches
             return true;
         }
     }
+    
 }
+*/

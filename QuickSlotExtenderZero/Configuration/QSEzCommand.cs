@@ -13,7 +13,7 @@ namespace QuickSlotExtenderZero.Configuration
         {                
             DevConsole.RegisterConsoleCommand(this, "qsezconfig", false, false);
 
-            BZLogger.Log("QuickSlotExtenderZero", Message);
+            BZLogger.Log(Message);
         }
         
         private void OnConsoleCommand_qsezconfig(NotificationCenter.Notification n)

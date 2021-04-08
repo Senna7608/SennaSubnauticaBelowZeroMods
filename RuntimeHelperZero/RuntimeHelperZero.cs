@@ -25,6 +25,7 @@ namespace RuntimeHelperZero
         private string COLLIDERINFO = string.Empty;                       
         
         private Vector3 lPos, lScale, lRot;
+        private Vector2 rtPos, rtSize, rtPivot;
         public bool isDirty = false;       
 
         private string sizeText = string.Empty;
@@ -42,7 +43,7 @@ namespace RuntimeHelperZero
 
                 if (Main.Instance == null)
                 {
-                    GameObject runtimeHelperZero = new GameObject("RuntimeHelperZero");
+                    GameObject runtimeHelperZero = new GameObject("RuntimeHelperZero").gameObject;
                     Main.Instance = runtimeHelperZero.AddComponent<RuntimeHelperZero>();
                 }
             }
@@ -71,6 +72,8 @@ namespace RuntimeHelperZero
             AddComponentWindow_Awake();
 
             MarkWindow_Awake();
+
+            FMODWindow_Awake();
         }
 
         private void Start()
@@ -134,6 +137,12 @@ namespace RuntimeHelperZero
 
         private void PrintObjectInfo()
         {
+            if (isRectTransform)
+            {
+                PrintRectTransformInfo();
+                return;
+            }
+
             Vector3 tr, qt, sc;
 
             if (showLocal)
@@ -153,8 +162,20 @@ namespace RuntimeHelperZero
                 $"{selectedObject.transform.name} :\n\n" +
                 $"Position{" ",4}x:{tr.x,8:F2},  y:{tr.y,8:F2},  z:{tr.z,8:F2}\n" +
                 $"Scale{" ",7}x:{sc.x,8:F2},  y:{sc.y,8:F2},  z:{sc.z,8:F2}\n" +
-                $"Rotation{" ",3}x:{qt.x,8:F0},  y:{qt.y,8:F0},  z:{qt.z,8:F0}\n";
+                $"Rotation{" ",3}x:{qt.x,8:F0},  y:{qt.y,8:F0},  z:{qt.z,8:F0}";
         }
+
+        private void PrintRectTransformInfo()
+        {
+            RectTransform rt = objects[selected_component] as RectTransform;
+
+            OBJECTINFO =
+                "RectTransform :\n\n" +
+                $"anchoredPosition:{" ",3}x:{rt.anchoredPosition.x,8:F2},  y:{rt.anchoredPosition.y,8:F2}\n" +
+                $"sizeDelta:{" ",14}x:{rt.sizeDelta.x,8:F2},  y:{rt.sizeDelta.y,8:F2}\n" +
+                $"pivot:{" ",21}x:{rt.pivot.x,8:F2},  y:{rt.pivot.y,8:F2}";
+        }
+
 
         private void PrintColliderInfo()
         {
@@ -377,6 +398,8 @@ namespace RuntimeHelperZero
 
             MarkWindow_OnGUI();
 
+            FMODWindow_OnGUI();
+
             if (GUI.tooltip != "")
             {
                 GUIStyle gUIStyle = SNStyles.GetGuiItemStyle(GuiItemType.TEXTAREA, GuiColor.Green, TextAnchor.MiddleLeft);
@@ -485,12 +508,28 @@ namespace RuntimeHelperZero
 
             if (Event.current.Equals(Event.KeyboardEvent("up")))
             {
-                value = scaleFactor;
+                if (isRectTransform)
+                {
+                    value = 2;
+                }
+                else
+                {
+                    value = scaleFactor;
+                }
+
                 EditObjectVectors();
             }
             else if (Event.current.Equals(Event.KeyboardEvent("down")))
             {
-                value = -scaleFactor;                
+                if (isRectTransform)
+                {
+                    value = -2;
+                }
+                else
+                {
+                    value = -scaleFactor;
+                }
+
                 EditObjectVectors();                
             }
 
@@ -501,6 +540,8 @@ namespace RuntimeHelperZero
             AddComponentWindow_Update();
 
             MarkWindow_Update();
+
+            FMODWindow_Update();
 
             if (showRendererWindow)
                 RendererWindow_Update();
@@ -541,6 +582,12 @@ namespace RuntimeHelperZero
 
         private void EditObjectVectors()
         {
+            if (isRectTransform)
+            {
+                EditRectTransform();
+                return;
+            }
+
             switch (EDIT_MODE[current_editmode_index])
             {                
                 case "Rotation: x":                    

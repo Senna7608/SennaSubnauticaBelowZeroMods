@@ -35,8 +35,13 @@ namespace RuntimeHelperZero
 
         private bool isColliderSelected = false;
 
+        private bool isRectTransform = false;
+
         private void RefreshComponentsList()
         {
+            isColliderSelected = false;
+            isRectTransform = false;
+
             components.Clear();
             componentNames.Clear();
             objects.Clear();
@@ -51,6 +56,11 @@ namespace RuntimeHelperZero
                 {
                     objects.Add(component);
                 }
+
+                objects.Sort(delegate (UnityEngine.Object a, UnityEngine.Object b)
+                {
+                    return GetComponentShortType(a).CompareTo(GetComponentShortType(b));
+                });
 
                 foreach (UnityEngine.Object _object in objects)
                 {
@@ -145,11 +155,33 @@ namespace RuntimeHelperZero
                     showObjectInfoWindow = true;
                 }
 
+                if (IsRectTransform(objects[selected_component]))
+                {
+                    isRectTransform = true;
+                    showObjectInfoWindow = true;
+                    RefreshEditModeList();
+                }
+                else
+                {
+                    isRectTransform = false;
+                    RefreshEditModeList();
+                }
+
+                if (objects[selected_component].GetType() == typeof(ColorCustomizer))
+                {
+                    DebugColorCustomizer(objects[selected_component] as ColorCustomizer);                    
+                }
+
+                if (objects[selected_component].GetType() == typeof(SkyApplier))
+                {
+                    DebugSkyApplier(objects[selected_component] as SkyApplier);
+                }
+
                 if (IsComponentInBlacklist(objects[selected_component]))
                 {
                     changeEnabledproperty = null;
                     return;
-                }
+                }               
 
                 changeEnabledproperty = objects[selected_component].GetType().GetProperty("enabled");
 
@@ -197,6 +229,10 @@ namespace RuntimeHelperZero
             return false;
         }
 
+        private bool IsRectTransform(UnityEngine.Object component)
+        {
+            return component.GetType() == typeof(RectTransform) ? true : false;
+        }
 
         private void RemoveComponent(UnityEngine.Object component)
         {
@@ -296,6 +332,22 @@ namespace RuntimeHelperZero
         internal string GetComponentShortType(UnityEngine.Object component)
         {
             return component.GetType().ToString().Split('.').GetLast();
+        }
+
+        internal void DebugColorCustomizer(ColorCustomizer colorCustomizer)
+        {
+            foreach (ColorCustomizer.ColorData colorData in colorCustomizer.colorDatas)
+            {
+                print($"Renderer: {colorData.renderer.name}, material index: {colorData.materialIndex}");
+            }
+        }
+
+        internal void DebugSkyApplier(SkyApplier skyApplier)
+        {
+            foreach (Renderer renderer in skyApplier.renderers)
+            {
+                print($"Renderer: {renderer.name}");
+            }
         }
     }
 }

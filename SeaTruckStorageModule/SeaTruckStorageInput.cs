@@ -1,9 +1,11 @@
-﻿using BZCommon;
+﻿extern alias SEZero;
+using SEZero::SlotExtenderZero.API;
+
 using SMLHelper.V2.Handlers;
 using UnityEngine;
 
 namespace SeaTruckStorage
-{    
+{
     public class SeaTruckStorageInput : MonoBehaviour, IHandTarget
     {
         public SeaTruckHelper helper;
@@ -26,6 +28,8 @@ namespace SeaTruckStorage
         public int slotID = -1;
 
         private bool state;
+
+        public const string storageModuleString = "SeaTruckStorage";
 
         public void Awake()
         {
@@ -87,7 +91,7 @@ namespace SeaTruckStorage
 
         private void OpenPDA()
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType("SeaTruckStorage", out TechType techType);
+            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
                 return;
@@ -100,7 +104,7 @@ namespace SeaTruckStorage
 
                 Inventory.main.SetUsedStorage(storageInSlot, false);
 
-                if (!pda.Open(PDATab.Inventory, tr, new PDA.OnClose(OnClosePDA), -1f))
+                if (!pda.Open(PDATab.Inventory, tr, new PDA.OnClose(OnClosePDA)))
                 {
                     OnClosePDA(pda);
                 }
@@ -138,13 +142,13 @@ namespace SeaTruckStorage
 
             if (model != null)
             {
-                model.SetActive(state);
+                model.SetActive(state);                
             }
         }
 
         public void OpenFromExternal()
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType("SeaTruckStorage", out TechType techType);
+            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
                 return;
@@ -155,21 +159,21 @@ namespace SeaTruckStorage
             {
                 PDA pda = Player.main.GetPDA();
                 Inventory.main.SetUsedStorage(storageInSlot, false);
-                pda.Open(PDATab.Inventory, null, null, -1f);
+                pda.Open(PDATab.Inventory, null, null);
             }
         }
 
         public void OnHandHover(GUIHand hand)
         {
             HandReticle main = HandReticle.main;
-            main.SetText(HandReticle.TextType.Hand, "SeamothStorageOpen", true, GameInput.Button.LeftHand);
+            main.SetText(HandReticle.TextType.Hand, "OpenStorage", true, GameInput.Button.LeftHand);
             main.SetText(HandReticle.TextType.HandSubscript, string.Empty, false, GameInput.Button.None);
             HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
         }
 
         public void OnHandClick(GUIHand hand)
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType("SeaTruckStorage", out TechType techType);
+            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
                 return;

@@ -1,26 +1,31 @@
-﻿using System.Text;
+﻿extern alias SEZero;
+
+using System.Text;
 using UnityEngine;
 using UWE;
 using BZCommon;
 using BZCommon.Helpers;
 using SeaTruckArms.ArmPrefabs;
+using SeaTruckArms.API;
+using SeaTruckArms.API.Interfaces;
+using SEZero::SlotExtenderZero.API;
 
 namespace SeaTruckArms
 {
-    public partial class SeaTruckArmManager : MonoBehaviour
+    internal partial class SeaTruckArmManager : MonoBehaviour
     {
         public SeaTruckHelper helper;
 
         public SeaTruckArmManager manager => this;
         
-        private const Arm Left = Arm.Left;
-        private const Arm Right = Arm.Right;
-        private Arm currentSelectedArm;
+        private const SeaTruckArm Left = SeaTruckArm.Left;
+        private const SeaTruckArm Right = SeaTruckArm.Right;
+        private SeaTruckArm currentSelectedArm;
 
         private VFXConstructing vfxConstructing;
 
-        private ISeaTruckArm leftArm;
-        private ISeaTruckArm rightArm;
+        private ISeaTruckArmHandler leftArm;
+        private ISeaTruckArmHandler rightArm;
 
         public TechType currentLeftArmType;
         public TechType currentRightArmType;
@@ -51,9 +56,9 @@ namespace SeaTruckArms
         public ObjectHelper objectHelper { get; private set; }
 
         private void Awake()
-        {            
-            helper = new SeaTruckHelper(gameObject, true, true, false);
-
+        {
+            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
+            
             objectHelper = Main.graphics.objectHelper;
 
             vfxConstructing = GetComponent<VFXConstructing>();                    
@@ -64,6 +69,8 @@ namespace SeaTruckArms
             GameObject armSocketLeft = Instantiate(Main.graphics.ArmSocket, leftArmAttach);
             armSocketLeft.SetActive(true);
             armSocketLeft.name = "armSocketLeft";
+            ColorizationHelper.AddRendererToColorCustomizer(gameObject, armSocketLeft, false, new int[] { 0 });
+            ColorizationHelper.AddRendererToSkyApplier(gameObject, armSocketLeft, Skies.Auto);            
 
             LeftSocketMat = armSocketLeft.GetComponent<Renderer>().material;            
 
@@ -71,7 +78,10 @@ namespace SeaTruckArms
             rightArmAttach = rightArmAttachPoint.transform;
 
             objectHelper.GetPrefabClone(ref armSocketLeft, rightArmAttach, true, "armSocketRight", out GameObject armSocketRight);
-            
+
+            ColorizationHelper.AddRendererToColorCustomizer(gameObject, armSocketRight, false, new int[] { 0 });
+            ColorizationHelper.AddRendererToSkyApplier(gameObject, armSocketRight, Skies.Auto);
+
             armSocketLeft.transform.localPosition = new Vector3(0f, 0.01f, -0.01f);
             armSocketLeft.transform.localScale = new Vector3(1.17f, 1.50f, 1.50f);
             armSocketLeft.transform.localRotation = Quaternion.Euler(90, 0, 0);
@@ -91,48 +101,45 @@ namespace SeaTruckArms
 
         public void WakeUp()
         {
-            BZLogger.Debug("SeaTruckArmManager", "Received WakeUp message");
-            
+            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
+
             isSeaTruckArmSlotsReady = true;
             
-            helper.OnActiveSlotChanged.AddHandler(this, new Event<int>.HandleFunction(OnActiveSlotChanged));
-
-            helper.OnDockedChanged.AddHandler(this, new Event<bool>.HandleFunction(OnDockedChanged));
+            helper.onActiveSlotChanged += OnActiveSlotChanged;
+            helper.onDockedChanged += OnDockedChanged;
 
             Player.main.playerModeChanged.AddHandler(this, new Event<Player.Mode>.HandleFunction(OnPlayerModeChanged));
 
-            //helper.TruckQuickSlots. onToggle += OnToggleSlot;
-            helper.modules.onEquip += OnEquip;
-            helper.modules.onUnequip += OnUnequip;            
+            helper.TruckQuickSlots.onToggle += OnToggleSlot;
+            helper.TruckEquipment.onEquip += OnEquip;
+            helper.TruckEquipment.onUnequip += OnUnequip;            
 
             CheckArmSlots();            
         }
 
         private void OnDestroy()
         {
-            BZLogger.Debug("SeaTruckArmManager", "Removing unused handlers...");
-            
-            helper.OnActiveSlotChanged.RemoveHandler(this, OnActiveSlotChanged);
-            helper.OnDockedChanged.RemoveHandler(this, OnDockedChanged);
+            helper.onActiveSlotChanged -= OnActiveSlotChanged;
+            helper.onDockedChanged -= OnDockedChanged;
             Player.main.playerModeChanged.RemoveHandler(this, OnPlayerModeChanged);
-            helper.modules.onEquip -= OnEquip;
-            helper.modules.onUnequip -= OnUnequip;
+            helper.TruckEquipment.onEquip -= OnEquip;
+            helper.TruckEquipment.onUnequip -= OnUnequip;
         }
 
         private void OnEquip(string slot, InventoryItem item)
         {
-            if (IsSeaTruckArm(item.item.GetTechType(), out TechType techType))
+            if (ArmServices.main.IsSeaTruckArm(item.item.GetTechType(), out TechType techType))
             {
                 int slotID = helper.GetSlotIndex(slot);
 
                 if (slotID == LeftArmSlotID)
                 {
-                    AddArm(Arm.Left, techType);
+                    AddArm(SeaTruckArm.Left, techType);
                     return;
                 }
                 else if (slotID == RightArmSlotID)
                 {
-                    AddArm(Arm.Right, techType);
+                    AddArm(SeaTruckArm.Right, techType);
                     return;
                 }
             }
@@ -140,44 +147,42 @@ namespace SeaTruckArms
 
         private void OnUnequip(string slot, InventoryItem item)
         {
-            if (IsSeaTruckArm(item.item.GetTechType(), out TechType techType))
+            if (ArmServices.main.IsSeaTruckArm(item.item.GetTechType(), out TechType techType))
             {
                 int slotID = helper.GetSlotIndex(slot);                
 
                 if (slotID == LeftArmSlotID)
                 {
-                    RemoveArm(Arm.Left);
+                    RemoveArm(SeaTruckArm.Left);
                     return;
                 }
                 else if (slotID == RightArmSlotID)
                 {
-                    RemoveArm(Arm.Right);
+                    RemoveArm(SeaTruckArm.Right);
                     return;
                 }
             }
         }
-
-        /*
+        
         private void OnToggleSlot(int slotID, bool state)
         {
             if (state)
             {
                 if (slotID == LeftArmSlotID)
                 {
-                    currentSelectedArm = Arm.Left;
+                    currentSelectedArm = SeaTruckArm.Left;
                 }
                 else if (slotID == RightArmSlotID)
                 {
-                    currentSelectedArm = Arm.Right;
+                    currentSelectedArm = SeaTruckArm.Right;
                 }
             }
             else
             {
-                currentSelectedArm = Arm.None;
+                currentSelectedArm = SeaTruckArm.None;
                 ResetArms();
             }
-        }
-        */
+        }        
 
         private void OnActiveSlotChanged(int newValue)
         {
@@ -185,16 +190,16 @@ namespace SeaTruckArms
 
             if (slotID == LeftArmSlotID)
             {
-                currentSelectedArm = Arm.Left;
+                currentSelectedArm = SeaTruckArm.Left;
                 return;
             }
             else if (slotID == RightArmSlotID)
             {
-                currentSelectedArm = Arm.Right;
+                currentSelectedArm = SeaTruckArm.Right;
                 return;
             }
             
-            currentSelectedArm = Arm.None;
+            currentSelectedArm = SeaTruckArm.None;
 
             ResetArms();
         }
@@ -214,7 +219,7 @@ namespace SeaTruckArms
                 return;
             }
             
-            if (helper.thisMotor.IsPiloted())
+            if (helper.TruckMotor.IsPiloted())
             {
                 if (AvatarInputHandler.main != null && AvatarInputHandler.main.IsEnabled())
                 {
@@ -230,16 +235,16 @@ namespace SeaTruckArms
 
                     bool hasPropCannon = false;
 
-                    if (currentSelectedArm == Arm.Left && leftArm != null)
+                    if (currentSelectedArm == SeaTruckArm.Left && leftArm != null)
                     {
                         leftArm.Update(ref quaternion);
-                        //hasPropCannon = LeftArmType == SeaTruckPropulsionArmPrefab.TechTypeID;
+                        hasPropCannon = LeftArmType == SeaTruckPropulsionArm_Prefab.TechTypeID;
                     }
 
-                    if (currentSelectedArm == Arm.Right && rightArm != null)
+                    if (currentSelectedArm == SeaTruckArm.Right && rightArm != null)
                     {
                         rightArm.Update(ref rotation);
-                        //hasPropCannon = RightArmType == SeaTruckPropulsionArmPrefab.TechTypeID;
+                        hasPropCannon = RightArmType == SeaTruckPropulsionArm_Prefab.TechTypeID;
                     }
 
                     UpdateUIText(hasPropCannon);
@@ -255,7 +260,7 @@ namespace SeaTruckArms
                         }
                     }
 
-                    if (currentSelectedArm != Arm.None)
+                    if (currentSelectedArm != SeaTruckArm.None)
                     { 
                         if (main.GetLeftHandDown())
                         {
@@ -283,14 +288,14 @@ namespace SeaTruckArms
             {
                 sb.Length = 0;
                 sb.AppendLine(LanguageCache.GetButtonFormat("PressToExit", GameInput.Button.Exit));
-                /*
+                
                 if (hasPropCannon)
                 {
                     string[] splittedHint = LanguageCache.GetButtonFormat("PropulsionCannonToRelease", GameInput.Button.AltTool).Split(' ');
 
                     sb.AppendLine($"{splittedHint[0]} {splittedHint.GetLast()}");
                 }
-                */
+                
                 lastHasPropCannon = hasPropCannon;
                 uiStringPrimary = sb.ToString();
             }
@@ -306,12 +311,12 @@ namespace SeaTruckArms
 
             if (leftArm != null)
             {
-                leftArm.SetRotation(Arm.Left, isDocked);
+                leftArm.SetRotation(SeaTruckArm.Left, isDocked);
             }
 
             if (rightArm != null)
             {
-                rightArm.SetRotation(Arm.Right, isDocked);
+                rightArm.SetRotation(SeaTruckArm.Right, isDocked);
             }
         }
         
@@ -387,15 +392,15 @@ namespace SeaTruckArms
 
             activeTarget = targetObject;
 
-            if (activeTarget && currentSelectedArm != Arm.None)
+            if (activeTarget && currentSelectedArm != SeaTruckArm.None)
             {
-                if (canDrill && objectType == ObjectType.Drillable && GetSelectedArmTechType() == SeaTruckDrillArmPrefab.TechTypeID)
+                if (canDrill && objectType == ObjectType.Drillable && GetSelectedArmTechType() == SeaTruckDrillArm_Prefab.TechTypeID)
                 {
                     GUIHand component = Player.main.GetComponent<GUIHand>();
                     GUIHand.Send(activeTarget, HandTargetEventType.Hover, component);
 
                 }
-                else if (canPickup && objectType == ObjectType.Pickupable && GetSelectedArmTechType() == SeaTruckClawArmPrefab.TechTypeID)
+                else if (canPickup && objectType == ObjectType.Pickupable && GetSelectedArmTechType() == SeaTruckClawArm_Prefab.TechTypeID)
                 {
                     Pickupable pickupable = activeTarget.GetComponent<Pickupable>();
                     TechType techType = pickupable.GetTechType();
@@ -408,44 +413,17 @@ namespace SeaTruckArms
         
         private void CheckArmSlots()
         {
-           if (IsSeaTruckArm(helper.modules.GetTechTypeInSlot("SeaTruckArmLeft"), out TechType leftArmtechType))
+           if (ArmServices.main.IsSeaTruckArm(helper.TruckEquipment.GetTechTypeInSlot("SeaTruckArmLeft"), out TechType leftArmtechType))
            {
-                AddArm(Arm.Left, leftArmtechType);
+                AddArm(SeaTruckArm.Left, leftArmtechType);
            }
 
-            if (IsSeaTruckArm(helper.modules.GetTechTypeInSlot("SeaTruckArmRight"), out TechType rightArmTechType))
+            if (ArmServices.main.IsSeaTruckArm(helper.TruckEquipment.GetTechTypeInSlot("SeaTruckArmRight"), out TechType rightArmTechType))
             {
-                AddArm(Arm.Right, rightArmTechType);
+                AddArm(SeaTruckArm.Right, rightArmTechType);
             }
-        }
-        
-        private bool IsSeaTruckArm(TechType techType, out TechType result)
-        {
-            if (techType == SeaTruckClawArmPrefab.TechTypeID)
-            {
-                result = SeaTruckClawArmPrefab.TechTypeID;
-                return true;
-            }            
-            else if (techType == SeaTruckDrillArmPrefab.TechTypeID)
-            {
-                result = SeaTruckDrillArmPrefab.TechTypeID;
-                return true;
-            }
-            else if (techType == SeaTruckGrapplingArmPrefab.TechTypeID)
-            {
-                result = SeaTruckGrapplingArmPrefab.TechTypeID;
-                return true;
-            }
-            else if (techType == SeaTruckTorpedoArmPrefab.TechTypeID)
-            {
-                result = SeaTruckTorpedoArmPrefab.TechTypeID;
-                return true;
-            }
+        }        
 
-            result = TechType.None;
-            return false;
-        }
-        
         private void SetIllum()
         {
             if (leftArm == null)
@@ -465,8 +443,6 @@ namespace SeaTruckArms
             {
                 RightSocketMat.SetTexture(Shader.PropertyToID("_Illum"), Main.graphics.ArmSocket_Illum_Red);
             }
-        }
-
-
+        }        
     }
 }

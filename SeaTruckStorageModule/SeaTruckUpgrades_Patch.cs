@@ -12,7 +12,7 @@ namespace SeaTruckStorage
         {            
             __instance.gameObject.EnsureComponent<SeaTruckStorageManager>();
 
-            BZLogger.Debug("SeaTruckStorage", $"Storage Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
+            BZLogger.Debug($"Storage Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
         }
     }
 
@@ -25,7 +25,7 @@ namespace SeaTruckStorage
         {
             TechType techType = pickupable.GetTechType();
 
-            if (techType == SeaTruckStorage.TechTypeID)
+            if (techType == SeaTruckStorage_Prefab.TechTypeID)
             {
                 if (__instance.modules.GetCount(techType) <= 2)
                 {

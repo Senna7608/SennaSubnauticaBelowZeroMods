@@ -7,6 +7,8 @@ using RuntimeHelperZero.FileHelper;
 using System;
 using RuntimeHelperZero.Renderers;
 using BZCommon.Helpers.GUIHelper;
+using static RuntimeHelperZero.Objects.PropertyHelper;
+using static RuntimeHelperZero.Objects.FieldHelper;
 
 namespace RuntimeHelperZero
 {
@@ -41,7 +43,9 @@ namespace RuntimeHelperZero
             "_MainTex",
             "_Normal",            
             "_BumpMap",            
-            "_SpecTex"
+            "_SpecTex",
+            "_ScrollTex",
+            "_GlowScrollMask"            
         };
 
 
@@ -263,7 +267,27 @@ namespace RuntimeHelperZero
                     _materialInfo_ScrollItems.Add($"[{materialInfo.Index}] Shader Keywords: {shaderKeyword}");
                 }                
             }
-            
+
+            UnityEngine.Object _object = objects[selected_component];
+
+            ObjectProperties _objectProperties = new ObjectProperties(_object);
+
+            _materialInfo_ScrollItems.Add("Properties:");
+
+            foreach (ObjectProperty objectProperty in _objectProperties)
+            {
+                _materialInfo_ScrollItems.Add(objectProperty.ToString());
+            }
+
+            ObjectFields _objectFields = new ObjectFields(_object);
+
+            _materialInfo_ScrollItems.Add("Fields:");
+
+            foreach (ObjectField objectField in _objectFields)
+            {
+                _materialInfo_ScrollItems.Add(objectField.ToString());
+            }
+
             guiItems_Renderer.SetScrollViewItems(_materialInfo_ScrollItems, 530f);
 
             showRendererWindow = true;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BZCommon;
 using BZCommon.ConfigurationParser;
+using BZCommon.Helpers;
 
 namespace QuickSlotExtenderZero.Configuration
 {
@@ -52,13 +53,13 @@ namespace QuickSlotExtenderZero.Configuration
         {
             new ConfigData(SECTIONS[1], SECTION_Settings[0], 12.ToString()),
             new ConfigData(SECTIONS[1], SECTION_Settings[1], COLORS.Green.ToString()),            
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[0], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha6)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[1], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha7)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[2], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha8)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[3], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha9)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[4], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha0)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[5], InputHelper.GetKeyCodeAsInputName(KeyCode.Slash)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[6], InputHelper.GetKeyCodeAsInputName(KeyCode.Equals))            
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[0], InputHelper.KeyCodeToString(KeyCode.Alpha6)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[1], InputHelper.KeyCodeToString(KeyCode.Alpha7)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[2], InputHelper.KeyCodeToString(KeyCode.Alpha8)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[3], InputHelper.KeyCodeToString(KeyCode.Alpha9)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[4], InputHelper.KeyCodeToString(KeyCode.Alpha0)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[5], InputHelper.KeyCodeToString(KeyCode.Slash)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[6], InputHelper.KeyCodeToString(KeyCode.Equals))            
         };        
 
         internal static void InitSLOTKEYS()
@@ -71,13 +72,13 @@ namespace QuickSlotExtenderZero.Configuration
             SLOTKEYS.Add("Slot3", GameInput.GetBindingName(GameInput.Button.Slot3, GameInput.BindingSet.Primary));
             SLOTKEYS.Add("Slot4", GameInput.GetBindingName(GameInput.Button.Slot4, GameInput.BindingSet.Primary));
             SLOTKEYS.Add("Slot5", GameInput.GetBindingName(GameInput.Button.Slot5, GameInput.BindingSet.Primary));
-            SLOTKEYS.Add("Slot6", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[0]]));
-            SLOTKEYS.Add("Slot7", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[1]]));
-            SLOTKEYS.Add("Slot8", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[2]]));
-            SLOTKEYS.Add("Slot9", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[3]]));
-            SLOTKEYS.Add("Slot10", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[4]]));
-            SLOTKEYS.Add("Slot11", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[5]]));
-            SLOTKEYS.Add("Slot12", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[6]]));
+            SLOTKEYS.Add("Slot6", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[0]]));
+            SLOTKEYS.Add("Slot7", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[1]]));
+            SLOTKEYS.Add("Slot8", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[2]]));
+            SLOTKEYS.Add("Slot9", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[3]]));
+            SLOTKEYS.Add("Slot10", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[4]]));
+            SLOTKEYS.Add("Slot11", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[5]]));
+            SLOTKEYS.Add("Slot12", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[6]]));
 
             
             foreach (KeyValuePair<string, string> kvp in SLOTKEYS)
@@ -102,30 +103,30 @@ namespace QuickSlotExtenderZero.Configuration
                 int.TryParse(ParserHelper.GetKeyValue(FILENAME, SECTIONS[1], SECTION_Settings[0]), out int result);
                 MAXSLOTS = result < 5 || result > 12 ? 12 : result;
 
-                TEXTCOLOR = Modules.GetColor(ParserHelper.GetKeyValue(FILENAME, SECTIONS[1], SECTION_Settings[1]));
+                TEXTCOLOR = ColorHelper.GetColor(ParserHelper.GetKeyValue(FILENAME, SECTIONS[1], SECTION_Settings[1]));
 
-                BZLogger.Log("QuickSlotExtenderZero", "Configuration loaded.");
+                BZLogger.Log("Configuration loaded.");
             }
             catch
             {
-                BZLogger.Log("QuickSlotExtenderZero", "An error occurred while loading the configuration file!");
+                BZLogger.Error("An error occurred while loading the configuration file!");
             }
         }
 
         internal static void CreateDefaultConfigFile()
         {
-            BZLogger.Warn("QuickSlotExtenderZero", "Configuration file is missing or wrong version. Trying to create a new one.");
+            BZLogger.Warn("Configuration file is missing or wrong version. Trying to create a new one.");
 
             try
             {
                 ParserHelper.CreateDefaultConfigFile(FILENAME, "QuickSlotExtenderZero", PROGRAM_VERSION, DEFAULT_CONFIG);
                 ParserHelper.AddInfoText(FILENAME, SECTIONS[1], "TextColor possible values: Red, Green, Blue, Yellow, White, Magenta, Cyan, Orange, Lime, Amethyst");
 
-                BZLogger.Log("QuickSlotExtenderZero", "The new configuration file was successfully created.");
+                BZLogger.Log("The new configuration file was successfully created.");
             }
             catch
             {
-                BZLogger.Error("QuickSlotExtenderZero", "An error occured while creating the new configuration file!");
+                BZLogger.Error("An error occured while creating the new configuration file!");
             }
         }
         
@@ -133,21 +134,21 @@ namespace QuickSlotExtenderZero.Configuration
         {
             SetKeyBindings();
             InitSLOTKEYS();
-            BZLogger.Log("QuickSlotExtenderZero", "Configuration initialized.");
+            BZLogger.Log("Configuration initialized.");
         }
 
         internal static void WriteConfig()
         {
             ParserHelper.SetAllKeyValuesInSection(FILENAME, SECTIONS[0], Section_hotkeys);
             ParserHelper.SetKeyValue(FILENAME, SECTIONS[1], SECTION_Settings[0], MAXSLOTS.ToString());
-            ParserHelper.SetKeyValue(FILENAME, SECTIONS[1], SECTION_Settings[1], Modules.GetColorName(TEXTCOLOR));
+            ParserHelper.SetKeyValue(FILENAME, SECTIONS[1], SECTION_Settings[1], ColorHelper.GetColorName(TEXTCOLOR));
         }
 
         internal static void SyncConfig()
         {
             foreach (string key in SECTION_Hotkeys)
             {
-                Section_hotkeys[key] = InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[key]);                
+                Section_hotkeys[key] = InputHelper.KeyCodeToString(KEYBINDINGS[key]);                
             }
 
             WriteConfig();
@@ -163,17 +164,17 @@ namespace QuickSlotExtenderZero.Configuration
             {
                 try
                 {                    
-                    KEYBINDINGS.Add(kvp.Key, InputHelper.GetInputNameAsKeyCode(kvp.Value));
+                    KEYBINDINGS.Add(kvp.Key, InputHelper.StringToKeyCode(kvp.Value));
                 }
                 catch (ArgumentException)
                 {
-                    BZLogger.Warn("QuickSlotExtenderZero", $"({kvp.Value}) is not a valid KeyCode! Setting default value!");
+                    BZLogger.Warn($"({kvp.Value}) is not a valid KeyCode! Setting default value!");
 
                     for (int i = 0; i < DEFAULT_CONFIG.Count; i++)
                     {
                         if (DEFAULT_CONFIG[i].Key.Equals(kvp.Key))
                         {
-                            KEYBINDINGS.Add(kvp.Key, InputHelper.GetInputNameAsKeyCode(DEFAULT_CONFIG[i].Value));
+                            KEYBINDINGS.Add(kvp.Key, InputHelper.StringToKeyCode(DEFAULT_CONFIG[i].Value));
                             sync = true;
                         }
                     }
@@ -190,7 +191,7 @@ namespace QuickSlotExtenderZero.Configuration
         {
             if (!File.Exists(FILENAME))
             {
-                BZLogger.Error("QuickSlotExtenderZero", "Configuration file open error!");
+                BZLogger.Error("Configuration file open error!");
                 return false;
             }
 
@@ -198,19 +199,19 @@ namespace QuickSlotExtenderZero.Configuration
 
             if (!CONFIG_VERSION.Equals(PROGRAM_VERSION))
             {
-                BZLogger.Error("QuickSlotExtenderZero", "Configuration file version error!");
+                BZLogger.Error("Configuration file version error!");
                 return false;
             }
 
-            if (!ParserHelper.CheckSectionKeys(FILENAME, SECTIONS[0], SECTION_Hotkeys))
+            if (!ParserHelper.IsSectionKeysExists(FILENAME, SECTIONS[0], SECTION_Hotkeys))
             {
-                BZLogger.Error("QuickSlotExtenderZero", $"Configuration {SECTIONS[0]} section error!");
+                BZLogger.Error($"Configuration {SECTIONS[0]} section error!");
                 return false;
             }
 
-            if (!ParserHelper.CheckSectionKeys(FILENAME, SECTIONS[1], SECTION_Settings))
+            if (!ParserHelper.IsSectionKeysExists(FILENAME, SECTIONS[1], SECTION_Settings))
             {
-                BZLogger.Error("QuickSlotExtenderZero", $"Configuration {SECTIONS[1]} section error!");
+                BZLogger.Error($"Configuration {SECTIONS[1]} section error!");
                 return false;
             }
 

@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Reflection;
 using UnityEngine;
 using HarmonyLib;
-using System.Reflection;
+using QModManager.API.ModLoading;
 
 namespace BZTestMOD
 {
+    [QModCore]
     public static class Main
     {
+        [QModPatch]
         public static void Load()
         {
             try
             {
-                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "SubnauticaBelowZero.BZTestMOD.mod");
+                Assembly assembly = Assembly.GetExecutingAssembly();
+
+                Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");
             }
             catch (Exception ex)
             {

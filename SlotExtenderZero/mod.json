@@ -1,14 +1,10 @@
 ﻿{
   "Id": "SlotExtenderZero",
-  "DisplayName": "SlotExtenderZero",
+  "DisplayName": "Slot Extender Zero",
   "Author": "Senna",
-  "Version": "1.0",
-  "Dependencies": ["SMLHelper"],
-  "VersionDependencies": {"SMLHelper": "2.8"},  
-  "LoadBefore": [],
-  "LoadAfter": [],
+  "Version": "1.5",
+  "Dependencies": ["SMLHelper"],   
   "Enable": true,
   "Game": "BelowZero",
-  "AssemblyName": "SlotExtenderZero.dll",
-  "EntryMethod": "SlotExtenderZero.Main.Load" 
+  "AssemblyName": "SlotExtenderZero.dll" 
 }

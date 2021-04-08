@@ -112,7 +112,11 @@ namespace BZCommon.Helpers.RuntimeGUI
             SimpleSkin.button.normal.background = lightTexture;
             SimpleSkin.button.hover.background = hoverTexture;
             SimpleSkin.button.active.background = activeTexture;
-            SimpleSkin.button.SetBorderAndMargin();
+            //SimpleSkin.button.margin = new RectOffset(0, 0, 0, 0);
+            SimpleSkin.button.border = new RectOffset(6, 6, 6, 6);
+            SimpleSkin.button.padding = new RectOffset(4, 4, 3, 3);
+
+            //SimpleSkin.button.SetBorderAndMargin();
 
             SimpleSkin.verticalScrollbar.normal.background = normalTexture;
             SimpleSkin.verticalScrollbar.SetBorderAndMargin();
@@ -120,7 +124,7 @@ namespace BZCommon.Helpers.RuntimeGUI
             SimpleSkin.verticalScrollbarThumb.normal.background = grayTexture;
             SimpleSkin.verticalScrollbarThumb.hover.background = hoverTexture;
             SimpleSkin.verticalScrollbarThumb.active.background = activeTexture;
-            SimpleSkin.verticalScrollbarThumb.SetBorderAndMargin();
+            //SimpleSkin.verticalScrollbarThumb.SetBorderAndMargin();
 
             SimpleSkin.horizontalScrollbar.normal.background = normalTexture;
             SimpleSkin.horizontalScrollbar.SetBorderAndMargin();            
@@ -131,20 +135,24 @@ namespace BZCommon.Helpers.RuntimeGUI
             SimpleSkin.horizontalScrollbarThumb.SetBorderAndMargin();
 
             SimpleSkin.horizontalSlider.normal.background = normalTexture;
-            SimpleSkin.horizontalSlider.SetBorderAndMargin();
+            //SimpleSkin.horizontalSlider.SetBorderAndMargin();
 
-            SimpleSkin.horizontalSlider.fixedHeight = 19;
+            SimpleSkin.horizontalSlider.fixedHeight = 18;
             SimpleSkin.horizontalSlider.stretchHeight = true;
-            SimpleSkin.horizontalSlider.padding = new RectOffset(0, 0, 3, -3);
+            //SimpleSkin.horizontalSlider.margin = new RectOffset(0, 0, 0, 0);
+            SimpleSkin.horizontalSlider.border = new RectOffset(6, 6, 6, 6);
+            SimpleSkin.horizontalSlider.padding = new RectOffset(0, 0, 2, 0);
 
             SimpleSkin.horizontalSliderThumb.normal.background = grayTexture;
             SimpleSkin.horizontalSliderThumb.hover.background = hoverTexture;
             SimpleSkin.horizontalSliderThumb.active.background = activeTexture;
-            SimpleSkin.horizontalSliderThumb.SetBorderAndMargin();
+            //SimpleSkin.horizontalSliderThumb.SetBorderAndMargin();
 
             SimpleSkin.horizontalSliderThumb.fixedHeight = 12;
             SimpleSkin.horizontalSliderThumb.stretchHeight = true;
-
+            SimpleSkin.horizontalSliderThumb.margin = new RectOffset(0, 0, 0, 0);
+            SimpleSkin.horizontalSliderThumb.border = new RectOffset(6, 6, 6, 6);
+            SimpleSkin.horizontalSliderThumb.padding = new RectOffset(0, 0, 0, 0);
             SimpleSkin.horizontalSliderThumb.fixedWidth = 40;
             SimpleSkin.horizontalSliderThumb.stretchWidth = true;
 
@@ -161,8 +169,24 @@ namespace BZCommon.Helpers.RuntimeGUI
         
         private static void SetBorderAndMargin(this GUIStyle gUIStyle)
         {
-            gUIStyle.border = GUI.skin.box.border;
+            gUIStyle.border = GUI.skin.box.border;            
             gUIStyle.margin = GUI.skin.box.margin;
+
+            Debug.Log($"button margin: {GUI.skin.button.margin}");
+            Debug.Log($"button border: {GUI.skin.button.border}");
+            Debug.Log($"button padding: {GUI.skin.button.padding}");
+
+            Debug.Log($"box margin: {GUI.skin.box.margin}");
+            Debug.Log($"box border: {GUI.skin.box.border}");            
+            Debug.Log($"box padding: {GUI.skin.box.padding}");
+
+            Debug.Log($"hSlider margin: {GUI.skin.horizontalSlider.margin}");
+            Debug.Log($"hSlider border: {GUI.skin.horizontalSlider.border}");            
+            Debug.Log($"hSlider padding: {GUI.skin.horizontalSlider.padding}");
+
+            Debug.Log($"hSliderThumb margin: {GUI.skin.horizontalSliderThumb.margin}");
+            Debug.Log($"hSliderThumb border: {GUI.skin.horizontalSliderThumb.border}");            
+            Debug.Log($"hSliderThumb padding: {GUI.skin.horizontalSliderThumb.padding}");
         }
                
         public static GUIStyle GetGuiStyle

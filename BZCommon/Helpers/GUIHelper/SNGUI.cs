@@ -223,7 +223,7 @@ namespace BZCommon.Helpers.GUIHelper
 
             if (itemsCount < 2 || index == itemsCount - 1)
             {
-                guiItems.RemoveFast(index);
+                guiItems.RemoveAt(index);
                 return true;
             }
             
@@ -237,7 +237,7 @@ namespace BZCommon.Helpers.GUIHelper
             float width = guiItems[index].Rect.width;
             float height = guiItems[index].Rect.height;
 
-            guiItems.RemoveFast(index);
+            guiItems.RemoveAt(index);
 
             int i = index;
             int j = 0;

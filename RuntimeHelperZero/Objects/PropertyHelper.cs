@@ -1,4 +1,5 @@
 ﻿using BZCommon;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -20,6 +21,14 @@ namespace RuntimeHelperZero.Objects
                 }
             }
 
+            public Type @Type
+            {
+                get
+                {
+                    return propertyInfo.PropertyType;
+                }
+            }
+
             public override string ToString()
             {
                 return $"{Name} = {GetValue()}";
@@ -27,15 +36,16 @@ namespace RuntimeHelperZero.Objects
 
             private readonly BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-            public ObjectProperty(object instance, PropertyInfo pInfo)
+            public ObjectProperty(ref object instance, PropertyInfo pInfo)
             {
                 Instance = instance;
                 propertyInfo = pInfo;
             }
 
-            public object GetProperty()
+            public ObjectProperty GetProperty()
             {
-                return Instance.GetPrivateProperty(Name, bindingFlags);
+                return this;
+                //return Instance.GetPrivateProperty(Name, bindingFlags);
             }
 
             public object GetValue()
@@ -77,7 +87,7 @@ namespace RuntimeHelperZero.Objects
 
                 foreach (PropertyInfo propertyInfo in _object.GetType().GetProperties(bindingFlags))
                 {
-                    pObjects.Add(new ObjectProperty(_object, propertyInfo));
+                    pObjects.Add(new ObjectProperty(ref _object, propertyInfo));
                 }
             }
 
@@ -91,11 +101,11 @@ namespace RuntimeHelperZero.Objects
                 return ((IEnumerable<ObjectProperty>)pObjects).GetEnumerator();
             }
 
-            public object GetPropertyValue(string name)
+            public object GetPropertyValue(string propertyName)
             {
                 foreach (ObjectProperty pObject in pObjects)
                 {
-                    if (pObject.Name == name)
+                    if (pObject.Name == propertyName)
                     {
                         return pObject.GetValue();
                     }
@@ -104,11 +114,11 @@ namespace RuntimeHelperZero.Objects
                 return null;
             }
 
-            public bool SetPropertyValue(string name, object value)
+            public bool SetPropertyValue(string propertyName, object value)
             {
                 foreach (ObjectProperty pObject in pObjects)
                 {
-                    if (pObject.Name == name)
+                    if (pObject.Name == propertyName)
                     {
                         return pObject.SetValue(value);
                     }
@@ -117,7 +127,7 @@ namespace RuntimeHelperZero.Objects
                 return false;
             }
 
-            public object GetProperty(string propertyName)
+            public ObjectProperty GetProperty(string propertyName)
             {
                 foreach (ObjectProperty pObject in pObjects)
                 {

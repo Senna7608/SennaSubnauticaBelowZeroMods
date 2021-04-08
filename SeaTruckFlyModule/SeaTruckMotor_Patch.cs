@@ -9,7 +9,7 @@ namespace SeaTruckFlyModule
         [HarmonyPrefix]
         public static bool Prefix(SeaTruckMotor __instance, ref bool __result)
         {
-            if (__instance.TryGetComponent(out SeaTruckFlyManager manager))
+            if (__instance.TryGetComponent(out FlyManager manager))
             {
                 if (manager.isEnabled)
                 {
@@ -28,7 +28,7 @@ namespace SeaTruckFlyModule
         [HarmonyPrefix]
         public static bool Prefix(SeaTruckMotor __instance)
         {
-            if (__instance.TryGetComponent(out SeaTruckFlyManager manager))
+            if (__instance.TryGetComponent(out FlyManager manager))
             {
                 if (manager.altitude > 0)
                 {                    
@@ -46,7 +46,7 @@ namespace SeaTruckFlyModule
         [HarmonyPrefix]
         public static bool Prefix(SeaTruckMotor __instance)
         {
-            if (__instance.TryGetComponent(out SeaTruckFlyManager manager))
+            if (__instance.TryGetComponent(out FlyManager manager))
             {
                 if (manager.altitude > 0)
                 {
@@ -64,7 +64,7 @@ namespace SeaTruckFlyModule
         [HarmonyPrefix]
         public static bool Prefix(SeaTruckMotor __instance, bool waitForDocking, bool forceStop, ref bool __result)
         {
-            if (__instance.TryGetComponent(out SeaTruckFlyManager manager))
+            if (__instance.TryGetComponent(out FlyManager manager))
             {
                 if (manager.altitude > 0 && manager.isFlying.value)
                 {

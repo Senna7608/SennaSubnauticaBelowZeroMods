@@ -26,8 +26,8 @@ namespace CheatManagerZero.NewCommands
 
             if (OverPowerCheat)
             {
-                overPowerMultiplier = Config.overPowerMultiplier;
-                hungerAndThristInterval = Config.hungerAndThirstInterval;
+                overPowerMultiplier = CmZConfig.overPowerMultiplier;
+                hungerAndThristInterval = CmZConfig.hungerAndThirstInterval;
             }
             else
             {

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SlotExtenderZero</RootNamespace>
     <AssemblyName>SlotExtenderZero</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\SubnauticaBelowZero\QMods\SlotExtenderZero\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SlotExtenderZero\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\SubnauticaBelowZero\QMods\SlotExtenderZero\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SlotExtenderZero\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -39,68 +39,93 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>D:\SubnauticaBelowZero\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="QModInstaller">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SMLHelper">
-      <HintPath>D:\SubnauticaBelowZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+	<Reference Include="Unity.ResourceManager">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\SeaTruckHelper.cs" />
+    <Compile Include="API\SeatruckServices.cs" />
     <Compile Include="Configuration\SEzCommand.cs" />
     <Compile Include="Configuration\SEzConfig.cs" />
     <Compile Include="Configuration\SEzConfigUI.cs" />
     <Compile Include="DataTypes.cs" />
+    <Compile Include="Patches\Hoverbike_Patch.cs" />
+    <Compile Include="Patches\Inventory_Patch.cs" />
+    <Compile Include="SlotPosHoverbike.cs" />
     <Compile Include="SlotPosCircle.cs" />
     <Compile Include="SlotPosGrid.cs" />
     <Compile Include="uGUI_SlotTextHandler.cs" />

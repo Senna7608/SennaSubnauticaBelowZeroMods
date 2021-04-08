@@ -1,56 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace BZCommon
 {
+    public enum LogMode
+    {
+        LOG,
+        WARNING,
+        ERROR,
+        DEBUG
+    }
+
     public static class BZLogger
     {
-        
-        public static void Log(string message)
+        private static readonly Dictionary<LogMode, string> logTypeCache = new Dictionary<LogMode, string>(4)
         {
-            Console.WriteLine(message);
-        }        
+            { LogMode.LOG, "LOG" },
+            { LogMode.WARNING, "WARNING" },
+            { LogMode.ERROR, "ERROR" },
+            { LogMode.DEBUG, "DEBUG" },
+        };
 
-        public static void Log(string moduleName, string message)
+        private static void WriteLog(LogMode logType, string message)
         {
-            Console.WriteLine($"[{moduleName}] [LOG] {message}");
+            Console.WriteLine($"[{Assembly.GetCallingAssembly().GetName().Name}/{logTypeCache[logType]}] {message}");
         }
 
-        public static void Log(string moduleName, string format, params object[] args)
-        {
-            Console.WriteLine($"[{moduleName}] [LOG] {string.Format(format, args)}");
-        }
+        public static void Log(string message) => WriteLog(LogMode.LOG, message);
 
-        public static void Error(string moduleName, string message)
-        {
-            Console.WriteLine($"[{moduleName}] [ERROR] {message}");
-        }
+        public static void Log(string format, params object[] args) => WriteLog(LogMode.LOG, string.Format(format, args));
 
-        public static void Error(string moduleName, string format, params object[] args)
-        {
-            Console.WriteLine($"[{moduleName}] [ERROR] {string.Format(format, args)}");
-        }
+        public static void Warn(string message) => WriteLog(LogMode.WARNING, message);
 
-        public static void Warn(string moduleName, string message)
-        {
-            Console.WriteLine($"[{moduleName}] [WARNING] {message}");
-        }
+        public static void Warn(string format, params object[] args) => WriteLog(LogMode.WARNING, string.Format(format, args));
 
-        public static void Warn(string moduleName, string format, params object[] args)
-        {
-            Console.WriteLine($"[{moduleName}] [WARNING] {string.Format(format, args)}");
-        }
+        public static void Error(string message) => WriteLog(LogMode.ERROR, message);
+
+        public static void Error(string format, params object[] args) => WriteLog(LogMode.ERROR, string.Format(format, args));
 
         [Conditional("DEBUG")]
-        public static void Debug(string moduleName, string message)
-        {
-            Console.WriteLine($"[{moduleName}] [DEBUG] {message}");
-        }
+        public static void Debug(string message) => WriteLog(LogMode.DEBUG, message);
 
         [Conditional("DEBUG")]
-        public static void Debug(string moduleName, string format, params object[] args)
-        {
-            Console.WriteLine($"[{moduleName}] [DEBUG] {string.Format(format, args)}");
-        }        
+        public static void Debug(string format, params object[] args) => WriteLog(LogMode.DEBUG, string.Format(format, args));
     }
 }

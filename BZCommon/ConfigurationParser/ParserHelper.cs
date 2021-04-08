@@ -14,17 +14,34 @@ namespace BZCommon.ConfigurationParser
             Section = section;
             Key = key;
             Value = value;
+        }       
+    }
+
+    public class SaveData : List<SaveData>
+    {
+        public string Section { get; private set; }
+        public string Key { get; private set; }
+        public string Value { get; private set; }
+
+        public SaveData(string section, string key, string value)
+        {
+            Section = section;
+            Key = key;
+            Value = value;
         }
     }
 
     public class ParserHelper
     {
-        public static void CreateDefaultConfigFile(string filename, string programName, string version, List<ConfigData> configData)
+        public static void CreateDefaultConfigFile(string path, string programName, string version, List<ConfigData> configData)
         {            
-            File.WriteAllText(filename,$"[{programName}]\r\nVersion: {version}\r\n");
+            File.WriteAllText(path,$"[{programName}]\r\nVersion: {version}\r\n");
 
-            Parser parser = new Parser(filename);
-            
+            Parser parser = new Parser(path);
+
+            if (configData == null)
+                return;
+
             foreach (ConfigData data in configData)
             {
                 if (!parser.IsExists(data.Section))
@@ -34,6 +51,26 @@ namespace BZCommon.ConfigurationParser
                 
                 parser.SetKeyValueInSection(data.Section, data.Key, data.Value);
             }            
+        }
+
+        public static void CreateSaveGameFile(string path, string programName, string version, List<SaveData> saveDatas)
+        {
+            File.WriteAllText(path, $"[{programName}]\r\nVersion: {version}\r\n");
+
+            Parser parser = new Parser(path);
+
+            if (saveDatas == null)
+                return;
+
+            foreach (SaveData data in saveDatas)
+            {
+                if (!parser.IsExists(data.Section))
+                {
+                    parser.AddNewSection(data.Section);
+                }
+
+                parser.SetKeyValueInSection(data.Section, data.Key, data.Value);
+            }
         }
 
         public static void AddInfoText(string filename, string key, string value)
@@ -113,6 +150,12 @@ namespace BZCommon.ConfigurationParser
         public static void SetKeyValue(string filename, string section, string key, string value)
         {
             Parser parser = new Parser(filename);
+
+            if (!parser.IsExists(section))
+            {
+                parser.AddNewSection(section);
+            }
+
             parser.SetKeyValueInSection(section, key, value);
         }
 
@@ -139,7 +182,7 @@ namespace BZCommon.ConfigurationParser
             return true;
         }
 
-        public static bool CheckSectionKeys(string filename, string section, string[] keys)
+        public static bool IsSectionKeysExists(string filename, string section, string[] keys)
         {
             Parser parser = new Parser(filename);
 
@@ -156,6 +199,20 @@ namespace BZCommon.ConfigurationParser
             }
 
             return true;
+        }
+
+        public static bool IsSectionKeyExists(string filename, string section, string key)
+        {
+            Parser parser = new Parser(filename);
+
+            return parser.IsExists(section, key) ? true : false;
+        }
+
+        public static bool IsSectionExists(string filename, string section)
+        {
+            Parser parser = new Parser(filename);
+
+            return parser.IsExists(section) ? true : false;
         }
 
         public static void ClearSection(string filename, string section)

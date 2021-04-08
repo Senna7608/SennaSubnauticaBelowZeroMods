@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SeaTruckArms</RootNamespace>
     <AssemblyName>SeaTruckArms</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\SubnauticaBelowZero\QMods\SeaTruckArms\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SeaTruckArms\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\SubnauticaBelowZero\QMods\SeaTruckArms\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SeaTruckArms\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -37,89 +37,120 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>D:\SubnauticaBelowZero\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="QModInstaller">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SMLHelper">
-      <HintPath>D:\SubnauticaBelowZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="Unity.ResourceManager">
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.InputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>D:\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArmControls\SeaTruckClawArmControl.cs" />
-    <Compile Include="ArmControls\SeaTruckDrillArmControl.cs" />
-    <Compile Include="ArmControls\SeaTruckGrapplingArmControl.cs" />
-    <Compile Include="ArmControls\SeaTruckGrapplingHook.cs" />
-    <Compile Include="ArmControls\SeaTruckPropulsionArmControl.cs" />
-    <Compile Include="ArmControls\SeaTruckTorpedoArmControl.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckClawArmPrefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckDrillArmPrefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckGrapplingArmPrefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckPropulsionArmPrefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckTorpedoArmPrefab.cs" />
-    <Compile Include="SeatruckArms_Graphics.cs" />
-    <Compile Include="ISeaTruckArm.cs" />
+    <Compile Include="API\ArmHandlers\ClawArmHandler.cs" />
+    <Compile Include="API\ArmHandlers\DrillArmHandler.cs" />
+    <Compile Include="API\ArmHandlers\GrapplingArmHandler.cs" />
+    <Compile Include="API\ArmHandlers\PropulsionArmHandler.cs" />
+    <Compile Include="API\ArmHandlers\TorpedoArmHandler.cs" />
+    <Compile Include="API\ArmServices.cs" />
+    <Compile Include="API\CraftableSeatruckArm.cs" />
+    <Compile Include="API\Enums.cs" />
+    <Compile Include="API\Interfaces\ISeaTruckArmHandlerRequest.cs" />
+    <Compile Include="API\SeaTruckArmFragment.cs" />
+    <Compile Include="ArmHandlerRequesters\TorpedoArmHandlerRequest.cs" />
+    <Compile Include="ArmHandlerRequesters\PropulsionArmHandlerRequest.cs" />
+    <Compile Include="ArmHandlerRequesters\GrapplingArmHandlerRequest.cs" />
+    <Compile Include="ArmHandlerRequesters\DrillArmHandlerRequest.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckPropulsionArmFragment_Prefab.cs" />
+    <Compile Include="ArmRegistrationListener.cs" />
+    <Compile Include="AsyncLoaders.cs" />
+    <Compile Include="InternalArmHandlers\InternalClawArmHandler.cs" />
+    <Compile Include="InternalArmHandlers\InternalDrillArmHandler.cs" />
+    <Compile Include="InternalArmHandlers\InternalGrapplingArmHandler.cs" />
+    <Compile Include="API\SeaTruckGrapplingHook.cs" />
+    <Compile Include="InternalArmHandlers\InternalPropulsionArmHandler.cs" />
+    <Compile Include="InternalArmHandlers\InternalTorpedoArmHandler.cs" />
+    <Compile Include="ArmHandlerRequesters\ClawArmHandlerRequest.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckTorpedoArmFragment_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckGrapplingArmFragment_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckDrillArmFragment_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckClawArmFragment_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckClawArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckDrillArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckGrapplingArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckPropulsionArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeaTruckTorpedoArm_Prefab.cs" />
+    <Compile Include="Patches\Addressables_Patch.cs" />
+    <Compile Include="SeaTruckArms_Graphics.cs" />
+    <Compile Include="API\Interfaces\ISeaTruckArmHandler.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patches\Drillable_Patch.cs" />
     <Compile Include="Patches\SeaTruckUpgrades_Patch.cs" />
@@ -127,7 +158,7 @@
     <Compile Include="SeaTruckArmManager.cs" />
     <Compile Include="SeaTruckArm_Public.cs" />
     <Compile Include="SeaTruckArm_SlotControl.cs" />
-    <Compile Include="SeaTruckDrillable.cs" />
+    <Compile Include="API\SeaTruckDrillable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json">
@@ -144,9 +175,14 @@
     <Content Include="Assets\ArmSocket_MultiColorMask.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\ArmSocket_SpecTex.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SlotExtenderZero\SlotExtenderZero.csproj">
+      <Project>{0f852683-7a27-4146-866e-388660b6cab3}</Project>
+      <Name>SlotExtenderZero</Name>
+      <Private>False</Private>
+      <Aliases>SEZero</Aliases>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\BZCommon\BZCommon.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

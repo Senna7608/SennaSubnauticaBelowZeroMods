@@ -1,0 +1,10 @@
+﻿{
+  "Id": "SeaTruckScannerModule",
+  "DisplayName": "SeaTruckScannerModule",
+  "Author": "Senna",
+  "Version": "1.0",
+  "Dependencies": ["SMLHelper", "SlotExtenderZero"],  
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "SeaTruckScannerModule.dll" 
+}

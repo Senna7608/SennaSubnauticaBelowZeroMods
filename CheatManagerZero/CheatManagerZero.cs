@@ -1,5 +1,4 @@
-﻿//#define DEBUG_PROGRAM
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UWE;
 using BZCommon.Helpers.GUIHelper;
@@ -8,10 +7,6 @@ using CheatManagerZero.NewCommands;
 using BZCommon;
 using BZCommon.Helpers;
 using System.Linq;
-
-#if DEBUG_PROGRAM
-using System.Collections;
-#endif
 
 namespace CheatManagerZero
 {
@@ -22,7 +17,7 @@ namespace CheatManagerZero
         internal TechnologyMatrix techMatrix;        
         private Vector2 scrollPos;
 
-        private static Rect windowRect = new Rect(Screen.width - (Screen.width / Config.ASPECT), 0, Screen.width / Config.ASPECT, (Screen.height / 4 * 3) - 2);
+        private static Rect windowRect = new Rect(Screen.width - (Screen.width / CmZConfig.ASPECT), 0, Screen.width / CmZConfig.ASPECT, (Screen.height / 4 * 3) - 2);
         private Rect drawRect;
         private Rect scrollRect;
 
@@ -31,10 +26,10 @@ namespace CheatManagerZero
         public Utils.MonitoredValue<bool> isSeaglideFast = new Utils.MonitoredValue<bool>();
         public Utils.MonitoredValue<bool> isHoverBikeMoveOnWater = new Utils.MonitoredValue<bool>();
         public Event<Player.MotorMode> onPlayerMotorModeChanged = new Event<Player.MotorMode>();
-        public Utils.MonitoredValue<bool> isSeamothCanFly = new Utils.MonitoredValue<bool>();
+        //public Utils.MonitoredValue<bool> isSeamothCanFly = new Utils.MonitoredValue<bool>();
         public Event<string> onConsoleCommandEntered = new Event<string>();
         public Event<bool> onFilterFastChanged = new Event<bool>();
-        public Event<object> onSeamothSpeedValueChanged = new Event<object>();
+        //public Event<object> onSeamothSpeedValueChanged = new Event<object>();
         public Event<object> onExosuitSpeedValueChanged = new Event<object>();
         public Event<object> onHoverbikeSpeedValueChanged = new Event<object>();
         public Event<object> onSeatruckSpeedValueChanged = new Event<object>();
@@ -58,7 +53,7 @@ namespace CheatManagerZero
         internal bool isDirty = false;
         internal bool initToggleButtons = false;        
         internal IntVector prevCwPos;
-        internal string seamothName;
+        //internal string seamothName;
         internal string exosuitName;
         internal string hoverbikeName;
         internal string seatruckName;
@@ -66,12 +61,11 @@ namespace CheatManagerZero
         internal float seamothSpeedMultiplier;
         internal float exosuitSpeedMultiplier;
         internal float hoverbikeSpeedMultiplier;
-        internal float seatruckSpeedMultiplier;        
 
         private const int SPACE = 4;
         private const int ITEMSIZE = 22;
         private const int SLIDERHEIGHT = 30;
-        private const int MAXSHOWITEMS = 3;
+        private const int MAXSHOWITEMS = 6;
 
         private string windowTitle;
 
@@ -88,21 +82,15 @@ namespace CheatManagerZero
         //private int weatherTabID = -1;
         private bool filterFast;
         private bool noIceWorm = false;
-#if DEBUG_PROGRAM
-            internal static float crTimer = 10;           
-#endif
 
         public void Awake()
-        {
+        {            
             DontDestroyOnLoad(this);
             useGUILayout = false;
             gameObject.AddComponent<AlwaysDayConsoleCommand>();
             gameObject.AddComponent<OverPowerConsoleCommand>();
             gameObject.AddComponent<ResistColdConsoleCommand>();
-
-#if DEBUG_PROGRAM
-            isActive = true;
-#endif
+            
             UpdateTitle();            
             warpSound = ScriptableObject.CreateInstance<FMODAsset>();
             warpSound.path = "event:/tools/gravcannon/fire";
@@ -114,14 +102,14 @@ namespace CheatManagerZero
             techMatrix.InitFullTechMatrixList(ref FullTechMatrix);
             FullTechMatrix.Sort();
 
-            if (Config.Section_userWarpTargets.Count > 0)
+            if (CmZConfig.Section_userWarpTargets.Count > 0)
             {
-                foreach (KeyValuePair<string, string> kvp in Config.Section_userWarpTargets)
+                foreach (KeyValuePair<string, string> kvp in CmZConfig.Section_userWarpTargets)
                 {
                     WarpTargets_User.Add(new IntVector(kvp.Key), kvp.Value);
                 }
             }
-                                        
+           
             techMatrix.GetModdedTechTypes(ref tMatrix);            
             
             techMatrix.SortTechLists(ref tMatrix);
@@ -169,7 +157,7 @@ namespace CheatManagerZero
                     width -= 20;                
                 
                 scrollItemRects[i] = SNWindow.SetGridItemsRect(new Rect(0, 0, width, tMatrix[i].Count * (ITEMSIZE + SPACE)), 1, tMatrix[i].Count, ITEMSIZE, SPACE, 2, false, false, true);
-            }
+            }           
 
             int warpCounts = WarpTargets_Internal.Count + WarpTargets_User.Count;
 
@@ -194,8 +182,8 @@ namespace CheatManagerZero
             var searchSeaGlide = new TechnologyMatrix.TechTypeSearch(TechType.Seaglide);
             string seaglideName = tMatrix[1][tMatrix[1].FindIndex(searchSeaGlide.EqualsWith)].Name;
 
-            var searchSeamoth = new TechnologyMatrix.TechTypeSearch(TechType.Seamoth);
-            seamothName = tMatrix[0][tMatrix[0].FindIndex(searchSeamoth.EqualsWith)].Name;
+            //var searchSeamoth = new TechnologyMatrix.TechTypeSearch(TechType.Seamoth);
+            //seamothName = tMatrix[0][tMatrix[0].FindIndex(searchSeamoth.EqualsWith)].Name;
 
             var searchExosuit = new TechnologyMatrix.TechTypeSearch(TechType.Exosuit);
             exosuitName = tMatrix[0][tMatrix[0].FindIndex(searchExosuit.EqualsWith)].Name;
@@ -206,7 +194,7 @@ namespace CheatManagerZero
             var searchSeaTruck = new TechnologyMatrix.TechTypeSearch(TechType.SeaTruck);
             seatruckName = tMatrix[0][tMatrix[0].FindIndex(searchSeaTruck.EqualsWith)].Name;
 
-            string[] vehicleSetButtons = { $"{seamothName} Can Fly", $"{seaglideName} Speed Fast" , $"{hoverbikeName} Move on Water" };
+            string[] vehicleSetButtons = { /*$"{seamothName} Can Fly",*/ $"{seaglideName} Speed Fast" , $"{hoverbikeName} Move on Water" };            
 
             float scrollRectheight = (MAXSHOWITEMS + 1) * (scrollItemsList[0][0].Rect.height + 2);
             float y = scrollRect.y + scrollRectheight + SPACE;
@@ -215,14 +203,14 @@ namespace CheatManagerZero
             vehicleSettings.CreateGuiItemsGroup(vehicleSetButtons, vehicleSettingsRects, GuiItemType.TOGGLEBUTTON, new GuiItemColor(GuiColor.Red, GuiColor.Green));
             vehicleSettings.SetGuiItemsGroupLabel("Vehicle settings:", vehicleSettingsRects.GetLast(), new GuiItemColor(GuiColor.White));
 
-            string[] sliderLabels = { $"{seamothName} speed multiplier:", $"{exosuitName} speed multiplier:", $"{hoverbikeName} speed multiplier:"/*, $"{seatruckName} speed multiplier:"*/ };
+            string[] sliderLabels = { /*$"{seamothName} speed multiplier:",*/ $"{exosuitName} speed multiplier:", $"{hoverbikeName} speed multiplier:"/*, $"{seatruckName} speed multiplier:"*/ };
 
             List<Rect> slidersRects = SNWindow.SetGridItemsRect(new Rect(drawRect.x, SNWindow.GetNextYPos(ref vehicleSettingsRects), drawRect.width, drawRect.height), 1, 4, SLIDERHEIGHT, SPACE, SPACE, false, false);
             sliders.CreateGuiItemsGroup(sliderLabels, slidersRects, GuiItemType.HORIZONTALSLIDER, new GuiItemColor());
 
-            sliders[0].OnChangedEvent = onSeamothSpeedValueChanged;
-            sliders[1].OnChangedEvent = onExosuitSpeedValueChanged;
-            sliders[2].OnChangedEvent = onHoverbikeSpeedValueChanged;
+            //sliders[0].OnChangedEvent = onSeamothSpeedValueChanged;
+            sliders[0].OnChangedEvent = onExosuitSpeedValueChanged;
+            sliders[1].OnChangedEvent = onHoverbikeSpeedValueChanged;
             //sliders[3].OnChangedEvent = onSeatruckSpeedValueChanged;
 
             string[] warpExtrasButtons = { "Add current position to list", "Remove selected from list" };
@@ -307,7 +295,7 @@ namespace CheatManagerZero
      
         public void OnDestroy()
         {
-            Config.WriteConfig();
+            CmZConfig.WriteConfig();
             commands = null;            
             toggleCommands = null;
             daynightTab = null;
@@ -371,14 +359,14 @@ namespace CheatManagerZero
         
         internal void UpdateTitle()
         {            
-           windowTitle = $"CheatManagerZero v.{Config.VERSION}, {Config.KEYBINDINGS["ToggleWindow"]} Toggle Window, {Config.KEYBINDINGS["ToggleMouse"]} Toggle Mouse";
+           windowTitle = $"CheatManagerZero v.{CmZConfig.VERSION}, {CmZConfig.KEYBINDINGS["ToggleWindow"]} Toggle Window, {CmZConfig.KEYBINDINGS["ToggleMouse"]} Toggle Mouse";
         }
 
         public void Update()
         {
             if (Player.main != null)
             {                
-                if (Input.GetKeyDown(Config.KEYBINDINGS["ToggleWindow"]))
+                if (Input.GetKeyDown(CmZConfig.KEYBINDINGS["ToggleWindow"]))
                 {
                     isActive = !isActive;
                 }
@@ -387,7 +375,7 @@ namespace CheatManagerZero
                     return;
 
                 
-                if (Input.GetKeyDown(Config.KEYBINDINGS["ToggleMouse"]))
+                if (Input.GetKeyDown(CmZConfig.KEYBINDINGS["ToggleMouse"]))
                 {
                     UWE.Utils.lockCursor = !UWE.Utils.lockCursor;
                 }                                        
@@ -453,20 +441,20 @@ namespace CheatManagerZero
 
                 if (VehicleSettingsGroup.ItemID != -1 && VehicleSettingsGroup.MouseButton == 0)
                 {
-                    if (VehicleSettingsGroup.ItemID == 0)
+                    /*if (VehicleSettingsGroup.ItemID == 0)
                     {
                         isSeamothCanFly.Update(!isSeamothCanFly.value);
                         vehicleSettings[0].State = SNGUI.ConvertBoolToState(isSeamothCanFly.value);
                     }
-                    else if (VehicleSettingsGroup.ItemID == 1)
+                    else*/ if (VehicleSettingsGroup.ItemID == 0)
                     {
                         isSeaglideFast.Update(!isSeaglideFast.value);
-                        vehicleSettings[1].State = SNGUI.ConvertBoolToState(isSeaglideFast.value);                           
+                        vehicleSettings[0].State = SNGUI.ConvertBoolToState(isSeaglideFast.value);                           
                     }
-                    else if (VehicleSettingsGroup.ItemID == 2)
+                    else if (VehicleSettingsGroup.ItemID == 1)
                     {
                         isHoverBikeMoveOnWater.Update(!isHoverBikeMoveOnWater.value);
-                        vehicleSettings[2].State = SNGUI.ConvertBoolToState(isHoverBikeMoveOnWater.value);
+                        vehicleSettings[1].State = SNGUI.ConvertBoolToState(isHoverBikeMoveOnWater.value);
                     }
                 }
 
@@ -523,7 +511,7 @@ namespace CheatManagerZero
         
         private void SetToggleButtons()
         {
-            foreach (KeyValuePair<string, string> kvp in Config.Section_toggleButtons)
+            foreach (KeyValuePair<string, string> kvp in CmZConfig.Section_toggleButtons)
             {
                 bool.TryParse(kvp.Value, out bool result);
 
@@ -563,8 +551,8 @@ namespace CheatManagerZero
             if (toggleCommands[(int)ToggleCommands.overpower].Enabled)
                 toggleCommands[(int)ToggleCommands.overpower].State = SNGUI.ConvertBoolToState(OverPowerConsoleCommand.main.GetOverPowerCheat());
 
-            vehicleSettings[0].State = SNGUI.ConvertBoolToState(isSeamothCanFly.value);
-            vehicleSettings[1].State = SNGUI.ConvertBoolToState(isSeaglideFast.value);
+            //vehicleSettings[0].State = SNGUI.ConvertBoolToState(isSeamothCanFly.value);
+            vehicleSettings[0].State = SNGUI.ConvertBoolToState(isSeaglideFast.value);
 
             /*
             weatherTab[(int)Weather.weather].State = isWeatherEnabled ? GuiItemState.NORMAL : GuiItemState.PRESSED;
@@ -594,9 +582,9 @@ namespace CheatManagerZero
 
                 VehicleSettingsGroup = vehicleSettings.DrawGuiItemsGroup();
 
-                SNHorizontalSlider.CreateHorizontalSlider(sliders[0].Rect, ref seamothSpeedMultiplier, 1f, 5f, sliders[0].Name, sliders[0].OnChangedEvent);
-                SNHorizontalSlider.CreateHorizontalSlider(sliders[1].Rect, ref exosuitSpeedMultiplier, 1f, 5f, sliders[1].Name, sliders[1].OnChangedEvent);
-                SNHorizontalSlider.CreateHorizontalSlider(sliders[2].Rect, ref hoverbikeSpeedMultiplier, 1f, 5f, sliders[2].Name, sliders[2].OnChangedEvent);
+                //SNHorizontalSlider.CreateHorizontalSlider(sliders[0].Rect, ref seamothSpeedMultiplier, 1f, 5f, sliders[0].Name, sliders[0].OnChangedEvent);
+                SNHorizontalSlider.CreateHorizontalSlider(sliders[0].Rect, ref exosuitSpeedMultiplier, 1f, 5f, sliders[0].Name, sliders[0].OnChangedEvent);
+                SNHorizontalSlider.CreateHorizontalSlider(sliders[1].Rect, ref hoverbikeSpeedMultiplier, 1f, 5f, sliders[1].Name, sliders[1].OnChangedEvent);
                 //SNHorizontalSlider.CreateHorizontalSlider(sliders[3].Rect, ref seatruckSpeedMultiplier, 1f, 5f, sliders[3].Name, sliders[3].OnChangedEvent);
             }
             else if (currentTab == 18)

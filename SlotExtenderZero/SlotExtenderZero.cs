@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UWE;
-using BZCommon;
 using SlotExtenderZero.Configuration;
+using SlotExtenderZero.API;
+using BZCommon;
 
 namespace SlotExtenderZero
 {
-    public class SlotExtenderZero : MonoBehaviour
+    internal class SlotExtenderZero : MonoBehaviour
     {
         public SlotExtenderZero Instance { get; private set; }
 
@@ -17,7 +18,7 @@ namespace SlotExtenderZero
         private PDA PdaMain;
         public bool isActive = false;
 
-        public void Awake()
+        private void Awake()
         {
             // set this SlotExtenderZero instance
             Instance = this;
@@ -30,11 +31,13 @@ namespace SlotExtenderZero
             else if (gameObject.GetComponent<SeaTruckUpgrades>() != null)
             {
                 // this Vehicle type is Seatruck
-                helper = new SeaTruckHelper(gameObject, false, false, false);
+                //helper = new SeaTruckHelper(gameObject, false, false, false);
+
+                helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
             }
         }
 
-        public void Start()
+        private void Start()
         {
             //get player instance
             PlayerMain = Player.main;
@@ -45,8 +48,7 @@ namespace SlotExtenderZero
             //add and start a handler to check the player mode if changed
             PlayerMain.playerModeChanged.AddHandler(gameObject, new Event<Player.Mode>.HandleFunction(OnPlayerModeChanged));
 
-            string vehicleName = string.Empty;
-            
+            string vehicleName = string.Empty;            
 
             if (ThisVehicle)
             {
@@ -55,16 +57,16 @@ namespace SlotExtenderZero
             }
             else if (helper.isReady)
             {
-                isActive = (PlayerMain.GetComponentInParent<SeaTruckUpgrades>() == helper.thisUpgrades);
-                vehicleName = helper.thisPingInstance.GetLabel();                
+                isActive = (PlayerMain.GetComponentInParent<SeaTruckUpgrades>() == helper.TruckUpgrades);
+                vehicleName = helper.TruckName;                
             }
 
-            BZLogger.Log("SlotExtenderZero", $"Broadcasting message: 'WakeUp', Name: {vehicleName}, Instance ID: {gameObject.GetInstanceID()}");
+            BZLogger.Log($"Broadcasting message: 'WakeUp', Name: {vehicleName}, Instance ID: {gameObject.GetInstanceID()}");
             gameObject.BroadcastMessage("WakeUp");
         }
 
 
-        public void OnPlayerModeChanged(Player.Mode playerMode)
+        private void OnPlayerModeChanged(Player.Mode playerMode)
         {
             if (playerMode == Player.Mode.LockedPiloting)
             {
@@ -94,7 +96,7 @@ namespace SlotExtenderZero
             }
             else if (helper.isReady)
             {
-                if (Player.main.GetComponentInParent<SeaTruckUpgrades>() == helper.thisUpgrades)
+                if (Player.main.GetComponentInParent<SeaTruckUpgrades>() == helper.TruckUpgrades)
                 {
                     isActive = true;
                 }
@@ -106,7 +108,7 @@ namespace SlotExtenderZero
             yield break;
         }
 
-        public void Update()
+        private void Update()
         {
             if (!isActive)
                 return; // SlotExtenderZero not active. Exit method.
@@ -132,7 +134,7 @@ namespace SlotExtenderZero
                     }
                     else if (helper.isReady)
                     {
-                        helper.thisUpgrades.upgradesInput.OpenFromExternal();
+                        helper.TruckUpgrades.upgradesInput.OpenFromExternal();
                     }
 
                     return;
@@ -218,19 +220,19 @@ namespace SlotExtenderZero
                 TryUseSlotItem(11);
                 return;
             }
-            else if (Input.GetKeyDown(SEzConfig.KEYBINDINGS["SeaTruckArmLeft"]))
+            else if (Input.GetKeyDown(SEzConfig.KEYBINDINGS[SlotHelper.slotStringCache[SlotName.SeaTruckArmLeft]]))
             {
-                TryUseSeatruckArm("SeaTruckArmLeft");
+                TryUseSeatruckArm(SlotHelper.slotStringCache[SlotName.SeaTruckArmLeft]);
                 return;
             }
-            else if (Input.GetKeyDown(SEzConfig.KEYBINDINGS["SeaTruckArmRight"]))
+            else if (Input.GetKeyDown(SEzConfig.KEYBINDINGS[SlotHelper.slotStringCache[SlotName.SeaTruckArmRight]]))
             {
-                TryUseSeatruckArm("SeaTruckArmRight");
+                TryUseSeatruckArm(SlotHelper.slotStringCache[SlotName.SeaTruckArmRight]);
                 return;
             }
         }
 
-        public void TryUseSlotItem(int slotID)
+        private void TryUseSlotItem(int slotID)
         {
             if (PdaMain.isOpen)
             {
@@ -247,29 +249,27 @@ namespace SlotExtenderZero
                 }
                 else if (slotID > 5)
                 {
-                    helper.thisQuickSlots.SlotKeyDown(slotID);
+                    helper.TruckQuickSlots.SlotKeyDown(slotID);
                     return;
                 }
             }
-            else if (ThisVehicle)
+            
+            if (slotID > 5)
             {
-                if (slotID > 5)
-                {
-                    ThisVehicle.SendMessage("SlotKeyDown", slotID);
-                }
+                ThisVehicle.SlotKeyDown(slotID);
             }
+           
         }
 
-        public void TryUseSeatruckArm(string seatruckArmID)
+        private void TryUseSeatruckArm(string seatruckArmID)
         {
             if (helper.isReady)
             {
-                int slotIndex = helper.GetSlotIndex(seatruckArmID);
-                helper.thisQuickSlots.SlotKeyDown(slotIndex);
+                helper.TruckQuickSlots.SlotKeyDown(helper.GetSlotIndex(seatruckArmID));
             }
         }
                
-        public void OnDestroy()
+        private void OnDestroy()
         {
             // removing unused handler from memory
             PlayerMain.playerModeChanged.RemoveHandler(gameObject, OnPlayerModeChanged);

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿/*
+using UnityEngine;
 using UWE;
 
 namespace CheatManagerZero
@@ -122,3 +123,4 @@ namespace CheatManagerZero
 
     }
 }
+*/

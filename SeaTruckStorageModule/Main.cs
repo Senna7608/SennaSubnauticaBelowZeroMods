@@ -1,22 +1,27 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 using HarmonyLib;
-using System.Reflection;
-using System.IO;
+using QModManager.API.ModLoading;
 
 namespace SeaTruckStorage
 {
+    [QModCore]
     public static class Main
     {
         public static readonly string modFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+        [QModPatch]
         public static void Load()
         {
             try
             {
-                new SeaTruckStorage().Patch();
+                new SeaTruckStorage_Prefab().Patch();
 
-                Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "BelowZero.SeaTruckStorage.mod");
+                Assembly assembly = Assembly.GetExecutingAssembly();
+
+                Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");
             }
             catch (Exception ex)
             {

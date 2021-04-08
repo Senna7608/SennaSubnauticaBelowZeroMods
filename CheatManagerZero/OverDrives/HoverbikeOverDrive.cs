@@ -25,7 +25,7 @@ namespace CheatManagerZero
 
         internal void PrintForces(Hoverbike hoverbike)
         {
-            BZLogger.Log($"[{Config.PROGRAM_NAME}] DebugHoverBike:\n" +
+            BZLogger.Log($"[{CmZConfig.PROGRAM_NAME}] DebugHoverBike:\n" +
                 $"forwardAccel: {hoverbike.forwardAccel}\n" +
                 $"forwardBoostForce: {hoverbike.forwardBoostForce}\n" +
                 $"fovMaxVelocity: {hoverbike.fovMaxVelocity}\n" +

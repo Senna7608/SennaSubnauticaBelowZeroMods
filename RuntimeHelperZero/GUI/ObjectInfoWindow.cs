@@ -97,7 +97,107 @@ namespace RuntimeHelperZero
                     showSetButton = false;
                 }                
             }
+
+            if (ScrollView_objectInfo_event.ItemID != -1 && ScrollView_objectInfo_event.MouseButton == 1)
+            {
+                int index = ScrollView_objectInfo_event.ItemID;
+
+                if (IsBoolValue(index, out string name, out bool isProperty))
+                {
+                    if (isProperty)
+                    {
+                        ObjectProperty property = objectProperties.GetProperty(name);
+
+                        bool oldValue = (bool)property.GetValue();
+
+                        property.SetValue(!oldValue);                        
+                    }
+                    else
+                    {
+                        ObjectField field = objectFields.GetField(name);
+
+                        bool oldValue = (bool)field.GetValue();
+
+                        field.SetValue(!oldValue);                        
+                    }
+
+                    ObjectInfoWindow_Awake(objects[selected_component]);
+                }
+            }
+
+
         }
+
+        private bool IsBoolValue(int index, out string name, out bool isProperty)
+        {
+            string[] splittedItem = objectInfoText[index].Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
+
+            object value = null;
+
+            try
+            {
+                value = objectProperties.GetProperty(splittedItem[0]);
+
+                if (value == null)
+                {
+                    value = objectFields.GetField(splittedItem[0]);
+                }
+                else
+                {
+                    ObjectProperty property = value as ObjectProperty;
+
+                    if (property.Type == typeof(bool))
+                    {
+                        isProperty = true;
+                        name = splittedItem[0];
+                        return true;
+                    }
+                    else
+                    {
+                        isProperty = false;
+                        name = null;
+                        return false;
+                    }
+                }
+
+                if (value == null)
+                {
+                    isProperty = false;
+                    name = null;
+                    return false;
+                }
+                else
+                {
+                    ObjectField field = value as ObjectField;
+
+                    if (field.Type == typeof(bool))
+                    {
+                        isProperty = false;
+                        name = splittedItem[0];
+                        return true;
+                    }
+                    else
+                    {
+                        isProperty = false;
+                        name = null;
+                        return false;
+                    }
+                }                
+            }
+            catch
+            {
+                isProperty = false;
+                name = null;
+                return false;
+            }
+        }
+
+
+
+
+
+
+
 
         private void SwitchGameObject()
         {
@@ -107,14 +207,13 @@ namespace RuntimeHelperZero
 
             try
             {
-                if (probeGO == null)
-                {
-                    probeGO = objectProperties.GetProperty(splittedItem[0]) as GameObject;
-                }
+                
+                probeGO = objectProperties.GetPropertyValue(splittedItem[0]) as GameObject;
+                
 
                 if (probeGO == null)
                 {
-                    probeGO = objectFields.GetField(splittedItem[0]) as GameObject;
+                    probeGO = objectFields.GetFieldValue(splittedItem[0]) as GameObject;
                 }
 
                 if (probeGO == null)

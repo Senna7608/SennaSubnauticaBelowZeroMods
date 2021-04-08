@@ -17,7 +17,7 @@ namespace RuntimeHelperZero.VisualHelpers
             foreach (GameObject container in lineContainers)
             {
                 LineRenderer lineRenderer = container.GetComponent<LineRenderer>();
-
+                
                 lineRenderer.startWidth = lineWidth;
                 lineRenderer.endWidth = lineWidth;
             }
@@ -72,17 +72,17 @@ namespace RuntimeHelperZero.VisualHelpers
         {
             LineRenderer lineRenderer = lineContainer.GetComponent<LineRenderer>();
 
-            RemoveDuplicatedVertices(vertices, out Vector3[] cleanVertices);
+            //RemoveDuplicatedVertices(vertices, out Vector3[] cleanVertices);
 
-            lineRenderer.positionCount = cleanVertices.Length;
+            lineRenderer.positionCount = vertices.Length;
 
             lineRenderer.loop = true;
 
-            for (int i = 0; i < cleanVertices.Length; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
-                lineRenderer.SetPosition(i, cleanVertices[i]);
+                lineRenderer.SetPosition(i, vertices[i]);
             }
-        }
+        }        
 
         public static void RemoveDuplicatedVertices(Vector3[] vertices, out Vector3[] cleanVertices)
         {

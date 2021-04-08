@@ -21,7 +21,7 @@ namespace SeaTruckArmorUpgrades
                 }
                 else
                 {
-                    BZLogger.Debug("SeaTruckArmorUpgrades", "Manager not found in Seatruck gameobject!");
+                    BZLogger.Debug("Manager not found in Seatruck gameobject!");
                 }                           
             }
 

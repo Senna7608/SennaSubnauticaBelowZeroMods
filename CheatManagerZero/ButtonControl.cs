@@ -140,18 +140,7 @@ namespace CheatManagerZero
                 case Categories.Vehicles:
                     if (!Player.main.IsInBase() && !Player.main.IsInSubmarine() && !Player.main.IsInSub())
                     {
-                        switch (tMatrix[categoryTabID][selected].TechType)
-                        {
-                            case TechType.Cyclops:
-                                ExecuteCommand($"{scrollItems[selected].Name}  has spawned", "sub cyclops");
-                                break;
-                            case TechType.Seamoth:
-                                ExecuteCommand($"{scrollItems[selected].Name}  has spawned", $"item {selectedTech}");
-                                break;
-                            default:
-                                ExecuteCommand($"{scrollItems[selected].Name}  has spawned", $"spawn {selectedTech}");
-                                break;
-                        }
+                        ExecuteCommand($"{scrollItems[selected].Name}  has spawned", $"spawn {selectedTech}");
                         break;
                     }
                     ErrorMessage.AddMessage("CheatManager Error!\nVehicles cannot spawn inside Lifepod, Base or Submarine!");

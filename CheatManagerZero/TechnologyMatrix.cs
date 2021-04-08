@@ -77,19 +77,9 @@ namespace CheatManagerZero
                     {
                         string name;
                         TechType techType = kvp.Value[j];
-                        
-                        switch (techType)
-                        {
-                            case TechType.SeaEmperorBaby:
-                                name = Language.main.Get(TechTypeExtensions.AsString(TechType.SeaEmperorJuvenile, false));
-                                break;
-                            case TechType.SeaEmperorJuvenile:
-                                name = Language.main.Get(TechTypeExtensions.AsString(TechType.SeaEmperorBaby, false));
-                                break;
-                            default:
-                                name = Language.main.Get(TechTypeExtensions.AsString(kvp.Value[j], false));
-                                break;
-                        }
+
+                        name = Language.main.Get(TechTypeExtensions.AsString(kvp.Value[j], false));
+
                         TechnologyMatrix[i].Add(new TechTypeData(techType, name));
                     }
 
@@ -115,8 +105,7 @@ namespace CheatManagerZero
                 EquipmentType equipmentType = mHelper.TypeDefCache[kvp.Value];
 
                 switch (equipmentType)
-                {
-                    case EquipmentType.CyclopsModule:
+                {                    
                     case EquipmentType.ExosuitArm:
                     case EquipmentType.ExosuitModule:
                     case EquipmentType.HoverbikeModule:
@@ -125,23 +114,38 @@ namespace CheatManagerZero
                     case EquipmentType.VehicleModule:
                     case (EquipmentType)200:
                         TechnologyMatrix[(int)TechCategory.Upgrades].Add(new TechTypeData(kvp.Value, Language.main.Get(TechTypeExtensions.AsString(kvp.Value, false))));
+                        break;                    
+                    case EquipmentType.Body:
+                    case EquipmentType.Chip:
+                    case EquipmentType.Foots:
+                    case EquipmentType.Gloves:                    
+                    case EquipmentType.Head:
+                    case EquipmentType.Tank:                        
+                        TechnologyMatrix[(int)TechCategory.Equipment].Add(new TechTypeData(kvp.Value, Language.main.Get(TechTypeExtensions.AsString(kvp.Value, false))));
                         break;
+
+                    case EquipmentType.Hand:
+                        TechnologyMatrix[(int)TechCategory.Tools].Add(new TechTypeData(kvp.Value, Language.main.Get(TechTypeExtensions.AsString(kvp.Value, false))));
+                        break;
+                }
+
+                if (kvp.Key.Equals("SeaTruckScannerModule"))
+{
+                    TechnologyMatrix[(int)TechCategory.Vehicles].Add(new TechTypeData(kvp.Value, Language.main.Get(TechTypeExtensions.AsString(kvp.Value, false))));
                 }
             }
 
         }
         
-        public readonly Dictionary<TechCategory, TechType[]> baseTechMatrix = new Dictionary<TechCategory, TechType[]>()
+        public static readonly Dictionary<TechCategory, TechType[]> baseTechMatrix = new Dictionary<TechCategory, TechType[]>()
         {
             #region Vehicles
             {
                 TechCategory.Vehicles,
 
                 new TechType[]
-                {
-                    TechType.Seamoth,
+                {                    
                     TechType.Exosuit,
-                  //TechType.Cyclops,
                     TechType.SeaTruck,
                     TechType.SeaTruckAquariumModule,
                     TechType.SeaTruckDockingModule,
@@ -161,34 +165,31 @@ namespace CheatManagerZero
 
                 new TechType[]
                 {                    
-                    TechType.HeatingGel,
-                    TechType.Thumper,
-                    TechType.BioScanner,
+                    TechType.Thumper,                    
                     TechType.SpyPenguin,
-                    TechType.Knife,
-                    TechType.DiamondBlade,
+                    TechType.Knife,                    
                     TechType.HeatBlade,
                     TechType.Flashlight,
                     TechType.Beacon,
                     TechType.Builder,
-                    TechType.AirBladder,
-                    TechType.Terraformer,
+                    TechType.AirBladder,                    
                     TechType.DiveReel,
-                    TechType.Scanner,
-                    TechType.FireExtinguisher,
+                    TechType.Scanner,                    
                     TechType.PipeSurfaceFloater,
                     TechType.Welder,
                     TechType.Seaglide,
-                    TechType.Constructor,
-                    TechType.Transfuser,
-                    TechType.Flare,
-                    TechType.StasisRifle,
-                    TechType.PropulsionCannon,
-                    TechType.RepulsionCannon,
-                    //TechType.Gravsphere,
+                    TechType.Constructor,                    
+                    TechType.Flare,                    
+                    TechType.PropulsionCannon,                    
+                    TechType.Gravsphere,
                     TechType.SmallStorage,
                     TechType.LaserCutter,
-                    TechType.LEDLight
+                    TechType.LEDLight,
+                    TechType.TeleportationTool,
+                    TechType.SpyPenguinRemote,
+                    TechType.QuantumLocker,
+                    TechType.MetalDetector
+
                 }
             },
             #endregion
@@ -198,10 +199,7 @@ namespace CheatManagerZero
                 TechCategory.Equipment,
 
                 new TechType[]
-                {
-                    TechType.RadiationSuit,
-                    TechType.RadiationHelmet,
-                    TechType.RadiationGloves,
+                {                    
                     TechType.ReinforcedDiveSuit,
                     TechType.ReinforcedGloves,
                     TechType.Stillsuit,
@@ -222,10 +220,7 @@ namespace CheatManagerZero
                     TechType.ColdSuit,
                     TechType.ColdSuitGloves,
                     TechType.ColdSuitHelmet,
-                    TechType.SuitBoosterTank
-                    
-                    
-
+                    TechType.SuitBoosterTank                    
                 }
             },
             #endregion
@@ -236,44 +231,38 @@ namespace CheatManagerZero
 
                 new TechType[]
                 {
-                    TechType.Quartz,
-                    TechType.ScrapMetal,
-                    TechType.FiberMesh,
+                    TechType.Aerogel,
+                    TechType.AluminumOxide,
+                    TechType.AramidFibers,
+                    TechType.Benzene,                    
                     TechType.Copper,
-                    TechType.Lead,
-                    TechType.Salt,
-                    TechType.StalkerTooth,
-                    TechType.MercuryOre,
-                    TechType.Glass,
-                    TechType.Titanium,
-                    TechType.Silicone,
-                    TechType.Gold,
-                    TechType.Magnesium,
-                    TechType.Sulphur,
-                    TechType.Bleach,
-                    TechType.Silver,
-                    TechType.TitaniumIngot,
                     TechType.CrashPowder,
                     TechType.Diamond,
-                    TechType.Lithium,
-                    TechType.PlasteelIngot,
                     TechType.EnameledGlass,
-                    TechType.Uranium,
-                    TechType.AluminumOxide,
+                    TechType.FiberMesh,
+                    TechType.Glass,
+                    TechType.Gold,                    
                     TechType.HydrochloricAcid,
-                    TechType.Magnetite,
-                    TechType.Polyaniline,
-                    TechType.AramidFibers,
-                    TechType.Aerogel,
-                    TechType.Benzene,
-                    TechType.Lubricant,
-                    TechType.UraniniteCrystal,
-                    TechType.PrecursorIonCrystal,
+                    TechType.JeweledDiskPiece,
                     TechType.Kyanite,
+                    TechType.Lead,
+                    TechType.Lithium,
+                    TechType.Lubricant,                    
+                    TechType.Magnetite,                    
                     TechType.Nickel,
-                    TechType.HatchingEnzymes,
-                    TechType.SeaTreaderPoop,
-                    TechType.JeweledDiskPiece
+                    TechType.PlasteelIngot,
+                    TechType.Polyaniline,
+                    TechType.PrecursorIonCrystal,
+                    TechType.Quartz,                    
+                    TechType.Salt,
+                    TechType.ScrapMetal,                    
+                    TechType.Silicone,
+                    TechType.Silver,                    
+                    TechType.Sulphur,
+                    TechType.Titanium,                    
+                    TechType.TitaniumIngot,                                      
+                    TechType.UraniniteCrystal,
+                    TechType.HydraulicFluid
                 }
             },
             #endregion
@@ -284,22 +273,18 @@ namespace CheatManagerZero
 
                 new TechType[]
                 {
-                    TechType.CopperWire,                    
-                    TechType.WiringKit,
                     TechType.AdvancedWiringKit,
-                    TechType.ComputerChip,
-                    TechType.ReactorRod,
-                    TechType.DepletedReactorRod,
                     TechType.Battery,
-                    TechType.LithiumIonBattery,
-                    TechType.PrecursorIonBattery,
+                    TechType.ComputerChip,
+                    TechType.CopperWire,
+                    TechType.DepletedReactorRod,                    
                     TechType.PowerCell,
-                    TechType.PrecursorIonPowerCell,
-                    TechType.PrecursorKey_Red,
-                    TechType.PrecursorKey_Blue,
-                    TechType.PrecursorKey_Orange,
-                    TechType.PrecursorKey_White,
-                    TechType.PrecursorKey_Purple
+                    TechType.PrecursorIonBattery,                    
+                    TechType.PrecursorIonPowerCell,                    
+                    TechType.RadioTowerPPU,
+                    TechType.RadioTowerTOM,
+                    TechType.ReactorRod,
+                    TechType.WiringKit
                 }
             },
             #endregion
@@ -319,19 +304,10 @@ namespace CheatManagerZero
                     TechType.SeaTruckUpgradeHorsePower,
                     TechType.SeaTruckUpgradeAfterburner,
                     TechType.HoverbikeJumpModule,
+                    TechType.HoverbikeIceWormReductionModule,
                     TechType.MapRoomUpgradeScanRange,
-                    TechType.MapRoomUpgradeScanSpeed,
-                    TechType.VehiclePowerUpgradeModule,
-                    TechType.VehicleStorageModule,
-                    TechType.VehicleArmorPlating,
-                    TechType.LootSensorFragment,
-                    TechType.VehicleHullModule1,
-                    TechType.VehicleHullModule2,
-                    TechType.VehicleHullModule3,
-                    TechType.SeamothSolarCharge,
-                    TechType.SeamothElectricalDefense,
-                    TechType.SeamothTorpedoModule,
-                    TechType.SeamothSonarModule,
+                    TechType.MapRoomUpgradeScanSpeed,                    
+                    TechType.LootSensorFragment,                    
                     TechType.ExosuitJetUpgradeModule,
                     TechType.ExosuitDrillArmModule,
                     TechType.ExosuitThermalReactorModule,
@@ -340,73 +316,46 @@ namespace CheatManagerZero
                     TechType.ExosuitGrapplingArmModule,
                     TechType.ExosuitTorpedoArmModule,
                     TechType.ExoHullModule1,
-                    TechType.ExoHullModule2,
-                    TechType.PowerUpgradeModule,
-                    TechType.CyclopsShieldModule,
-                    TechType.CyclopsSonarModule,
-                    TechType.CyclopsSeamothRepairModule,
-                    TechType.CyclopsDecoyModule,
-                    TechType.CyclopsFireSuppressionModule,
-                    TechType.CyclopsThermalReactorModule,
-                    TechType.CyclopsHullModule1,
-                    TechType.CyclopsHullModule2,
-                    TechType.CyclopsHullModule3
+                    TechType.ExoHullModule2                    
                 }
             },
             #endregion
-
+            
             #region Food and Water
             {
                 TechCategory.FoodAndWater,
 
                 new TechType[]
                 {
-                    TechType.CuredArcticPeeper,
-                    TechType.CuredArrowRay,
-                    TechType.CuredNootFish,
-                    TechType.CuredSymbiote,                    
-                    TechType.CookedArcticPeeper,
-                    TechType.CookedArrowRay,
-                    TechType.CookedNootFish,
-                    TechType.CookedSymbiote,                    
-                    TechType.NutrientBlock,
-                    TechType.Snack1,
-                    TechType.Snack2,
-                    TechType.Snack3,
+                    TechType.SpicyFruitSalad,
+                    TechType.NutrientBlock,                    
                     TechType.Coffee,
                     TechType.FirstAidKit,
                     TechType.FilteredWater,
                     TechType.DisinfectedWater,
                     TechType.StillsuitWater,
-                    TechType.BigFilteredWater,
-                    TechType.CookedPeeper,
-                    TechType.CookedHoleFish,
-                    TechType.CookedGarryFish,
-                    TechType.CookedReginald,
-                    TechType.CookedBladderfish,
-                    TechType.CookedHoverfish,
-                    TechType.CookedSpadefish,
-                    TechType.CookedBoomerang,
-                    TechType.CookedEyeye,
-                    TechType.CookedOculus,
+                    TechType.BigFilteredWater,                    
+                    TechType.CookedArcticPeeper,
+                    TechType.CookedArrowRay,
+                    TechType.CookedNootFish,
+                    TechType.CookedSymbiote,                    
+                    TechType.CookedBladderfish,                    
+                    TechType.CookedBoomerang,                    
                     TechType.CookedHoopfish,
                     TechType.CookedSpinefish,
-                    TechType.CookedLavaEyeye,
-                    TechType.CookedLavaBoomerang,
-                    TechType.CuredPeeper,
-                    TechType.CuredHoleFish,
-                    TechType.CuredGarryFish,
-                    TechType.CuredReginald,
-                    TechType.CuredBladderfish,
-                    TechType.CuredHoverfish,
-                    TechType.CuredSpadefish,
-                    TechType.CuredBoomerang,
-                    TechType.CuredEyeye,
-                    TechType.CuredOculus,
+                    TechType.CookedSpinnerfish,
+                    TechType.CookedTriops,
+                    TechType.CookedFeatherFish,
+                    TechType.CookedFeatherFishRed,
+                    TechType.CookedDiscusFish,                    
+                    TechType.CuredArcticPeeper,
+                    TechType.CuredArrowRay,
+                    TechType.CuredNootFish,
+                    TechType.CuredSymbiote,                    
+                    TechType.CuredBladderfish,                    
+                    TechType.CuredBoomerang,                    
                     TechType.CuredHoopfish,
-                    TechType.CuredSpinefish,
-                    TechType.CuredLavaEyeye,
-                    TechType.CuredLavaBoomerang
+                    TechType.CuredSpinefish                    
                 }
             },
             #endregion
@@ -417,10 +366,7 @@ namespace CheatManagerZero
 
                 new TechType[]
                 {
-                    TechType.LimestoneChunk,
-                    TechType.SandstoneChunk,
-                    TechType.BasaltChunk,
-                    TechType.ShaleChunk,                    
+                    TechType.LimestoneChunk,                                    
                     TechType.DrillableSalt,
                     TechType.DrillableQuartz,
                     TechType.DrillableCopper,
@@ -434,7 +380,9 @@ namespace CheatManagerZero
                     TechType.DrillableMercury,
                     TechType.DrillableUranium,
                     TechType.DrillableAluminiumOxide,
-                    TechType.DrillableNickel
+                    TechType.DrillableNickel,
+                    TechType.DrillableSulphur,
+                    TechType.DrillableKyanite
                 }
             },
             #endregion
@@ -451,28 +399,12 @@ namespace CheatManagerZero
                     TechType.PenguinBaby,
                     TechType.ArcticPeeper,
                     TechType.ArcticRay,                    
-                    TechType.Skyray,
-                    TechType.HoleFish,
-                    TechType.Peeper,
-                    TechType.Oculus,
-                    TechType.RabbitRay,
-                    TechType.GarryFish,
-                    TechType.Boomerang,
-                    TechType.Eyeye,
-                    TechType.Bladderfish,
-                    TechType.Hoverfish,
-                    TechType.Jellyray,
-                    TechType.Reginald,
-                    TechType.Spadefish,
-                    TechType.Gasopod,
+                    TechType.Skyray,                    
+                    TechType.Boomerang,                    
+                    TechType.Bladderfish,                   
                     TechType.Hoopfish,
-                    TechType.HoopfishSchool,
-                    TechType.Cutefish,
-                    TechType.Spinefish,
-                    TechType.LavaBoomerang,
-                    TechType.LavaEyeye,
-                    TechType.GhostRayBlue,
-                    TechType.GhostRayRed
+                    TechType.HoopfishSchool,                    
+                    TechType.Spinefish                    
                 }
             },
             #endregion
@@ -489,19 +421,7 @@ namespace CheatManagerZero
                     TechType.RockPuncher,
                     TechType.Brinicle,
                     TechType.BruteShark,                    
-                    TechType.Crash,
-                    //TechType.Stalker,
-                    TechType.Sandshark,
-                    TechType.BoneShark,
-                    //TechType.Mesmer,
-                    //TechType.Crabsnake,
-                    TechType.Warper,
-                    TechType.Biter,
-                    TechType.Shocker,
-                    TechType.Blighter,
-                    TechType.CrabSquid,
-                    TechType.LavaLizard,
-                    TechType.SpineEel
+                    TechType.Crash                    
                 }
             },
             #endregion
@@ -511,15 +431,8 @@ namespace CheatManagerZero
                 TechCategory.Parasites,
 
                 new TechType[]
-                {
-                    TechType.Jumper,
-                    TechType.LavaLarva,
-                    TechType.Floater,
-                    TechType.Bleeder,
-                    TechType.Rockgrub,
-                    TechType.CaveCrawler,
-                    TechType.Shuttlebug,
-                    TechType.LargeFloater,
+                {                    
+                    TechType.Rockgrub,                    
                     TechType.PrecursorDroid
                 }
             },
@@ -533,16 +446,8 @@ namespace CheatManagerZero
                 {    
                     TechType.ShadowLeviathan,                    
                     TechType.GlowWhale,
-                    TechType.Chelicerate,
-                    //TechType.ReefbackBaby,
-                    //TechType.Reefback,
-                    //TechType.SeaTreader,
-                    //TechType.ReaperLeviathan,
-                    //TechType.SeaDragon,
-                    TechType.SeaEmperorBaby,
-                    TechType.SeaEmperorJuvenile,
-                    //TechType.GhostLeviathanJuvenile,
-                    //TechType.GhostLeviathan
+                    TechType.Chelicerate,                    
+                    TechType.SeaEmperorJuvenile                    
                 }
             },
             #endregion
@@ -552,23 +457,8 @@ namespace CheatManagerZero
                 TechCategory.Eggs,
 
                 new TechType[]
-                {
-                    TechType.StalkerEgg,
-                    TechType.ReefbackEgg,
-                    TechType.SpadefishEgg,
-                    TechType.RabbitrayEgg,
-                    TechType.MesmerEgg,
-                    TechType.JumperEgg,
-                    TechType.SandsharkEgg,
-                    TechType.JellyrayEgg,
-                    TechType.BonesharkEgg,
-                    TechType.CrabsnakeEgg,
-                    TechType.ShockerEgg,
-                    TechType.GasopodEgg,
-                    TechType.CrashEgg,
-                    TechType.CrabsquidEgg,
-                    TechType.CutefishEgg,
-                    TechType.LavaLizardEgg
+                {                    
+                    TechType.ShockerEgg                    
                 }
             },
             #endregion
@@ -578,28 +468,9 @@ namespace CheatManagerZero
                 TechCategory.SeaSeed,
 
                 new TechType[]
-                {
-                    TechType.AcidMushroomSpore,
-                    TechType.WhiteMushroomSpore,
-                    TechType.SpikePlantSeed,
-                    TechType.BluePalmSeed,
-                    TechType.PurpleFanSeed,
-                    TechType.SmallFanSeed,
-                    TechType.PurpleTentacleSeed,
-                    TechType.GabeSFeatherSeed,
-                    TechType.SeaCrownSeed,
-                    TechType.MembrainTreeSeed,
-                    TechType.EyesPlantSeed,
-                    TechType.RedGreenTentacleSeed,
-                    TechType.PurpleStalkSeed,
-                    TechType.RedBasketPlantSeed,
-                    TechType.RedBushSeed,
-                    TechType.RedConePlantSeed,
-                    TechType.ShellGrassSeed,
-                    TechType.SpottedLeavesPlantSeed,
-                    TechType.RedRollPlantSeed,
-                    TechType.PurpleBranchesSeed,
-                    TechType.SnakeMushroomSpore,
+                {                   
+                    TechType.PurpleStalkSeed,                    
+                    TechType.RedBushSeed,                   
                     TechType.CreepvineSeedCluster
                 }
             },
@@ -610,17 +481,9 @@ namespace CheatManagerZero
                 TechCategory.LandSeed,
 
                 new TechType[]
-                {
-                    TechType.BulboTreePiece,
-                    TechType.OrangeMushroomSpore,
-                    TechType.PurpleVasePlantSeed,
-                    TechType.PinkMushroomSpore,
-                    TechType.PurpleRattleSpore,
+                {                    
                     TechType.PurpleVegetable,
-                    TechType.MelonSeed,
-                    TechType.PinkFlowerSeed,
-                    TechType.FernPalmSeed,
-                    TechType.OrangePetalsPlantSeed
+                    TechType.MelonSeed                    
                 }
             },
             #endregion
@@ -632,21 +495,12 @@ namespace CheatManagerZero
                 new TechType[]
                 {
                     TechType.GenericRibbon,
-                    TechType.JellyPlant,
-                    TechType.AcidMushroom,
-                    TechType.SmallFan,
-                    TechType.BloodOil,
-                    TechType.WhiteMushroom,
-                    TechType.JeweledDiskPiece,
-                    TechType.CoralChunk,
-                    TechType.KooshChunk,
-                    TechType.PurpleBrainCoralPiece,
-                    TechType.JellyPlantSeed,
-                    TechType.PinkMushroom,
-                    TechType.PurpleRattle,
+                    TechType.JellyPlant,                    
+                    TechType.JeweledDiskPiece,                    
+                    TechType.JellyPlantSeed,                    
                     TechType.HangingFruit,
                     TechType.SmallMelon,
-                    TechType.Melon
+                    TechType.Melon                    
                 }
             },
             #endregion
@@ -657,36 +511,21 @@ namespace CheatManagerZero
 
                 new TechType[]
                 {
-                    TechType.BlueLostRiverLilly,
-                    TechType.SmallKoosh,
-                    TechType.MediumKoosh,
-                    TechType.LargeKoosh,
-                    TechType.HugeKoosh,
-                    TechType.MembrainTree,
-                    TechType.PurpleFan,
-                    TechType.PurpleTentacle,
-                    TechType.SmallFanCluster,
+                    TechType.BlueLostRiverLilly,                    
+                    TechType.PurpleTentacle,                    
                     TechType.BigCoralTubes,
                     TechType.TreeMushroom,
                     TechType.BloodRoot,
-                    TechType.BloodVine,
-                    TechType.BluePalm,
-                    TechType.GabeSFeather,
-                    TechType.SeaCrown,
+                    TechType.BloodVine,                    
                     TechType.EyesPlant,
                     TechType.RedGreenTentacle,
                     TechType.PurpleStalk,
                     TechType.RedBasketPlant,
-                    TechType.RedBush,
-                    TechType.RedConePlant,
+                    TechType.RedBush,                    
                     TechType.ShellGrass,
-                    TechType.SpottedLeavesPlant,
-                    TechType.RedRollPlant,
-                    TechType.PurpleBranches,
-                    TechType.SnakeMushroom,
-                    TechType.GenericJeweledDisk,
-                    TechType.PurpleBrainCoral,
-                    TechType.SpikePlant,
+                    TechType.SpottedLeavesPlant,                    
+                    TechType.PurpleBranches,                    
+                    TechType.GenericJeweledDisk,                   
                     TechType.BallClusters,
                     TechType.BarnacleSuckers,
                     TechType.BlueBarnacle,
@@ -719,10 +558,7 @@ namespace CheatManagerZero
 
                 new TechType[]
                 {
-                    TechType.PinkFlower,
-                    TechType.BulboTree,
-                    TechType.PurpleVasePlant,
-                    TechType.OrangeMushroom,
+                    TechType.PinkFlower,                    
                     TechType.FernPalm,
                     TechType.HangingFruitTree,
                     TechType.PurpleVegetablePlant,

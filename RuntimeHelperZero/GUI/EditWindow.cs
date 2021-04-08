@@ -27,24 +27,34 @@ namespace RuntimeHelperZero
 
             EDIT_MODE.Clear();
 
-            foreach (string item in EditModeStrings.OBJECT_MODES)
+            if (!isRectTransform)
             {
-                EDIT_MODE.Add(item);
-            }
-            
-            if (isColliderSelected)
-            {               
-                foreach (KeyValuePair<ColliderType, string[]> pair in EditModeStrings.COLLIDER_MODES)
+                foreach (string item in EditModeStrings.OBJECT_MODES)
                 {
-                    if (pair.Key == colliderModify.ColliderType)
-                    {
-                        foreach (string modes in pair.Value)
-                        {
-                            EDIT_MODE.Add(modes);
-                        }
-                    }                    
+                    EDIT_MODE.Add(item);
                 }
-            }            
+
+                if (isColliderSelected)
+                {
+                    foreach (KeyValuePair<ColliderType, string[]> pair in EditModeStrings.COLLIDER_MODES)
+                    {
+                        if (pair.Key == colliderModify.ColliderType)
+                        {
+                            foreach (string modes in pair.Value)
+                            {
+                                EDIT_MODE.Add(modes);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (string item in EditModeStrings.RECTTRANSFORM_MODES)
+                {
+                    EDIT_MODE.Add(item);
+                }
+            }
 
             guiItems_editmode.SetScrollViewItems(EDIT_MODE, EditWindow_Rect.width - 20);
             guiItems_editmode.SetStateInverseTAB(current_editmode_index);
@@ -82,6 +92,60 @@ namespace RuntimeHelperZero
             {
                 current_editmode_index = ScrollView_editmode_event.ItemID;
             }
+        }
+
+        private void EditRectTransform()
+        {
+            RectTransform rt = objects[selected_component] as RectTransform;
+            rtPos = rt.anchoredPosition;
+            rtSize = rt.sizeDelta;
+            rtPivot = rt.pivot;
+            
+            switch (EDIT_MODE[current_editmode_index])
+            {
+                case "Position: x":
+                    rtPos.x += value;
+                    break;
+                case "Position: y":
+                    rtPos.y += value;
+                    break;
+                case "Width":
+                    rtSize.x += value;
+                    break;
+                case "Height":
+                    rtSize.y += value;
+                    break;
+                case "Scale: x,y":
+                    lScale.x += value;
+                    lScale.y += value;                    
+                    break;
+                case "Scale: x":
+                    lScale.x += value;
+                    break;
+                case "Scale: y":
+                    lScale.y += value;
+                    break;
+                case "Pivot: x":
+                    rtPivot.x += value;
+                    break;
+                case "Pivot: y":
+                    rtPivot.y += value;
+                    break;
+            }
+
+            SetRectTransform();
+        }
+
+        private void SetRectTransform()
+        {
+            RectTransform rt = objects[selected_component] as RectTransform;
+
+            rt.anchoredPosition = rtPos;
+            //rt.offsetMax = rtSize / 2;
+            //rt.offsetMin = rt.offsetMax * -1;
+            //rt.sizeDelta = rtSize;
+            rt.pivot = rtPivot;
+            //rt.transform.localScale = new Vector3(lScale.x, lScale.y, lScale.z);
         }
 
     }

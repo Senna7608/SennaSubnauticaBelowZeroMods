@@ -2,7 +2,7 @@
 
 namespace SlotExtenderZero
 {
-    public class SlotPosGrid : SlotPosLayout
+    internal class SlotPosGrid : SlotPosLayout
     {
         public override Vector2 VehicleImgPos => SlotPos[11];
 
@@ -38,6 +38,6 @@ namespace SlotExtenderZero
         {
             new Vector2(LeftColumn, FifthRow),     // arm slot left
             new Vector2(RightColumn, FifthRow)     // arm slot right
-        };
+        }; 
     }
 }

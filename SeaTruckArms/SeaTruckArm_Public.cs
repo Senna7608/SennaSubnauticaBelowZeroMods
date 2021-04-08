@@ -1,34 +1,11 @@
-﻿using UnityEngine;
+﻿using BZCommon.Helpers;
+using SeaTruckArms.API;
+using SeaTruckArms.API.Interfaces;
+using UnityEngine;
 
 namespace SeaTruckArms
 {
-    public enum ArmTemplate
-    {
-        DrillArm,
-        ClawArm,
-        //PropulsionArm,
-        GrapplingArm,
-        TorpedoArm
-    };
-
-    //for future use
-    public struct NewSeaTruckArm
-    {
-        public ArmTemplate armBase;
-        public TechType techType;
-        public Mesh newMesh;
-        public Material[] newMeshMaterials;
-        public ISeaTruckArm armControl;
-    }
-
-    public enum Arm
-    {
-        None,
-        Left,
-        Right
-    }
-
-    public partial class SeaTruckArmManager
+    internal partial class SeaTruckArmManager
     {
         public TechType LeftArmType
         {
@@ -46,7 +23,7 @@ namespace SeaTruckArms
             }
         }
 
-        public ISeaTruckArm LeftArm
+        public ISeaTruckArmHandler LeftArm
         {
             get
             {
@@ -54,7 +31,7 @@ namespace SeaTruckArms
             }
         }
 
-        public ISeaTruckArm RightArm
+        public ISeaTruckArmHandler RightArm
         {
             get
             {
@@ -82,7 +59,7 @@ namespace SeaTruckArms
         {
             get
             {
-                return currentSelectedArm == Arm.None ? false : true;
+                return currentSelectedArm == SeaTruckArm.None ? false : true;
             }
         }
 
@@ -103,12 +80,12 @@ namespace SeaTruckArms
 
         public TechType GetSelectedArmTechType()
         {
-            if (currentSelectedArm == Arm.Left)
+            if (currentSelectedArm == SeaTruckArm.Left)
             {
                 return LeftArmType;
             }
 
-            if (currentSelectedArm == Arm.Right)
+            if (currentSelectedArm == SeaTruckArm.Right)
             {
                 return RightArmType;
             }
@@ -149,18 +126,22 @@ namespace SeaTruckArms
             return resultLeft || resultRight;
         }
         
-        public void RemoveArm(Arm arm)
+        public void RemoveArm(SeaTruckArm arm)
         {
             armsDirty = true;
 
-            if (arm == Arm.Left)
+            if (arm == SeaTruckArm.Left)
             {
+                GameObject leftModel = objectHelper.FindDeepChild(leftArm.GetGameObject(), "ArmModel");
+                helper.UnregisterRendererToSkyApplier(helper.TruckOuterApplier, leftModel);
                 Destroy(leftArm.GetGameObject());
                 leftArm = null;
                 currentLeftArmType = TechType.None;                
             }
             else
             {
+                GameObject rightModel = objectHelper.FindDeepChild(rightArm.GetGameObject(), "ArmModel");
+                helper.UnregisterRendererToSkyApplier(helper.TruckOuterApplier, rightModel);
                 Destroy(rightArm.GetGameObject());
                 rightArm = null;
                 currentRightArmType = TechType.None;
@@ -171,11 +152,11 @@ namespace SeaTruckArms
             armsDirty = false;
         }
 
-        public void AddArm(Arm arm, TechType techType)
+        public void AddArm(SeaTruckArm arm, TechType techType)
         {
             armsDirty = true;
 
-            if (arm == Arm.Left)
+            if (arm == SeaTruckArm.Left)
             {
                 if (leftArm != null)
                 {
@@ -186,7 +167,10 @@ namespace SeaTruckArms
                 leftArm = Main.graphics.SpawnArm(techType, leftArmAttach);
                 leftArm.SetSide(Left);
                 leftArm.SetRotation(Left, helper.IsDocked);
-                currentLeftArmType = techType;                
+                currentLeftArmType = techType;
+
+                GameObject leftModel = objectHelper.FindDeepChild(leftArm.GetGameObject(), "ArmModel");
+                helper.RegisterRendererToSkyApplier(helper.TruckOuterApplier, leftModel);
             }
             else
             {
@@ -199,17 +183,24 @@ namespace SeaTruckArms
                 rightArm = Main.graphics.SpawnArm(techType, rightArmAttach);
                 rightArm.SetSide(Right);
                 rightArm.SetRotation(Right, helper.IsDocked);
-                currentRightArmType = techType;                
+                currentRightArmType = techType;
+
+                GameObject rightModel = objectHelper.FindDeepChild(rightArm.GetGameObject(), "ArmModel");
+                helper.RegisterRendererToSkyApplier(helper.TruckOuterApplier, rightModel);
             }
 
             SetIllum();
 
             vfxConstructing.Regenerate();
-            helper.thisColorNameControl.ApplyColors();
 
+            ApplyColors();
+            //helper.TruckColorNameControl.ApplyColors();
+            
             armsDirty = false;
             
             UpdateColliders();
+
+            //ColorizationHelper.AddColorCustomizerToGameObject(rightArm.GetGameObject());
         }
 
         public void ResetArms()
@@ -222,6 +213,48 @@ namespace SeaTruckArms
             if (rightArm != null)
             {
                 rightArm.Reset();
+            }
+        }
+
+        internal void ApplyColors()
+        {
+            ColorCustomizer colorCustomizer;
+
+            if (leftArm != null)
+            {
+                colorCustomizer = leftArm.GetGameObject().GetComponent<ColorCustomizer>();
+
+                if (helper.TruckColorNameControl.savedColors.Length != 0)
+                {
+                    colorCustomizer.SetMainColor(helper.TruckColorNameControl.savedColors[0]);
+                }
+                if (helper.TruckColorNameControl.savedColors.Length > 1)
+                {
+                    colorCustomizer.SetStripe1Color(helper.TruckColorNameControl.savedColors[1]);
+                }
+                if (helper.TruckColorNameControl.savedColors.Length > 2)
+                {
+                    colorCustomizer.SetStripe2Color(helper.TruckColorNameControl.savedColors[2]);
+                }
+            }
+            
+
+            if (rightArm != null)
+            {
+                colorCustomizer = rightArm.GetGameObject().GetComponent<ColorCustomizer>();
+
+                if (helper.TruckColorNameControl.savedColors.Length != 0)
+                {
+                    colorCustomizer.SetMainColor(helper.TruckColorNameControl.savedColors[0]);
+                }
+                if (helper.TruckColorNameControl.savedColors.Length > 1)
+                {
+                    colorCustomizer.SetStripe1Color(helper.TruckColorNameControl.savedColors[1]);
+                }
+                if (helper.TruckColorNameControl.savedColors.Length > 2)
+                {
+                    colorCustomizer.SetStripe2Color(helper.TruckColorNameControl.savedColors[2]);
+                }
             }
         }
     }

@@ -18,7 +18,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationParser\SectionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ArrayUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ColorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ColorizationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\DebugHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\Indestructible.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\RuntimeGUI\GUI_ROOT.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\RuntimeGUI\GUI_content_hSlider.cs" />
@@ -34,7 +36,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\RuntimeGUI\GUI_struct.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\RuntimeGUI\GUI_style.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\RuntimeGUI\GUI_window.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\CraftableModItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SeaTruckHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\EncyData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\EncyHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\ModPrefab_Vehicle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\ModPrefab_Craftable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\GameHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\GUIHelper\HorizontalSlider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\GUIHelper\SNDropDown.cs" />
@@ -46,13 +52,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\GraphicsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ObjectHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\InputHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\ModPrefab_Fragment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\Structs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\SelfDestruct.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\TechTypeHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\TechTypeData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Testing\FragmentTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Testing\PrefabHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Testing\PrefabTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Testing\uGUIHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IntVector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SMLHelpers\ModdedTechTypeHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ReflectionHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SeaTruckHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\UnityHelper.cs" />
   </ItemGroup>
 </Project>

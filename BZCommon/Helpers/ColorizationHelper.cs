@@ -1,44 +1,132 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BZCommon.Helpers
 {
-    public class ColorizationHelper
-    {
-        public void AddColorCustomizerToGameObject(GameObject gameObject)
+    public static class ColorizationHelper
+    {        
+        public static void AddRendererToColorCustomizer(GameObject containCustomizer, GameObject containRenderer, bool clearCustomizer, params int[] materialIndexes)
         {
-            ColorCustomizer colorCustomizer = gameObject.AddComponent<ColorCustomizer>();
-
-            colorCustomizer.isBase = false;
-
-            List<Renderer> Renderers = new List<Renderer>();
-
-            gameObject.GetComponentsInChildren(true, Renderers);
-
-            int materials = 0;
-
-            for (int i = 0; i < Renderers.Count; i++)
+            ColorCustomizer colorCustomizer = containCustomizer.GetComponent<ColorCustomizer>();
+            
+            if (colorCustomizer == null)
             {
-                materials += Renderers[i].materials.Length;
+                throw new ArgumentException("GameObject does not have ColorCustomizer component!");                
             }
 
-            colorCustomizer.colorDatas = new ColorCustomizer.ColorData[materials];
+            Renderer renderer = containRenderer.GetComponent<Renderer>();
 
-            int m = 0;
-
-            for (int j = 0; j < Renderers.Count; j++)
+            if (renderer == null)
             {
-                for (int k = 0; k < Renderers[j].sharedMaterials.Length; k++)
-                {
-                    colorCustomizer.colorDatas[m] = new ColorCustomizer.ColorData
-                    {
-                        renderer = Renderers[j],
-                        materialIndex = k
-                    };
+                throw new ArgumentException($"GameObject [{containRenderer.name}] does not have Renderer component!");
+            }
 
-                    m++;
+            List<ColorCustomizer.ColorData> colorDatas = colorCustomizer.colorDatas.ToList();
+
+            if (clearCustomizer)
+            {
+                colorDatas.Clear();
+            }
+            else
+            {
+                foreach (ColorCustomizer.ColorData colorData in colorDatas)
+                {
+                    if (colorData.renderer.Equals(renderer))
+                    {
+                        BZLogger.Log($"ColorData.renderers [{renderer.name}] has contain the desired renderer!");
+                        return;
+                    }
                 }
             }
+
+            foreach (int index in materialIndexes)
+            {
+                colorDatas.Add(new ColorCustomizer.ColorData { renderer = renderer, materialIndex = index });
+            }
+
+            colorCustomizer.colorDatas = colorDatas.ToArray();        
+        }
+
+        
+        public static void AddRendererToSkyApplier(GameObject containAppliers, GameObject containRenderer, Skies applierType)
+        {
+            List<SkyApplier> skyAppliers = new List<SkyApplier>();
+
+            containAppliers.GetComponents(skyAppliers);
+
+            if (skyAppliers.Count < 1)
+            {
+                throw new ArgumentException($"GameObject [{containAppliers.name}] does not have SkyApplier components!");
+            }
+
+            Renderer renderer = containRenderer.GetComponent<Renderer>();
+
+            if (renderer == null)
+            {
+                throw new ArgumentException($"GameObject [{containRenderer.name}] does not have Renderer component!");
+            }
+
+            foreach (SkyApplier skyApplier in skyAppliers)
+            {
+                if (skyApplier.anchorSky == applierType)
+                {
+                    List<Renderer> renderers = skyApplier.renderers.ToList();
+
+                    if (renderers.Contains(renderer))
+                    {
+                        BZLogger.Log($"SkyApplier [{renderer.name}] has contain the desired renderer!");
+                        return;
+                    }
+
+                    renderers.Add(renderer);
+
+                    skyApplier.renderers = renderers.ToArray();
+
+                    return;
+                }
+            }
+
+            throw new Exception("The desired Skies type not found in these SkyAppliers!");            
+        }
+
+        public static void RegisterRendererInLightingController(GameObject containController, GameObject containRenderer)
+        {
+            LightingController lightingController = containController.GetComponent<LightingController>();
+
+            if (lightingController == null)
+            {
+                throw new ArgumentException("GameObject does not have LightingController component!");
+            }
+
+            Renderer renderer = containRenderer.GetComponent<Renderer>();
+
+            if (renderer == null)
+            {
+                throw new ArgumentException($"GameObject [{containRenderer.name}] does not have Renderer component!");
+            }
+
+            lightingController.emissiveController.RegisterRenderer(renderer);
+        }
+
+        public static void UnregisterRendererInLightingController(GameObject containController, GameObject containRenderer)
+        {
+            LightingController lightingController = containController.GetComponent<LightingController>();
+
+            if (lightingController == null)
+            {
+                throw new ArgumentException("GameObject does not have LightingController component!");
+            }
+
+            Renderer renderer = containRenderer.GetComponent<Renderer>();
+
+            if (renderer == null)
+            {
+                throw new ArgumentException($"GameObject [{containRenderer.name}] does not have Renderer component!");
+            }
+
+            lightingController.emissiveController.UnregisterRenderer(renderer);
         }
     }
 }

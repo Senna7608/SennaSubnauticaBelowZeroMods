@@ -8,7 +8,7 @@ namespace CheatManagerZero
 {
     public class CMZ_InfoBar : MonoBehaviour
     {
-        private static Rect windowRect = new Rect(0, 0, Screen.width - (Screen.width / Config.ASPECT) - 2 , Screen.height / 45);
+        private static Rect windowRect = new Rect(0, 0, Screen.width - (Screen.width / CmZConfig.ASPECT) - 2 , Screen.height / 45);
         private Rect drawRect;
         internal bool isShow;
         private Int3 currentBatch = new Int3();

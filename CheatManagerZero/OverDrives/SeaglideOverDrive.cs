@@ -43,12 +43,12 @@ namespace CheatManagerZero
         {         
             if (Main.Instance.isSeaglideFast.value && activeMotorMode == Player.MotorMode.Seaglide && Player.main.IsUnderwater())
             {
-                Player.main.playerController.underWaterController.acceleration = 60f;
+                Player.main.playerController.underWaterController.waterAcceleration = 60f;
                 Player.main.playerController.underWaterController.verticalMaxSpeed = 75f;
             }
             else
             {
-                Player.main.playerController.underWaterController.acceleration = 20;
+                Player.main.playerController.underWaterController.waterAcceleration = 20;
                 Player.main.playerController.underWaterController.verticalMaxSpeed = 5f;
             }
         }        

@@ -1,5 +1,4 @@
-﻿using BZCommon;
-
+﻿/*
 namespace SlotExtenderZero.Configuration
 {
     public class SEzCommand : ConsoleCommand
@@ -23,3 +22,4 @@ namespace SlotExtenderZero.Configuration
         }
     }
 }
+*/

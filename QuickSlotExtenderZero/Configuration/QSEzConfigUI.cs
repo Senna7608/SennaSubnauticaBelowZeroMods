@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BZCommon;
 using BZCommon.Helpers.GUIHelper;
+using BZCommon.Helpers;
 
 namespace QuickSlotExtenderZero.Configuration
 {
@@ -22,7 +23,7 @@ namespace QuickSlotExtenderZero.Configuration
         private static bool isMaxSlotsDropDownVisible = false;
         private static bool isTextColorDropDownVisible = false;
         private static int MaxSlotDropDownSelection = QSEzConfig.MAXSLOTS - 5;
-        private static int TextColorDropDownSelection = Modules.GetColorInt(QSEzConfig.TEXTCOLOR);
+        private static int TextColorDropDownSelection = ColorHelper.GetColorInt(QSEzConfig.TEXTCOLOR);
 
         private List<string> hotkeyLabels = new List<string>();
         private List<string> hotkeyButtons = new List<string>();
@@ -134,7 +135,7 @@ namespace QuickSlotExtenderZero.Configuration
 
             if (keyEvent.isKey && waitingForKey)
             {
-                newKey = InputHelper.GetKeyCodeAsInputName(keyEvent.keyCode);
+                newKey = InputHelper.KeyCodeToString(keyEvent.keyCode);
                 waitingForKey = false;
             }
         }        
@@ -167,7 +168,7 @@ namespace QuickSlotExtenderZero.Configuration
 
             if (keyCount > 0 && isFirst != selected)
             {
-                BZLogger.Warn("QuickSlotExtenderZero", "Duplicate keybind found, swapping keys...");
+                BZLogger.Warn("Duplicate keybind found, swapping keys...");
                 hotkeyButtons[isFirst] = hotkeyButtons[selected];
                 guiItem_Buttons[isFirst].Name = hotkeyButtons[selected];
             }
@@ -201,7 +202,7 @@ namespace QuickSlotExtenderZero.Configuration
                 QSEzConfig.MAXSLOTS = MaxSlotsResult;
             }
 
-            Color TextColorResult = Modules.GetColor(TextColorDropDownContent[TextColorDropDownSelection].text);
+            Color TextColorResult = ColorHelper.GetColor(TextColorDropDownContent[TextColorDropDownSelection].text);
 
             if (TextColorResult != QSEzConfig.TEXTCOLOR)
             {                

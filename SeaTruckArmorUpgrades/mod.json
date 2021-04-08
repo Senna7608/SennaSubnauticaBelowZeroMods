@@ -2,13 +2,9 @@
   "Id": "SeaTruckArmorUpgrades",
   "DisplayName": "Seatruck Armor Upgrades",
   "Author": "Senna",
-  "Version": "1.0",
-  "Dependencies": ["SMLHelper"],
-  "VersionDependencies": {"SMLHelper": "2.8"}, 
-  "LoadBefore": [],
-  "LoadAfter": [],
+  "Version": "1.4",
+  "Dependencies": ["SMLHelper", "SlotExtenderZero"],  
   "Enable": true,
   "Game": "BelowZero",
-  "AssemblyName": "SeaTruckArmorUpgrades.dll",
-  "EntryMethod": "SeaTruckArmorUpgrades.Main.Load" 
+  "AssemblyName": "SeaTruckArmorUpgrades.dll"
 }

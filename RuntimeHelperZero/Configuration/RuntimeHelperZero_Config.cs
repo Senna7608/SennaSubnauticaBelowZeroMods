@@ -57,7 +57,7 @@ namespace RuntimeHelperZero.Configuration
 
                 if (CONFIG_VERSION.Equals(PROGRAM_VERSION))
                 {
-                    BZLogger.Log(PROGRAM_NAME, "Configuration file version match with program version.");
+                    BZLogger.Log("Configuration file version match with program version.");
                 }
                 else
                 {
@@ -74,12 +74,12 @@ namespace RuntimeHelperZero.Configuration
                 AUTOSTART = false;
             }
 
-            BZLogger.Log(PROGRAM_NAME, "Configuration loaded.");
+            BZLogger.Log("Configuration loaded.");
         }
 
         internal static void CreateDefaultConfigFile()
         {
-            BZLogger.Warn(PROGRAM_NAME, "Configuration file is missing or wrong version. Creating a new one.");
+            BZLogger.Warn("Configuration file is missing or wrong version. Creating a new one.");
 
             try
             {
@@ -87,7 +87,7 @@ namespace RuntimeHelperZero.Configuration
             }
             catch
             {
-                BZLogger.Error(PROGRAM_NAME, "Creating new configuration file has failed!");
+                BZLogger.Error("Creating new configuration file has failed!");
             }
         }
 
@@ -95,7 +95,7 @@ namespace RuntimeHelperZero.Configuration
         {
             SetKeyBindings();
 
-            BZLogger.Log(PROGRAM_NAME, "Configuration initialized.");
+            BZLogger.Log("Configuration initialized.");
         }
 
         internal static void WriteConfig()

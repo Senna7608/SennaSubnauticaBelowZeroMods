@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace RuntimeHelperZero.Objects
 {
@@ -22,7 +23,7 @@ namespace RuntimeHelperZero.Objects
                 }
             }
 
-            public Type FieldType
+            public Type @Type
             {
                 get
                 {
@@ -37,15 +38,16 @@ namespace RuntimeHelperZero.Objects
 
             private readonly BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-            public ObjectField(object instance, FieldInfo fInfo)
+            public ObjectField(ref object instance, FieldInfo fInfo)
             {
                 Instance = instance;
                 fieldInfo = fInfo;
             }
 
-            public object GetField()
+            public ObjectField GetField()
             {
-                return Instance.GetPrivateField(Name, bindingFlags);
+                return this;
+                //return Instance.GetPrivateField(Name, bindingFlags);
             }
 
             public object GetValue()
@@ -87,7 +89,46 @@ namespace RuntimeHelperZero.Objects
 
                 foreach (FieldInfo fieldInfo in _object.GetType().GetFields(bindingFlags))
                 {
-                    fObjects.Add(new ObjectField(_object, fieldInfo));
+                    fObjects.Add(new ObjectField(ref _object, fieldInfo));
+
+                    /*
+                    object value = fieldInfo.GetValue(_object);
+
+                    Type valueType = value.GetType();
+
+                    if (valueType.IsArray)
+                    {
+                        if (valueType == typeof(VFXController.VFXEmitter[]))
+                        {
+                            var array = value as VFXController.VFXEmitter[];
+
+                            foreach (VFXController.VFXEmitter emitter in array)
+                            {
+                                FieldInfo[] emitterfields = emitter.GetType().GetFields(bindingFlags);
+
+                                foreach (FieldInfo emitterField in emitterfields)
+                                {
+                                    fObjects.Add(new ObjectField(emitter, emitterField));
+                                }
+                            }
+                        }
+                        else if (valueType == typeof(EnergyMixin[]))
+                        {
+                            var array = value as EnergyMixin[];
+
+                            foreach (EnergyMixin energyMixin in array)
+                            {
+                                FieldInfo[] energyMixinfields = energyMixin.GetType().GetFields(bindingFlags);
+
+                                foreach (FieldInfo energyMixinfield in energyMixinfields)
+                                {
+                                    fObjects.Add(new ObjectField(energyMixin, energyMixinfield));
+                                }
+                            }
+                        }
+                        else
+                            continue;
+                    }*/                    
                 }
             }
 
@@ -127,7 +168,7 @@ namespace RuntimeHelperZero.Objects
                 return false;
             }
 
-            public object GetField(string fieldName)
+            public ObjectField GetField(string fieldName)
             {
                 foreach (ObjectField fObject in fObjects)
                 {

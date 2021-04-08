@@ -5,61 +5,79 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using HarmonyLib;
+using QModManager.API.ModLoading;
 using SMLHelper.V2.Handlers;
-using BZCommon;
 using SlotExtenderZero.Configuration;
 using SlotExtenderZero.Patches;
+using BZCommon;
+using System.Collections;
 
 namespace SlotExtenderZero
 {
+    [QModCore]
     public static class Main
     {
-        public static CommandRoot commandRoot = null;            
-        public static Harmony hInstance;
+        //public static CommandRoot commandRoot = null;            
+        internal static Harmony hInstance;
         internal static InputFieldListener ListenerInstance { get; set; }
 
-        public static bool isConsoleActive;
-        public static bool isKeyBindigsUpdate = false;
+        internal static bool isConsoleActive;
+        internal static bool isKeyBindigsUpdate = false;
 
-        public static bool uGUI_PrefixComplete = false;
-        public static bool uGUI_PostfixComplete = false;
-        public static bool EquipmentPatched = false;
-        public static bool SeatruckUpgradesPatched = false;
-
+        internal static bool uGUI_PrefixComplete = false;
+        internal static bool uGUI_PostfixComplete = false;
+        //internal static bool EquipmentPatched = false;
+        internal static bool SeatruckUpgradesCtorPatched = false;
+        internal static bool ExosuitCtorPatched = false;
+        internal static bool ChipSlotsPatched = false;        
+        
+        [QModPatch]
         public static void Load()
         {
-            BZLogger.Debug("SlotExtenderZero", "Method call: Main.Load()");
-
             try
             {
                 //loading config from file
                 SEzConfig.Config_Load();
-                SlotHelper.InitSlotIDs();                
+                SlotHelper.InitSlotIDs();
+                SlotHelper.ExpandSlotMapping();
 
                 hInstance = new Harmony("BelowZero.SlotExtenderZero.mod");
                                               
-                BZLogger.Debug("SlotExtenderZero", $"Harmony instance created, Name = [{hInstance.Id}]");
+                BZLogger.Debug($"Harmony instance created, Name = [{hInstance.Id}]");                
 
-                hInstance.Patch(typeof(SeaTruckUpgrades).GetMethod("Start"), null,
-                    new HarmonyMethod(typeof(SeaTruckUpgrades_Start_Patch), "Postfix"));
+                hInstance.Patch(typeof(SeaTruckUpgrades).GetMethod("Start"), null, new HarmonyMethod(typeof(SeaTruckUpgrades_Start_Patch), "Postfix"));
 
-                MethodBase STU_ctor_0 = GetConstructorMethodBase(typeof(SeaTruckUpgrades), ".ctor");
+                MethodBase STU_ctor = GetConstructorMethodBase(typeof(SeaTruckUpgrades), ".ctor");
 
-                hInstance.Patch(STU_ctor_0, new HarmonyMethod(typeof(SeaTruckUpgrades_Constructor_Patch), "Prefix"));
+                hInstance.Patch(STU_ctor, new HarmonyMethod(typeof(SeaTruckUpgrades_Constructor_Patch), "Prefix"));
 
-                hInstance.Patch(typeof(DevConsole).GetMethod("SetState"),
-                    new HarmonyMethod(typeof(DevConsole_SetState_Patch), "Prefix"));
+                hInstance.Patch(typeof(DevConsole).GetMethod("SetState"), new HarmonyMethod(typeof(DevConsole_SetState_Patch), "Prefix"));
 
+                MethodBase Exosuit_ctor = GetConstructorMethodBase(typeof(Exosuit), ".ctor");
+
+                hInstance.Patch(Exosuit_ctor, new HarmonyMethod(typeof(Exosuit_Constructor_Patch), "Prefix"));
+
+                /*
+                MethodBase Hoverbike_ctor = GetConstructorMethodBase(typeof(Hoverbike), ".ctor");
+
+                hInstance.Patch(Hoverbike_ctor, new HarmonyMethod(typeof(Hoverbike_Constructor_Patch), "Prefix"));
+                */
                 /*
                 MethodBase Equipment_ctor_0 = GetConstructorMethodBase(typeof(Equipment), ".ctor");
 
                 hInstance.Patch(Equipment_ctor_0, null, new HarmonyMethod(typeof(Equipment_Constructor_Patch), "Postfix"));
                     */
-                hInstance.Patch(typeof(Equipment).GetMethod("GetSlotType"),
-                new HarmonyMethod(typeof(Equipment_GetSlotType_Patch), "Prefix"));
+                /*
+            hInstance.Patch(typeof(Equipment).GetMethod("GetSlotType"),
+            new HarmonyMethod(typeof(Equipment_GetSlotType_Patch), "Prefix"));
+            */
 
+
+
+                /*
                 hInstance.Patch(typeof(Equipment).GetMethod("AllowedToAdd"),
-                    new HarmonyMethod(typeof(Equipment_AllowedToAdd_Patch), "Prefix"));                
+                    new HarmonyMethod(typeof(Equipment_AllowedToAdd_Patch), "Prefix"));
+                    */
 
                 hInstance.Patch(typeof(uGUI_QuickSlots).GetMethod("SetBackground",
                     BindingFlags.NonPublic |
@@ -71,56 +89,89 @@ namespace SlotExtenderZero
                     BindingFlags.Instance |
                     BindingFlags.SetField),
                     new HarmonyMethod(typeof(uGUI_Equipment_Awake_Patch), "Prefix"),
-                    new HarmonyMethod(typeof(uGUI_Equipment_Awake_Patch), "Postfix"));                
+                    new HarmonyMethod(typeof(uGUI_Equipment_Awake_Patch), "Postfix"));
 
+                hInstance.Patch(typeof(Hoverbike).GetMethod("Awake",
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance |
+                    BindingFlags.SetField),
+                    new HarmonyMethod(typeof(Hoverbike_Awake_Patch), "Prefix"));
+
+                /*
                 hInstance.Patch(typeof(Exosuit).GetProperty("slotIDs",
                     BindingFlags.Instance |
                     BindingFlags.NonPublic |
                     BindingFlags.GetProperty).GetGetMethod(true),
                     new HarmonyMethod(typeof(Exosuit_slotIDs_Patch), "Prefix"));
+                    */
+
 
                 hInstance.Patch(typeof(Exosuit).GetMethod("Awake"), null,
-                    new HarmonyMethod(typeof(Exosuit_Awake_Patch), "Postfix"));                
+                    new HarmonyMethod(typeof(Exosuit_Awake_Patch), "Postfix"));
+
+                hInstance.Patch(typeof(Inventory).GetMethod("UnlockDefaultEquipmentSlots",
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance), null,
+                    new HarmonyMethod(typeof(Inventory_UnlockDefaultEquipmentSlots_Patch), "Postfix"));
 
                 SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
 
-                BZLogger.Debug("SlotExtenderZero", "Main.Load(): Added action OnSceneLoaded to SceneManager.sceneLoaded event.");
+                //BZLogger.Debug("SlotExtenderZero", "Main.Load(): Added action OnSceneLoaded to SceneManager.sceneLoaded event.");
 
                 // add console command for configuration window
-                commandRoot = new CommandRoot("SEzConfigGO");
-                commandRoot.AddCommand<SEzCommand>();
+                //commandRoot = new CommandRoot("SEzConfigGO");
+                //commandRoot.AddCommand<SEzCommand>();       
+                
+                //CoroutineHost.StartCoroutine(WaitForUGUI());
 
-                IngameMenuHandler.Main.RegisterOnQuitEvent(OnQuitEvent);
+                IngameMenuHandler.Main.RegisterOnQuitEvent(OnQuitEvent);                
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
             }                
-        }
+        }        
 
         private static void OnQuitEvent()
         {
             uGUI_PrefixComplete = false;
             uGUI_PostfixComplete = false;
-            EquipmentPatched = false;
-            SeatruckUpgradesPatched = false;
+            //EquipmentPatched = false;
+            SeatruckUpgradesCtorPatched = false;            
+            ExosuitCtorPatched = false;
+            ChipSlotsPatched = false;
+            GameInput.OnBindingsChanged -= GameInput_OnBindingsChanged;
         }
 
-        public static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        /*
+        public static IEnumerator WaitForUGUI()
         {
-            if (scene.name == "StartScreen")
-            {                
-                // enabling game console
-                DevConsole.disableConsole = false;
+            while (!uGUI.isInitialized)
+            {
+                yield return new WaitForSeconds(1);
+            }
 
-                // init config
+            SEzConfig.Config_Init();
+
+            GameInput.OnBindingsChanged += GameInput_OnBindingsChanged;
+
+            SlotHelper.InitSessionAllSlots();
+
+            yield break;
+        }
+        */
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {            
+            if (scene.name == "XMenu")
+            {
                 SEzConfig.Config_Init();
 
-                // add an action if changed keybindings
                 GameInput.OnBindingsChanged += GameInput_OnBindingsChanged;
 
                 SlotHelper.InitSessionAllSlots();
             }
+            
             if (scene.name == "Main")
             {
                 // creating a console input field listener to skip SlotExdender Update method key events conflict while console is active in game
@@ -128,9 +179,9 @@ namespace SlotExtenderZero
             }
         }
 
-        public static void GameInput_OnBindingsChanged()
+        private static void GameInput_OnBindingsChanged()
         {
-            BZLogger.Debug("SlotExtenderZero", "Method call: Main.GameInput_OnBindingsChanged()");
+            BZLogger.Debug("Method call: Main.GameInput_OnBindingsChanged()");
 
             // SlotExtender Update() method now disabled until all keybinding updates are complete
             isKeyBindigsUpdate = true;
@@ -178,13 +229,15 @@ namespace SlotExtenderZero
 
             foreach (ConstructorInfo ctor_info in ctor_Infos)
             {
+                BZLogger.Debug($"found constructor [{ctorName}] in class [{type}]");
+
                 if (ctor_info.Name == ctorName)
                 {
                     return ctor_info as MethodBase;
                 }
             }
 
-            BZLogger.Debug("SlotExtenderZero", $"the required constructor [{ctorName}] in class [{type}] has not found!");
+            BZLogger.Debug($"the required constructor [{ctorName}] in class [{type}] has not found!");
 
             return null;
         }

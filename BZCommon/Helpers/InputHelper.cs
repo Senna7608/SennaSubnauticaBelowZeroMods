@@ -5,17 +5,10 @@ namespace BZCommon
 {
     public static class InputHelper
     {
-        public static string GetKeyCodeAsInputName(KeyCode keyCode)
+        public static string KeyCodeToString(KeyCode keyCode)
         {
             switch (keyCode)
             {
-                case KeyCode.Mouse0:
-                    return "MouseButtonLeft";
-                case KeyCode.Mouse1:
-                    return "MouseButtonRight";
-                case KeyCode.Mouse2:
-                    return "MouseButtonMiddle";
-
                 case KeyCode.Alpha0:
                     return "0";
                 case KeyCode.Alpha1:
@@ -72,7 +65,12 @@ namespace BZCommon
                     return ".";
                 case KeyCode.Greater:
                     return ">";
-
+                case KeyCode.Mouse0:
+                    return "MouseButtonLeft";
+                case KeyCode.Mouse1:
+                    return "MouseButtonRight";
+                case KeyCode.Mouse2:
+                    return "MouseButtonMiddle";
                 case KeyCode.JoystickButton0:
                     return "ControllerButtonA";
                 case KeyCode.JoystickButton1:
@@ -98,17 +96,15 @@ namespace BZCommon
             }
         }
 
-        public static KeyCode GetInputNameAsKeyCode(string input)
+        public static KeyCode StringToKeyCode(string input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return 0;
+            }
+
             switch (input)
             {
-                case "MouseButtonLeft":
-                    return KeyCode.Mouse0;
-                case "MouseButtonRight":
-                    return KeyCode.Mouse1;
-                case "MouseButtonMiddle":
-                    return KeyCode.Mouse2;
-
                 case "0":
                     return KeyCode.Alpha0;
                 case "1":
@@ -165,7 +161,12 @@ namespace BZCommon
                     return KeyCode.Period;
                 case ">":
                     return KeyCode.Greater;
-
+                case "MouseButtonLeft":
+                    return KeyCode.Mouse0;
+                case "MouseButtonRight":
+                    return KeyCode.Mouse1;
+                case "MouseButtonMiddle":
+                    return KeyCode.Mouse2;
                 case "ControllerButtonA":
                     return KeyCode.JoystickButton0;
                 case "ControllerButtonB":
@@ -187,8 +188,17 @@ namespace BZCommon
                 case "ControllerButtonRightStick":
                     return KeyCode.JoystickButton9;
                 default:
-                    return (KeyCode)Enum.Parse(typeof(KeyCode), input);
+                    try
+                    {
+                        return (KeyCode)Enum.Parse(typeof(KeyCode), input);
+                    }
+                    catch
+                    {
+                        BZLogger.Debug($"Cannot translate input name [{input}] to KeyCode!");
+                        return 0;
+                    }
             }
         }
+
     }
 }

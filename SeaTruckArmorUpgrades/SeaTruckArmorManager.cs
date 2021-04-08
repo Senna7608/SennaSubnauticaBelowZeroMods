@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿extern alias SEZero;
+
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
-using UWE;
 using BZCommon;
+using SEZero::SlotExtenderZero.API;
 
 namespace SeaTruckArmorUpgrades
 {
@@ -10,9 +12,7 @@ namespace SeaTruckArmorUpgrades
     {
         private SeaTruckHelper helper;
 
-        public Dictionary<TechType, float> ArmorRatings => armorRatings;
-
-        private bool isFirstCheckComplete = false;
+        public Dictionary<TechType, float> ArmorRatings => armorRatings;        
 
         public float originalDamage;
 
@@ -21,15 +21,15 @@ namespace SeaTruckArmorUpgrades
         private static readonly Dictionary<TechType, float> armorRatings = new Dictionary<TechType, float>
         {
             {
-                SeaTruckArmorMK1.TechTypeID,
+                SeaTruckArmorMK1_Prefab.TechTypeID,
                 125f
             },
             {
-                SeaTruckArmorMK2.TechTypeID,
+                SeaTruckArmorMK2_Prefab.TechTypeID,
                 150f
             },
             {
-                SeaTruckArmorMK3.TechTypeID,
+                SeaTruckArmorMK3_Prefab.TechTypeID,
                 175f
             },
 
@@ -37,47 +37,63 @@ namespace SeaTruckArmorUpgrades
 
         public void Awake()
         {
-            helper = new SeaTruckHelper(gameObject, false, false, true);
+            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);            
 
-            DebugDamage();
+            helper.onUpgradeModuleEquip += OnUpgradeModuleChanged;
+            helper.onUpgradeModuleUnEquip += OnUpgradeModuleChanged;
+
+            AddDamageListener();
+        }        
+
+        private void OnUpgradeModuleChanged(int slotID, TechType techType)
+        {
+            if (armorRatings.ContainsKey(techType))
+            {
+                CheckSlotsForArmorUpgrades();
+            }
         }
 
         [Conditional("DEBUG")]
-        public void DebugDamage()
+        public void AddDamageListener()
         {
-            helper.OnDamageReceived.AddHandler(this, new Event<float>.HandleFunction(OnDamageReceived));
-        }
-
-        [Conditional("DEBUG")]
-        private void OnDestroy()
-        {
-            BZLogger.Debug("SeaTruckArmorManager", "Removing unused handlers...");
-
-            helper.OnDamageReceived.RemoveHandler(this,OnDamageReceived);
+            BZLogger.Debug("Adding damage listener handler");
+            helper.onDamageReceived += OnDamageReceived;
         }
         
+        private void OnDestroy()
+        {
+            helper.onUpgradeModuleEquip -= OnUpgradeModuleChanged;
+            helper.onUpgradeModuleUnEquip -= OnUpgradeModuleChanged;
+
+            RemoveDamageListener();
+        }
+
+        [Conditional("DEBUG")]
+        private void RemoveDamageListener()
+        {
+            helper.onDamageReceived -= OnDamageReceived;
+        }
+
         private void OnDamageReceived(float damage)
         {
             print($"[SeaTruckArmorManager] Damage reduced by: {originalDamage - damage}");           
-        }
+        }        
 
-        public void Update()
+        public void WakeUp()
         {
-            if (!isFirstCheckComplete && helper != null)
-            {
-                CheckSlotsForArmorUpgrades();
-                isFirstCheckComplete = true;
-            }
+            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
+
+            CheckSlotsForArmorUpgrades();                      
         }
 
         public void CheckSlotsForArmorUpgrades()
         {
             float armorClass = 100f;
 
-            for (int i = 0; i < helper.slotIDs.Length; i++)
+            for (int i = 0; i < helper.TruckSlotIDs.Length; i++)
             {
-                string slot = helper.slotIDs[i];
-                TechType techType = helper.modules.GetTechTypeInSlot(slot);
+                string slot = helper.TruckSlotIDs[i];
+                TechType techType = helper.TruckEquipment.GetTechTypeInSlot(slot);
 
                 if (armorRatings.TryGetValue(techType, out float armorRating) && armorRating > armorClass)
                 {

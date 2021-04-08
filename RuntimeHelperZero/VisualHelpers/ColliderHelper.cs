@@ -109,15 +109,39 @@ namespace RuntimeHelperZero.VisualHelpers
         }
 
         public static void DrawBoxColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, ColliderInfo colliderInfo)
-        {            
-            lineContainers.SetLineWidth(Mathf.Max(colliderInfo.Size.x, colliderInfo.Size.y, colliderInfo.Size.z));
+        {
+            //Vector3 scale = gameObject.transform.localScale;
+                        
+            //lineContainers.SetLineWidth(Mathf.Max(colliderInfo.Size.x, colliderInfo.Size.y, colliderInfo.Size.z), scale);
 
             lineContainers.DrawBox(colliderInfo.Center, colliderInfo.Size);
         }
 
+        public static void GetMeshVertices(Mesh mesh, out Vector3[] points)
+        {
+            int[] triangles = (int[])mesh.triangles.Clone();
+            Vector3[] vertices = (Vector3[])mesh.vertices.Clone();
+            List<Vector3> cleanVertices = new List<Vector3>();
+
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                Vector3 point = vertices[triangles[i]];
+
+                if (cleanVertices.Contains(point))
+                    continue;
+                else
+                    cleanVertices.Add(point);
+            }
+
+            points = cleanVertices.ToArray();
+
+        }
+
         public static void DrawMeshColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, MeshCollider meshCollider)
         {
-            lineContainers[0].DrawContinuousLine(meshCollider.sharedMesh.vertices);
+            GetMeshVertices(meshCollider.sharedMesh, out Vector3[] vertices);
+
+            lineContainers[0].DrawContinuousLine(vertices);
         }
 
         public static void DrawSphereColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, ColliderInfo colliderInfo)

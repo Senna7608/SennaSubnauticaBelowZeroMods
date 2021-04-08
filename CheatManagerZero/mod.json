@@ -2,13 +2,9 @@
   "Id": "CheatManagerZero",
   "DisplayName": "CheatManagerZero",
   "Author": "Senna",
-  "Version": "1.2.3",
-  "Dependencies": ["SMLHelper"],
-  "VersionDependencies": {"SMLHelper": "2.8"},  
-  "LoadBefore": [],
-  "LoadAfter": [],
+  "Version": "1.2.7",
+  "Dependencies": ["SMLHelper"],  
   "Enable": true,
   "Game": "BelowZero",  
-  "AssemblyName": "CheatManagerZero.dll",
-  "EntryMethod": "CheatManagerZero.Main.Load"
+  "AssemblyName": "CheatManagerZero.dll"
 }

@@ -1,0 +1,15 @@
+﻿SeaTruckScannerModule:Teherszállító Hajó szkenner modul
+Tooltip_SeaTruckScannerModule:Felkutatja 150 m-es tartományon belül az erőforrásokat és roncsokat.
+SeatruckScanner_PowerSystemLabel:Szkenner áramellátó rendszer
+SeatruckScanner_PowerSystemInteract:Hozzáférés az áremellátó rendszerhez
+SeatruckScanner_CabinUnpoweredText:Státusz: Kabin energia nélkül!
+SeatruckScanner_MainUnpoweredText:Státusz: Szkenner energia nélkül!
+SeatruckScanner_FullUnpoweredText:Státusz: Kabin és Szkenner energia nélkül!
+SeatruckScanner_ScannerReadyText:Státusz: Készenlét
+SeatruckScanner_PilotScannerModule:Szkenner modul vezetése
+SeatruckScanner_PowerSwitch:Főkapcsoló
+SeaTruckScannerHUDChip:Szkenner modul szemmagasságú kijelző chipje
+Tooltip_SeaTruckScannerHUDChip:Adatokat közvetít a szkenner modulból a szemmagasságú kijelzőre.
+SeaTruckScannerModuleFragment:Teherszállító Hajó szkenner modul töredék
+Ency_SeaTruckScannerModule:Teherszállító Hajó szkenner modulja
+EncyDesc_SeaTruckScannerModule:A Szkenner modul 150 m-es hatótávolságon belül képes felismerni az erőforrásokat és a roncsokat.\n\n - A modul saját, falra szerelt tápegységgel rendelkezik a szkenner számára, így nem fogyasztja a Seatruck energiáját.\n A modul energiafogyasztása:\n - Készenléti állapotban: 0 energia/sec\n - Bekapcsolt állapotban (erőforrások felderítése): 0,1 energia/sec\n - Szkennelés közben (kiválasztott erőforrás felderítése): 1 energia/sec

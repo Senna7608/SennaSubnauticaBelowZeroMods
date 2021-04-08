@@ -1,96 +1,97 @@
-﻿using SMLHelper.V2.Handlers;
+﻿/*
+using SMLHelper.V2.Handlers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using UnityEngine;
 using UWE;
 
-namespace BZCommon
+namespace SlotExtenderZero.API
 {
     public class SeaTruckHelper
     {
         private class SeaTruckSlotListener : MonoBehaviour
-        {
-            public SeaTruckHelper thisHelper = null;
+        {            
+            public SeaTruckHelper helper = null;
 
             private void Update()
             {
-                if (thisHelper == null || !thisHelper.IsPiloted())
+                if (helper == null || !helper.IsPiloted())
                     return;
 
-                thisHelper.ActiveSlot = thisHelper.GetActiveSlotID();
+                helper.ActiveSlot = helper.GetActiveSlotID();
             }
         }
 
         private class SeaTruckDockingListener : MonoBehaviour
         {
-            public SeaTruckHelper thisHelper = null;
+            public SeaTruckHelper helper = null;
 
             private void Update()
             {
-                if (thisHelper == null || !thisHelper.IsPiloted())
+                if (helper == null || !helper.IsPiloted())
                 {
                     return;
                 }
 
-                thisHelper.IsDocked = thisHelper.thisDockable.isDocked;
+                helper.IsDocked = helper.dockable.isDocked;
             }
         }
 
         private class SeaTruckDamageListener : MonoBehaviour
         {
-            public SeaTruckHelper thisHelper = null;
+            public SeaTruckHelper helper = null;
 
             private void Update()
             {
-                if (thisHelper == null || !thisHelper.IsPiloted())
+                if (helper == null || !helper.IsPiloted())
                     return;
 
-                thisHelper.Damage = thisHelper.thisDamageInfo.damage;
+                helper.Damage = helper.damageInfo.damage;
             }
         }
 
         private class SeaTruckPilotingListener : MonoBehaviour
         {
-            public SeaTruckHelper thisHelper = null;
+            public SeaTruckHelper helper = null;
 
             public void OnPilotBegin()
             {
-                thisHelper.onPilotingBegin?.Invoke();
+                helper.onPilotingBegin?.Invoke();
             }
 
             public void OnPilotEnd()
             {
-                thisHelper.onPilotingEnd?.Invoke();
+                helper.onPilotingEnd?.Invoke();
             }
         }
 
         public GameObject MainCab { get; private set; }
 
-        public SeaTruckAnimation thisAnimation;
-        public SeaTruckAquarium thisAquarium;
-        public SeaTruckConnection thisConnection;
-        public SeaTruckDockingBay thisDockingBay;
-        public SeaTruckEffects thisEffects;
-        public SeaTruckLights thisLights;
-        public SeaTruckSegment thisSegment;
-        public SeaTruckConnectingDoor thisConnectingDoor;
-        public SeaTruckMotor thisMotor;
-        public SeaTruckTeleporter thisTeleporter;
-        public PingInstance thisPingInstance;
-        public Dockable thisDockable;
-        public ColorNameControl thisColorNameControl;
+        public SeaTruckAnimation animation;
+        public SeaTruckAquarium aquarium;
+        public SeaTruckConnection connection;
+        public SeaTruckDockingBay dockingBay;
+        public SeaTruckEffects effects;
+        public SeaTruckLights lights;
+        public SeaTruckSegment segment;
+        public SeaTruckConnectingDoor connectingDoor;
+        public SeaTruckMotor motor;
+        public SeaTruckTeleporter teleporter;
+        public PingInstance pingInstance;
+        public Dockable dockable;
+        public ColorNameControl colorNameControl;
         public LiveMixin thisLiveMixin;
-        private DamageInfo thisDamageInfo;
-        public DealDamageOnImpact thisDealDamageOnImpact;
+        private DamageInfo damageInfo;
+        public DealDamageOnImpact dealDamageOnImpact;
         
-        public WorldForces thisWorldForces;
-        public GameObject thisInputStackDummy;
-        public Int2 thisLeverDirection;
-        public float thisAnimAccel;
+        public WorldForces worldForces;
+        public GameObject inputStackDummy;
+        public Int2 leverDirection;
+        public float animAccel;
 
-        public SeaTruckUpgrades thisUpgrades;
-        public IQuickSlots thisQuickSlots;
+        public SeaTruckUpgrades upgrades;
+        public IQuickSlots quickSlots;
 
         public float[] quickSlotTimeUsed;
         public float[] quickSlotCooldown;
@@ -169,6 +170,11 @@ namespace BZCommon
             }
         }
 
+        public string TruckName
+        {
+            get => pingInstance.GetLabel();
+        }
+
         public SeaTruckHelper
             (
             GameObject Seatruck,
@@ -192,42 +198,42 @@ namespace BZCommon
 
         private void Init()
         {
-            thisUpgrades = MainCab.GetComponent<SeaTruckUpgrades>();
-            thisAnimation = MainCab.GetComponent<SeaTruckAnimation>();
-            thisAquarium = MainCab.GetComponent<SeaTruckAquarium>();
-            thisConnection = MainCab.GetComponent<SeaTruckConnection>();
-            thisDockingBay = MainCab.GetComponent<SeaTruckDockingBay>();
-            thisEffects = MainCab.GetComponent<SeaTruckEffects>();
-            thisLights = MainCab.GetComponent<SeaTruckLights>();
-            thisSegment = MainCab.GetComponent<SeaTruckSegment>();
-            thisConnectingDoor = MainCab.GetComponent<SeaTruckConnectingDoor>();
-            thisMotor = MainCab.GetComponent<SeaTruckMotor>();
-            thisTeleporter = MainCab.GetComponent<SeaTruckTeleporter>();
-            thisPingInstance = MainCab.GetComponent<PingInstance>();
-            thisDockable = MainCab.GetComponent<Dockable>();
-            thisColorNameControl = MainCab.GetComponent<ColorNameControl>();
-            thisLiveMixin = thisSegment.liveMixin;
-            thisDamageInfo = thisLiveMixin.GetPrivateField("damageInfo") as DamageInfo;
-            thisDealDamageOnImpact = MainCab.GetComponent<DealDamageOnImpact>();
+            upgrades = MainCab.GetComponent<SeaTruckUpgrades>();
+            animation = MainCab.GetComponent<SeaTruckAnimation>();
+            aquarium = MainCab.GetComponent<SeaTruckAquarium>();
+            connection = MainCab.GetComponent<SeaTruckConnection>();
+            dockingBay = MainCab.GetComponent<SeaTruckDockingBay>();
+            effects = MainCab.GetComponent<SeaTruckEffects>();
+            lights = MainCab.GetComponent<SeaTruckLights>();
+            segment = MainCab.GetComponent<SeaTruckSegment>();
+            connectingDoor = MainCab.GetComponent<SeaTruckConnectingDoor>();
+            motor = MainCab.GetComponent<SeaTruckMotor>();
+            teleporter = MainCab.GetComponent<SeaTruckTeleporter>();
+            pingInstance = MainCab.GetComponent<PingInstance>();
+            dockable = MainCab.GetComponent<Dockable>();
+            colorNameControl = MainCab.GetComponent<ColorNameControl>();
+            thisLiveMixin = segment.liveMixin;
+            damageInfo = thisLiveMixin.GetPrivateField("damageInfo") as DamageInfo;
+            dealDamageOnImpact = MainCab.GetComponent<DealDamageOnImpact>();
 
-            thisWorldForces = MainCab.GetComponent<WorldForces>();
-            thisInputStackDummy = thisMotor.GetPrivateField("inputStackDummy") as GameObject;
-            thisLeverDirection = (Int2)thisMotor.GetPrivateProperty("leverDirection", BindingFlags.SetProperty);
-            thisAnimAccel = (float)thisMotor.GetPrivateField("animAccel", BindingFlags.SetField);
+            worldForces = MainCab.GetComponent<WorldForces>();
+            inputStackDummy = motor.GetPrivateField("inputStackDummy") as GameObject;
+            leverDirection = (Int2)motor.GetPrivateProperty("leverDirection", BindingFlags.SetProperty);
+            animAccel = (float)motor.GetPrivateField("animAccel", BindingFlags.SetField);
 
-            slotIDs = thisUpgrades.GetPrivateField("slotIDs", BindingFlags.Static) as string[];
-            slotIndexes = thisUpgrades.GetPrivateField("slotIndexes") as Dictionary<string, int>;
-            crushDepths = thisUpgrades.GetPrivateField("crushDepths", BindingFlags.Static) as Dictionary<TechType, float>;
+            slotIDs = upgrades.GetPrivateField("slotIDs", BindingFlags.Static) as string[];
+            slotIndexes = upgrades.GetPrivateField("slotIndexes") as Dictionary<string, int>;
+            crushDepths = upgrades.GetPrivateField("crushDepths", BindingFlags.Static) as Dictionary<TechType, float>;
 
-            quickSlotTimeUsed = thisUpgrades.GetPrivateField("quickSlotTimeUsed", BindingFlags.SetField) as float[];
-            quickSlotCooldown = thisUpgrades.GetPrivateField("quickSlotCooldown", BindingFlags.SetField) as float[];
-            quickSlotCharge = thisUpgrades.GetPrivateField("quickSlotCharge", BindingFlags.SetField) as float[];
+            quickSlotTimeUsed = upgrades.GetPrivateField("quickSlotTimeUsed", BindingFlags.SetField) as float[];
+            quickSlotCooldown = upgrades.GetPrivateField("quickSlotCooldown", BindingFlags.SetField) as float[];
+            quickSlotCharge = upgrades.GetPrivateField("quickSlotCharge", BindingFlags.SetField) as float[];
 
-            thisQuickSlots = MainCab.GetComponent<IQuickSlots>();
+            quickSlots = MainCab.GetComponent<IQuickSlots>();
 
-            powerRelay = thisUpgrades.relay;
+            powerRelay = upgrades.relay;
 
-            modules = thisUpgrades.modules;
+            modules = upgrades.modules;
 
             thisHUD = uGUI.main.GetComponentInChildren<uGUI_SeaTruckHUD>();
 
@@ -235,7 +241,7 @@ namespace BZCommon
             {
                 OnActiveSlotChanged = new Event<int>();
                 SeaTruckSlotListener thisSlotListener = MainCab.AddComponent<SeaTruckSlotListener>();
-                thisSlotListener.thisHelper = this;
+                thisSlotListener.helper = this;
 
                 BZLogger.Debug("SeatruckHelper", $"Slot Listener component added to this Seatruck. ID: [{MainCab.GetInstanceID()}]");                
             }
@@ -244,7 +250,7 @@ namespace BZCommon
             {
                 OnDockedChanged = new Event<bool>();
                 SeaTruckDockingListener thisDockListener = MainCab.AddComponent<SeaTruckDockingListener>();
-                thisDockListener.thisHelper = this;
+                thisDockListener.helper = this;
 
                 BZLogger.Debug("SeatruckHelper", $"Docking Listener component added to this Seatruck. ID: [{MainCab.GetInstanceID()}]");
             }
@@ -253,7 +259,7 @@ namespace BZCommon
             {
                 OnDamageReceived = new Event<float>();
                 SeaTruckDamageListener thisDamageListener = MainCab.AddComponent<SeaTruckDamageListener>();
-                thisDamageListener.thisHelper = this;
+                thisDamageListener.helper = this;
 
                 BZLogger.Debug("SeatruckHelper", $"Damage Listener component added to this Seatruck. ID: [{MainCab.GetInstanceID()}]");
             }
@@ -261,24 +267,24 @@ namespace BZCommon
             isReady = true;
 
             SeaTruckPilotingListener truckPilotingListener = MainCab.AddComponent<SeaTruckPilotingListener>();
-            truckPilotingListener.thisHelper = this;
+            truckPilotingListener.helper = this;
 
             DebugSlots();
         }
         
         public bool IsPowered()
         {
-            return !thisMotor.requiresPower || (thisMotor.relay && thisMotor.relay.IsPowered());
+            return !motor.requiresPower || (motor.relay && motor.relay.IsPowered());
         }
 
         public int GetActiveSlotID()
         {
-            return thisQuickSlots.GetActiveSlotID();
+            return quickSlots.GetActiveSlotID();
         }
 
         public float GetSlotProgress(int slotID)
         {
-            return thisQuickSlots.GetSlotProgress(slotID);
+            return quickSlots.GetSlotProgress(slotID);
         }
 
         public int GetSlotIndex(string slot)
@@ -293,32 +299,32 @@ namespace BZCommon
 
         public bool IsPiloted()
         {
-            return thisMotor.IsPiloted();
+            return motor.IsPiloted();
         }        
 
         public float GetWeight()
         {
-            return thisSegment.GetWeight() + thisSegment.GetAttachedWeight() * (thisMotor.horsePowerUpgrade ? 0.65f : 0.8f);
+            return segment.GetWeight() + segment.GetAttachedWeight() * (motor.horsePowerUpgrade ? 0.65f : 0.8f);
         }
 
         public InventoryItem GetSlotItem(int slotID)
         {
-            return thisQuickSlots.GetSlotItem(slotID);
+            return quickSlots.GetSlotItem(slotID);
         }
 
         public TechType GetSlotBinding(int slotID)
         {
-            return thisQuickSlots.GetSlotBinding(slotID);
+            return quickSlots.GetSlotBinding(slotID);
         }
 
         public int GetSlotCount()
         {
-            return thisQuickSlots.GetSlotCount();
+            return quickSlots.GetSlotCount();
         }
 
         float GetSlotCharge(int slotID)
         {
-            return thisQuickSlots.GetSlotCharge(slotID);
+            return quickSlots.GetSlotCharge(slotID);
         }
 
         public QuickSlotType GetQuickSlotType(int slotID, out TechType techType)
@@ -391,7 +397,7 @@ namespace BZCommon
             {
                 PDA pda = Player.main.GetPDA();
                 Inventory.main.SetUsedStorage(container, false);
-                pda.Open(PDATab.Inventory, null, null, -1f);
+                pda.Open(PDATab.Inventory, null, null);
                 return true;
             }
 
@@ -494,7 +500,7 @@ namespace BZCommon
 
         public bool IsSeatruckChained()
         {
-            return (thisSegment.rearConnection != null && thisSegment.rearConnection.occupied) ? true : false;            
+            return (segment.rearConnection != null && segment.rearConnection.occupied) ? true : false;            
         }
 
         public bool IsDockingModulePresent()
@@ -506,7 +512,7 @@ namespace BZCommon
 
             List<SeaTruckSegment> chain = new List<SeaTruckSegment>();
 
-            thisSegment.GetTruckChain(chain);
+            segment.GetTruckChain(chain);
                         
             foreach (SeaTruckSegment segment in chain)
             {
@@ -531,15 +537,15 @@ namespace BZCommon
 
             List<SeaTruckSegment> chain = new List<SeaTruckSegment>();
 
-            thisSegment.GetTruckChain(chain);
+            segment.GetTruckChain(chain);
 
             SeaTruckSegment lastSegment = chain.GetLast();                      
 
-            if (lastSegment != thisSegment)
+            if (lastSegment != segment)
             {
                 foreach (SeaTruckSegment segment in chain)
                 {
-                    if (segment == thisSegment)
+                    if (segment == this.segment)
                     {
                         continue;
                     }
@@ -573,11 +579,11 @@ namespace BZCommon
 
             List<SeaTruckSegment> chain = new List<SeaTruckSegment>();
 
-            thisSegment.GetTruckChain(chain);
+            segment.GetTruckChain(chain);
                         
             foreach (SeaTruckSegment segment in chain)
             {
-                if (segment == thisSegment)
+                if (segment == this.segment)
                 {
                     continue;
                 }
@@ -634,3 +640,4 @@ namespace BZCommon
 
     }
 }
+*/

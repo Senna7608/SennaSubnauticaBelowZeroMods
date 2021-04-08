@@ -21,7 +21,7 @@ namespace ZHelper
         {
             if (!guiRoot)
             {
-                guiRoot =  new GameObject("IGUI_Test", typeof(IGUI_Test));
+                guiRoot =  new GameObject("IGUI_Test", typeof(Zhelper));
             }
             else
             {

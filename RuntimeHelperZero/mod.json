@@ -1,14 +1,10 @@
 ﻿{
   "Id": "RuntimeHelperZero",
-  "DisplayName": "RuntimeHelperZero",
+  "DisplayName": "Runtime Helper Zero",
   "Author": "Senna",
-  "Version": "1.0",
-  "Dependencies": ["SMLHelper"],
-  "VersionDependencies": {"SMLHelper": "2.8"},
-  "LoadBefore": [],
-  "LoadAfter": [],
+  "Version": "1.1",
+  "Dependencies": ["SMLHelper"],  
   "Enable": true,
   "Game": "BelowZero",
-  "AssemblyName": "RuntimeHelperZero.dll",
-  "EntryMethod": "RuntimeHelperZero.Main.Load",  
+  "AssemblyName": "RuntimeHelperZero.dll" 
 }

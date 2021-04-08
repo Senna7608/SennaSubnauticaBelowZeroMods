@@ -8,7 +8,7 @@ namespace RuntimeHelperZero.Command
         public static RHZCommand Instance;
 
         public void Awake()
-        {            
+        {                       
             DevConsole.RegisterConsoleCommand(this, "rhzero", false, false);
         }        
 
@@ -17,6 +17,7 @@ namespace RuntimeHelperZero.Command
             RuntimeHelperZero rhz = new RuntimeHelperZero();
         }
 
+        
         public RHZCommand()
         {
             if (!Instance)
@@ -30,5 +31,6 @@ namespace RuntimeHelperZero.Command
                 }
             }            
         }
+        
     }
 }

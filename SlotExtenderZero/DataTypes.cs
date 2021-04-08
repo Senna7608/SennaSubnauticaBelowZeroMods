@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using SMLHelper.V2.Utility;
 using BZCommon;
 
 namespace SlotExtenderZero
@@ -21,11 +22,15 @@ namespace SlotExtenderZero
         OriginalArmRight,
         CloneNormal,
         CloneArmLeft,
-        CloneArmRight
+        CloneArmRight,
+        Chip,
+        CloneChip,
+        Battery,
+        CloneBattery
     };
 
     public enum SlotConfigID
-    {
+    {        
         ExosuitArmLeft = -1,
         ExosuitArmRight,
         Slot_1,
@@ -41,7 +46,57 @@ namespace SlotExtenderZero
         Slot_11,
         Slot_12,
         SeaTruckArmLeft,
-        SeaTruckArmRight
+        SeaTruckArmRight,
+        Chip,
+        Battery
+    };
+
+    public enum SlotName
+    {
+        Chip1,
+        Chip2,
+        Chip3,
+        Chip4,
+
+        HoverbikeModule1,
+        HoverbikeModule2,
+        HoverbikeModule3,
+        HoverbikeModule4,
+
+        ExosuitModule1,
+        ExosuitModule2,
+        ExosuitModule3,
+        ExosuitModule4,
+        ExosuitModule5,
+        ExosuitModule6,
+        ExosuitModule7,
+        ExosuitModule8,
+        ExosuitModule9,
+        ExosuitModule10,
+        ExosuitModule11,
+        ExosuitModule12,
+        ExosuitArmLeft,
+        ExosuitArmRight,
+
+        SeaTruckModule1,
+        SeaTruckModule2,
+        SeaTruckModule3,
+        SeaTruckModule4,
+        SeaTruckModule5,
+        SeaTruckModule6,
+        SeaTruckModule7,
+        SeaTruckModule8,
+        SeaTruckModule9,
+        SeaTruckModule10,
+        SeaTruckModule11,
+        SeaTruckModule12,
+        SeaTruckArmLeft,
+        SeaTruckArmRight,
+
+        ScannerModuleBattery1,
+        ScannerModuleBattery2,
+        ScannerModuleBattery3,
+        ScannerModuleBattery4
     };
 
     public class SlotData
@@ -53,7 +108,7 @@ namespace SlotExtenderZero
 
         public string KeyCodeName { get; set; }
         public string SlotConfigIDName => SlotConfigID.ToString();
-        public KeyCode KeyCode => InputHelper.GetInputNameAsKeyCode(KeyCodeName);
+        public KeyCode KeyCode => InputHelper.StringToKeyCode(KeyCodeName);
 
         public SlotData(string slotID, SlotConfigID internalSlotID, Vector2 slotPOS, SlotType slotType)
         {
@@ -68,7 +123,7 @@ namespace SlotExtenderZero
     {
         public abstract Vector2 VehicleImgPos { get; }
         public abstract Vector2[] SlotPos { get; }
-        public abstract Vector2[] ArmSlotPos { get; }
+        public abstract Vector2[] ArmSlotPos { get; }        
 
         public const float Unit = 200f;
         public const float RowStep = Unit * 2.2f / 3;

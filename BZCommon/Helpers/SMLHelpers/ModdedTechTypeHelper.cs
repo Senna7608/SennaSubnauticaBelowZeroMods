@@ -1,5 +1,4 @@
-﻿using SMLHelper.V2.Handlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BZCommon.Helpers.SMLHelpers
@@ -31,12 +30,12 @@ namespace BZCommon.Helpers.SMLHelpers
                     EquipmentType equipmentType = TechData.GetEquipmentType(techType);
                     FoundModdedTechTypes.Add(techName, techType);
                     TypeDefCache.Add(techType, equipmentType);
-                    BZLogger.Log("ModdedTechTypeHelper", $"Modded techtype found! Name: [{techName}], ID: [{(int)techType}], Type: [{equipmentType}]");
+                    BZLogger.Log($"Modded techtype found! Name: [{techName}], ID: [{(int)techType}], Type: [{equipmentType}]");
                     i++;
                 }
             }
 
-            BZLogger.Log("ModdedTechTypeHelper", $"Found [{i}] modded TechType(s).");
+            BZLogger.Log($"Found [{i}] modded TechType(s).");
         }
 
         public bool IsModdedTechType(string techName)

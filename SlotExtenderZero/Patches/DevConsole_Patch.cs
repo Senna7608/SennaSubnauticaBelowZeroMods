@@ -4,10 +4,10 @@ namespace SlotExtenderZero.Patches
 {
     [HarmonyPatch(typeof(DevConsole))]
     [HarmonyPatch("SetState")]
-    public class DevConsole_SetState_Patch
+    internal class DevConsole_SetState_Patch
     {
         [HarmonyPrefix]
-        public static void Prefix(DevConsole __instance, bool value)
+        internal static void Prefix(DevConsole __instance, bool value)
         {
             if (Main.ListenerInstance != null)
             {

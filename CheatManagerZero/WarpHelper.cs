@@ -40,6 +40,7 @@ namespace CheatManagerZero
             { new IntVector(-391, -143, -825),   "Alterra Mining Site Entrance"},
             { new IntVector(-80, -405, -940),    "Crystal Cave Entrance (Tree Spires)"},
             { new IntVector(92, -365, -940),     "Maghda's Base"},
+            { new IntVector(998, 30, -873),     "Maghda's Greenhouse"},
             { new IntVector(284, -173, -904),    "Cave entrance (Lily Pads)"},
             { new IntVector(776, 0, 241),        "Glacial Connection"},
             { new IntVector(1221, -945, -308),   "Precursor Base (Fabricator Caverns)"},            

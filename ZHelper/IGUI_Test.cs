@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace ZHelper
 {
-    public partial class IGUI_Test : GUI_ROOT, IGUI
+    public partial class Zhelper : GUI_ROOT, IGUI
     {
         private Rect mainWindowRect = new Rect(0, 30, 298, 700);
         private Rect secondWindowRect = new Rect(300, 30, 298, 400);
+        private Rect outputWindowRect = new Rect(600, 30, 298, 400);
 
         void IGUI.WakeUp()
         {
@@ -22,7 +23,8 @@ namespace ZHelper
         void IGUI.GetWindows(ref List<Window> windows)
         {
             windows.Add(new Window(1, mainWindowRect, "Runtime Helper Zero v.1.0", hasToolTipButton: true));
-            windows.Add(new Window(2, secondWindowRect, "Second Window", hasToolTipButton: true));
+            windows.Add(new Window(2, secondWindowRect, "Second Window", hasCloseButton: false));
+            windows.Add(new Window(2, outputWindowRect, "Output Window", hasCloseButton: false));
         }
 
         void IGUI.GetGroups(ref List<Group> groups)

@@ -1,14 +1,10 @@
 ﻿{
   "Id": "BZTestMOD",
-  "DisplayName": "BZTestMOD",
+  "DisplayName": "BZ Test MOD",
   "Author": "Senna",
   "Version": "1.0",
-  "Dependencies": ["SMLHelper"],
-  "VersionDependencies": {"SMLHelper": "2.8.0"},
-  "LoadBefore": [],
-  "LoadAfter": [],
+  "Dependencies": ["SMLHelper"], 
   "Enable": true,
   "Game": "BelowZero",
-  "AssemblyName": "BZTestMOD.dll",
-  "EntryMethod": "BZTestMOD.Main.Load" 
+  "AssemblyName": "BZTestMOD.dll"
 }

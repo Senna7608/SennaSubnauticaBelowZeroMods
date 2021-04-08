@@ -14,7 +14,7 @@ namespace ZHelper
         BUTTON_DESTROY
     }
 
-    public partial class IGUI_Test
+    public partial class Zhelper
     {
         private List<GUI_content> BaseText = new List<GUI_content>()
         {
@@ -47,12 +47,12 @@ namespace ZHelper
             new GUI_content(3, GUI_Item_Type.NORMALBUTTON, "Mark", null, new GUI_textColor(), textAlign: TextAnchor.MiddleLeft),
             new GUI_content_hSlider(4, "Rot. X:", null, new GUI_textColor(), 0, 0, 360, textAlign: TextAnchor.MiddleLeft),
             new GUI_content_hSlider(5, "Rot. Y:", null, new GUI_textColor(), 0, 0, 360, textAlign: TextAnchor.MiddleLeft),
-            new GUI_content_hSlider(6, "Rot. Z:", null, new GUI_textColor(), 0, 0, 360, textAlign: TextAnchor.MiddleLeft),            
+            new GUI_content_hSlider(6, "Rot. Z:", null, new GUI_textColor(), 0, 0, 360, textAlign: TextAnchor.MiddleLeft),
             new GUI_content(7, GUI_Item_Type.NORMALBUTTON, "Copy", null, new GUI_textColor(), textAlign: TextAnchor.MiddleLeft),
             new GUI_content(8, GUI_Item_Type.NORMALBUTTON, "Paste", null, new GUI_textColor(), textAlign: TextAnchor.MiddleLeft),
             new GUI_content(9, GUI_Item_Type.NORMALBUTTON, "Destroy", null, new GUI_textColor(), textAlign: TextAnchor.MiddleLeft),
-            
-            
+
+
         };
     }
 }

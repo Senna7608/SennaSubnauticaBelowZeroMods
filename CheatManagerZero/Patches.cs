@@ -5,6 +5,7 @@ namespace CheatManagerZero
 {
     internal class Patches
     {
+        /*
         [HarmonyPatch(typeof(SeaMoth))]
         [HarmonyPatch("Awake")]
         internal class SeaMoth_Awake_Patch
@@ -15,6 +16,7 @@ namespace CheatManagerZero
                 __instance.gameObject.EnsureComponent<SeamothOverDrive>();               
             }
         }
+        */
 
         [HarmonyPatch(typeof(Exosuit))]
         [HarmonyPatch("Awake")]
@@ -27,6 +29,7 @@ namespace CheatManagerZero
             }
         }
 
+        /*
         [HarmonyPatch(typeof(Hoverbike))]
         [HarmonyPatch("Awake")]
         internal class Hoverbike_Start_Patch
@@ -37,7 +40,8 @@ namespace CheatManagerZero
                 __instance.gameObject.EnsureComponent<HoverbikeOverDrive>();
             }
         }
-        
+        */
+
         [HarmonyPatch(typeof(PlayerController))]
         [HarmonyPatch("SetMotorMode")]
         internal class PlayerController_SetMotorMode_Patch

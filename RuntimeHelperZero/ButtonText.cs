@@ -56,5 +56,13 @@ namespace RuntimeHelperZero
             new GUIContent("Unmark", "Remove the selected gameobject from the list.")
         };
 
+        public static List<GUIContent> FMODWindow = new List<GUIContent>
+        {
+            new GUIContent("Get", "Tries to gets all FMOD asset from resources"),
+            new GUIContent("Play", "Play the selected FMOD asset from the list."),
+            new GUIContent("Stop", "Stop the last played FMOD asset."),
+            new GUIContent("Log", "Log current asset info to output window.")
+        };
+
     }
 }

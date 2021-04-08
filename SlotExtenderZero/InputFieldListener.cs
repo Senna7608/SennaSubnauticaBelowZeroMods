@@ -3,7 +3,7 @@ using UWE;
 
 namespace SlotExtenderZero
 {
-    public class InputFieldListener : MonoBehaviour
+    internal class InputFieldListener : MonoBehaviour
     {        
         public Utils.MonitoredValue<bool> onConsoleInputFieldActive = new Utils.MonitoredValue<bool>();
 

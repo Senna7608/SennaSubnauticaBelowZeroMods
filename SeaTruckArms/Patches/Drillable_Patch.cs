@@ -1,23 +1,24 @@
 ﻿using BZCommon;
 using HarmonyLib;
+using SeaTruckArms.API;
 
 namespace SeaTruckArms.Patches
 {
     [HarmonyPatch(typeof(Drillable))]
     [HarmonyPatch("Start")]
-    public class Drillable_Start_Patch
+    internal class Drillable_Start_Patch
     {
         static void Postfix(Drillable __instance)
         {
             __instance.gameObject.EnsureComponent<SeaTruckDrillable>();
 
-            BZLogger.Log("SeaTruckArms", $"SeatruckDrillable component added in Drillable.Start -> Postfix Patch. ID: {__instance.GetInstanceID()}");
+            BZLogger.Log($"SeatruckDrillable component added in Drillable.Start -> Postfix Patch. ID: {__instance.GetInstanceID()}");
         }
     }
 
     [HarmonyPatch(typeof(Drillable))]
     [HarmonyPatch("HoverDrillable")]
-    public class Drillable_HoverDrillable_Patch
+    internal class Drillable_HoverDrillable_Patch
     {
         static bool Prefix(Drillable __instance)
         {

@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using SeaTruckArms.API;
+using UnityEngine;
 
 namespace SeaTruckArms
 {
-    public partial class SeaTruckArmManager
+    internal partial class SeaTruckArmManager
     {
         private bool leftButtonDownProcessed;
         private bool rightButtonDownProcessed;
@@ -21,7 +22,7 @@ namespace SeaTruckArms
                 return;
             }
 
-            if (currentSelectedArm == Arm.Left)
+            if (currentSelectedArm == SeaTruckArm.Left)
             {
                 leftButtonDownProcessed = true;                
 
@@ -34,18 +35,18 @@ namespace SeaTruckArms
 
                 if (quickSlotType == QuickSlotType.Selectable && leftArm.OnUseDown(out float coolDown))
                 {
-                    if (helper.powerRelay)
+                    if (helper.TruckPowerRelay)
                     {
-                        helper.powerRelay.ConsumeEnergy(leftArm.GetEnergyCost(), out float amount);
+                        helper.TruckPowerRelay.ConsumeEnergy(leftArm.GetEnergyCost(), out float amount);
                     }
 
-                    helper.quickSlotTimeUsed[LeftArmSlotID] = Time.time;
-                    helper.quickSlotCooldown[LeftArmSlotID] = coolDown;
+                    helper.TruckQuickSlotTimeUsed[LeftArmSlotID] = Time.time;
+                    helper.TruckQuickSlotCooldown[LeftArmSlotID] = coolDown;
 
                     return;
                 }
             }
-            else if (currentSelectedArm == Arm.Right)
+            else if (currentSelectedArm == SeaTruckArm.Right)
             {
                 rightButtonDownProcessed = true;
 
@@ -58,13 +59,13 @@ namespace SeaTruckArms
 
                 if (quickSlotType == QuickSlotType.Selectable && rightArm.OnUseDown(out float coolDown))
                 {
-                    if (helper.powerRelay)
+                    if (helper.TruckPowerRelay)
                     {
-                        helper.powerRelay.ConsumeEnergy(rightArm.GetEnergyCost(), out float amount);
+                        helper.TruckPowerRelay.ConsumeEnergy(rightArm.GetEnergyCost(), out float amount);
                     }
 
-                    helper.quickSlotTimeUsed[RightArmSlotID] = Time.time;
-                    helper.quickSlotCooldown[RightArmSlotID] = coolDown;
+                    helper.TruckQuickSlotTimeUsed[RightArmSlotID] = Time.time;
+                    helper.TruckQuickSlotCooldown[RightArmSlotID] = coolDown;
                 }
             }            
         }
@@ -83,7 +84,7 @@ namespace SeaTruckArms
                 return;
             }
 
-            if (currentSelectedArm == Arm.Left)
+            if (currentSelectedArm == SeaTruckArm.Left)
             {
                 if (!leftButtonDownProcessed)
                 {
@@ -99,16 +100,16 @@ namespace SeaTruckArms
 
                 if (quickSlotType == QuickSlotType.Selectable && leftArm.OnUseHeld(out float coolDown))
                 {
-                    if (helper.powerRelay)
+                    if (helper.TruckPowerRelay)
                     {
-                        helper.powerRelay.ConsumeEnergy(leftArm.GetEnergyCost(), out float amount);
+                        helper.TruckPowerRelay.ConsumeEnergy(leftArm.GetEnergyCost(), out float amount);
                     }
 
-                    helper.quickSlotTimeUsed[LeftArmSlotID] = Time.time;
-                    helper.quickSlotCooldown[LeftArmSlotID] = coolDown;
+                    helper.TruckQuickSlotTimeUsed[LeftArmSlotID] = Time.time;
+                    helper.TruckQuickSlotCooldown[LeftArmSlotID] = coolDown;
                 }
             }
-            else if (currentSelectedArm == Arm.Right)
+            else if (currentSelectedArm == SeaTruckArm.Right)
             {
                 if (!rightButtonDownProcessed)
                 {
@@ -124,13 +125,13 @@ namespace SeaTruckArms
 
                 if (quickSlotType == QuickSlotType.Selectable && rightArm.OnUseHeld(out float coolDown))
                 {
-                    if (helper.powerRelay)
+                    if (helper.TruckPowerRelay)
                     {
-                        helper.powerRelay.ConsumeEnergy(leftArm.GetEnergyCost(), out float amount);
+                        helper.TruckPowerRelay.ConsumeEnergy(leftArm.GetEnergyCost(), out float amount);
                     }
 
-                    helper.quickSlotTimeUsed[RightArmSlotID] = Time.time;
-                    helper.quickSlotCooldown[RightArmSlotID] = coolDown;
+                    helper.TruckQuickSlotTimeUsed[RightArmSlotID] = Time.time;
+                    helper.TruckQuickSlotCooldown[RightArmSlotID] = coolDown;
                 }
             }
         }
@@ -146,7 +147,7 @@ namespace SeaTruckArms
                 return;
             }
 #endif
-            if (currentSelectedArm == Arm.Left)
+            if (currentSelectedArm == SeaTruckArm.Left)
             {
                 leftButtonDownProcessed = false;
 
@@ -170,14 +171,14 @@ namespace SeaTruckArms
 
                     if (leftArm.OnUseUp(out float coolDown))
                     {
-                        helper.quickSlotTimeUsed[LeftArmSlotID] = Time.time;
-                        helper.quickSlotCooldown[LeftArmSlotID] = coolDown;
+                        helper.TruckQuickSlotTimeUsed[LeftArmSlotID] = Time.time;
+                        helper.TruckQuickSlotCooldown[LeftArmSlotID] = coolDown;
                     }
 
-                    helper.quickSlotCharge[LeftArmSlotID] = 0f;
+                    helper.TruckQuickSlotCharge[LeftArmSlotID] = 0f;
                 }
             }
-            else if (currentSelectedArm == Arm.Right)
+            else if (currentSelectedArm == SeaTruckArm.Right)
             {
                 rightButtonDownProcessed = false;
 
@@ -201,11 +202,11 @@ namespace SeaTruckArms
 
                     if (rightArm.OnUseUp(out float coolDown))
                     {
-                        helper.quickSlotTimeUsed[RightArmSlotID] = Time.time;
-                        helper.quickSlotCooldown[RightArmSlotID] = coolDown;
+                        helper.TruckQuickSlotTimeUsed[RightArmSlotID] = Time.time;
+                        helper.TruckQuickSlotCooldown[RightArmSlotID] = coolDown;
                     }
 
-                    helper.quickSlotCharge[LeftArmSlotID] = 0f;
+                    helper.TruckQuickSlotCharge[LeftArmSlotID] = 0f;
                 }
             }
         }

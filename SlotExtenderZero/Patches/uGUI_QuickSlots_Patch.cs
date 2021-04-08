@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SlotExtenderZero.Patches
 {
     [HarmonyPatch(typeof(uGUI_QuickSlots), "SetBackground")]
-    public class uGUI_QuickSlots_SetBackground_Patch
+    internal class uGUI_QuickSlots_SetBackground_Patch
     {
         public static Sprite spriteExosuitArm = null;
 

@@ -20,7 +20,7 @@ namespace CheatManagerZero
         private static GUIStyle logStyle;
         //private bool setStyle = false;
 
-        private static Rect windowRect = new Rect(Screen.width - (Screen.width / Config.ASPECT), Screen.height - (Screen.height / 4), Screen.width / Config.ASPECT, Screen.height / 4);
+        private static Rect windowRect = new Rect(Screen.width - (Screen.width / CmZConfig.ASPECT), Screen.height - (Screen.height / 4), Screen.width / CmZConfig.ASPECT, Screen.height / 4);
         private static Rect buttonRect = new Rect(windowRect.x + 5, windowRect.y + windowRect.height - 27, windowRect.width - 10, 22);
         private Rect drawRect, scrollRect;
         private float scrollWidth;
@@ -125,7 +125,7 @@ namespace CheatManagerZero
             
             logStyle = SNStyles.GetGuiItemStyle(GuiItemType.LABEL, GuiColor.Green, TextAnchor.MiddleLeft, wordWrap: true);
 
-            SNWindow.CreateWindow(windowRect, $"CheatManagerZero Console (Press {Config.KEYBINDINGS["ToggleConsole"]} to toggle)", true, true);
+            SNWindow.CreateWindow(windowRect, $"CheatManagerZero Console (Press {CmZConfig.KEYBINDINGS["ToggleConsole"]} to toggle)", true, true);
 
             scrollPos = GUI.BeginScrollView(scrollRect, scrollPos, new Rect(scrollRect.x, scrollRect.y, scrollWidth, drawingPos - scrollRect.y));
 
@@ -203,7 +203,7 @@ namespace CheatManagerZero
             
         public void Update()
         {
-            if (Input.GetKeyDown(Config.KEYBINDINGS["ToggleConsole"]))
+            if (Input.GetKeyDown(CmZConfig.KEYBINDINGS["ToggleConsole"]))
             {
                 show = !show;                
             }

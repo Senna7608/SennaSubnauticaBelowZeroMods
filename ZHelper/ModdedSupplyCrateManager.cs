@@ -1,4 +1,5 @@
-﻿using BZCommon;
+﻿/*
+using BZCommon;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -142,7 +143,7 @@ namespace ZHelper
 
             
 
-            /*
+            
             if (SearchChestInRange(new Vector3(-290, -16.05f, 39.04f)))
                 return;
 
@@ -174,7 +175,7 @@ namespace ZHelper
 
                 treasureChest.transform.position = new Vector3(-290, -16.05f, 39.04f);
            }
-           */
+           
 
 
 
@@ -203,7 +204,7 @@ namespace ZHelper
         {
             //StartCoroutine(RegisterChest());
         }
-        /*
+        
         private IEnumerator RegisterChest()
         {
             while (LargeWorldStreamer.main == null)
@@ -218,7 +219,7 @@ namespace ZHelper
 
             yield break;
         }
-        */
+        
         private bool FindActiveGameObject(string goName, out GameObject go)
         {
             GameObject[] array = FindObjectsOfType(typeof(GameObject)) as GameObject[];
@@ -246,3 +247,4 @@ namespace ZHelper
         
     }
 }
+*/

@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿/*
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BZCommon;
-using BZCommon.Helpers;
 using BZCommon.Helpers.GUIHelper;
 
 namespace SlotExtenderZero.Configuration
@@ -208,3 +208,4 @@ namespace SlotExtenderZero.Configuration
         }
     }
 }
+*/
