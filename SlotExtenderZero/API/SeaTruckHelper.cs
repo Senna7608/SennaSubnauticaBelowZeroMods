@@ -188,7 +188,7 @@ namespace SlotExtenderZero.API
         {
             MainCab = gameObject;
 
-            BZLogger.Debug($"SeaTruckHelper message: Awake started, ID: [{MainCab.GetInstanceID()}]");            
+            BZLogger.Debug($"SeaTruckHelper/DEBUG: Awake started, ID: [{MainCab.GetInstanceID()}]");            
             
             TruckUpgrades = MainCab.GetComponent<SeaTruckUpgrades>();            
             TruckConnection = MainCab.GetComponent<SeaTruckConnection>();
@@ -254,7 +254,7 @@ namespace SlotExtenderZero.API
 
             DebugSlots();
 
-            BZLogger.Debug($"SeaTruckHelper message: Awake finished, ID: [{MainCab.GetInstanceID()}]");
+            BZLogger.Debug($"SeaTruckHelper/DEBUG: Awake finished, ID: [{MainCab.GetInstanceID()}]");
         }
 
         private void OnEquip(string slot, InventoryItem item)
@@ -351,7 +351,7 @@ namespace SlotExtenderZero.API
             return TruckQuickSlots.GetSlotCount();
         }
 
-        float GetSlotCharge(int slotID)
+        public float GetSlotCharge(int slotID)
         {
             return TruckQuickSlots.GetSlotCharge(slotID);
         }
@@ -688,24 +688,24 @@ namespace SlotExtenderZero.API
         [Conditional("DEBUG")]
         void DebugSlots()
         {
-            BZLogger.Debug($"SeaTruckHelper message: Upgrade slots check started on this Seatruck. ID: [{MainCab.GetInstanceID()}]");
+            BZLogger.Debug($"SeaTruckHelper/DEBUG: Upgrade slots check started on this Seatruck. ID: [{MainCab.GetInstanceID()}]");
 
             foreach (string slot in TruckSlotIDs)
             {
-                BZLogger.Debug($"SeaTruckHelper message: Found slot: [{slot}]");
+                BZLogger.Debug($"SeaTruckHelper/DEBUG: Found slot: [{slot}]");
             }
 
-            BZLogger.Debug($"SeaTruckHelper message: Upgrade slots check finished on this Seatruck. ID: [{MainCab.GetInstanceID()}]");
+            BZLogger.Debug($"SeaTruckHelper/DEBUG: Upgrade slots check finished on this Seatruck. ID: [{MainCab.GetInstanceID()}]");
         }
 
         [Conditional("DEBUG")]
         void DebugStorageContainer(int slotID, SeamothStorageContainer container)
         {
-            BZLogger.Debug($"SeaTruckHelper message: Seamoth storage container found on slot [{slotID}], name [{container.name}]");
+            BZLogger.Debug($"SeaTruckHelper/DEBUG: Seamoth storage container found on slot [{slotID}], name [{container.name}]");
 
             foreach (TechType techtype in container.allowedTech)
             {
-                BZLogger.Debug($"SeaTruckHelper message: allowedTech: {techtype}");
+                BZLogger.Debug($"SeaTruckHelper/DEBUG: allowedTech: {techtype}");
             }
         }
 
@@ -713,11 +713,11 @@ namespace SlotExtenderZero.API
         [Conditional("DEBUG")]
         void DebugTriggers()
         {
-            BZLogger.Debug("SeaTruckHelper message: Debug handTargets:");
+            BZLogger.Debug("SeaTruckHelper/DEBUG Debug handTargets:");
 
             foreach (GameObject trigger in handTargets)
             {
-                BZLogger.Log($"SeaTruckHelper message: handtarget name: {trigger.name}");
+                BZLogger.Log($"SeaTruckHelper/DEBUG: handtarget name: {trigger.name}");
             }
         }
 

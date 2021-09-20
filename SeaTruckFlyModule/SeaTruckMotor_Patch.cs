@@ -39,6 +39,25 @@ namespace SeaTruckFlyModule
         }
     }
 
+    [HarmonyPatch(typeof(SeaTruckSegment))]
+    [HarmonyPatch("UpdateKinematicState")]
+    public class SeaTruckSegment_UpdateKinematicState_Patch
+    {
+        [HarmonyPrefix]
+        public static bool Prefix(SeaTruckSegment __instance)
+        {
+            if (__instance.TryGetComponent(out FlyManager manager))
+            {
+                if (manager.helper.MainCab.transform.position.y > 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     [HarmonyPatch(typeof(SeaTruckMotor))]
     [HarmonyPatch("FixedUpdate")]
     public class SeaTruckMotor_FixedUpdate_Patch

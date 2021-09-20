@@ -9,6 +9,8 @@ using BZCommon;
 using UnityEngine;
 using SeaTruckArms.API;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 namespace SeaTruckArms
 {
@@ -60,17 +62,28 @@ namespace SeaTruckArms
 
             Assembly assembly = Assembly.GetExecutingAssembly();
 
-            Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");            
+            Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");
 
-            CoroutineHost.StartCoroutine(InitGraphicsAsync());
+            SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
+
+            //CoroutineUtils.StartCoroutineSmart(InitGraphicsAsync());
         }
-        
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "XMenu")
+            {
+                graphics = new SeaTruckArms_Graphics();
+            }
+        }
+
+        /*
         public static IEnumerator InitGraphicsAsync()
         {
             while (!uGUI.isInitialized)
-            {
+            { 
                 BZLogger.Debug("uGUI is not ready!");
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(2);
             }
 
             BZLogger.Debug("API message: API initialize started.");
@@ -79,5 +92,6 @@ namespace SeaTruckArms
 
             yield break;
         }
+        */
     }
 }

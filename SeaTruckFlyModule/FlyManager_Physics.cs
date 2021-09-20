@@ -14,7 +14,7 @@ namespace SeaTruckFlyModule
             }
 
             if (helper == null || motor == null || !helper.IsPiloted())
-                return;
+                return;            
 
             if (altitude >= 0 && rigidbody != null && helper.IsPowered() && !IsBusyAnimating())
             {
@@ -49,8 +49,7 @@ namespace SeaTruckFlyModule
                 }
 
                 if (SeatruckPosition == TruckPosition.OnSurface && SeatruckState == TruckState.Landed && vector.y > 0f)
-                {
-                    rigidbody.isKinematic = false;
+                {                    
                     StartCoroutine(OnTakeOff());
                     //rigidbody.AddForce(new Vector3(0, 1 ,0), ForceMode.VelocityChange);                    
                 }                
@@ -134,7 +133,7 @@ namespace SeaTruckFlyModule
         {
             int footContacts = 0;
 
-            foreach(Collider collider in footCollisions)
+            foreach (Collider collider in footCollisions)
             {
                 if (collider.gameObject.activeSelf)
                 {
@@ -143,16 +142,9 @@ namespace SeaTruckFlyModule
                         footContacts++;
                     }
                 }
-            }            
-
-            if (rearFoots.activeSelf)
-            {
-                return footContacts == 5 ? true : false;
             }
-            else
-            {
-                return footContacts == 3 ? true : false;
-            }            
+
+            return rearFoots.activeSelf ? footContacts == 5 : footContacts == 3;
         }
 
         private float GetTruckPitch()

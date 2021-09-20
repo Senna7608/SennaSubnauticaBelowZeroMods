@@ -2,7 +2,7 @@
   "Id": "SlotExtenderZero",
   "DisplayName": "Slot Extender Zero",
   "Author": "Senna",
-  "Version": "1.5",
+  "Version": "1.7",
   "Dependencies": ["SMLHelper"],   
   "Enable": true,
   "Game": "BelowZero",

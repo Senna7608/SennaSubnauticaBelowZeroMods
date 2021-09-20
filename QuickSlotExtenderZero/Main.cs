@@ -40,9 +40,9 @@ namespace QuickSlotExtenderZero
 
                 BZLogger.Log("Harmony Patches installed");
 
-                //SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
+                SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
 
-                CoroutineHost.StartCoroutine(WaitForUGUI());
+                //CoroutineHost.StartCoroutine(WaitForUGUI());
 
                 IngameMenuHandler.Main.RegisterOnQuitEvent(OnQuitEvent);
             }
@@ -57,6 +57,19 @@ namespace QuickSlotExtenderZero
             isPatched = false;
         }
 
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "XMenu")
+            {
+                QSEzConfig.InitConfig();
+
+                new QSEzCommand();
+
+                GameInput.OnBindingsChanged += GameInput_OnBindingsChanged;
+            }            
+        }
+
+        /*
         public static IEnumerator WaitForUGUI()
         {
             while (!uGUI.isInitialized)
@@ -72,6 +85,7 @@ namespace QuickSlotExtenderZero
 
             yield break;
         }
+        */
 
         internal static void GameInput_OnBindingsChanged()
         {

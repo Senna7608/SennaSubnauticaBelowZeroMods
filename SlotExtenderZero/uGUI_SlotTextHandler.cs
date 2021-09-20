@@ -22,7 +22,7 @@ namespace SlotExtenderZero
 
             Dictionary<string, uGUI_EquipmentSlot> ALLSLOTS = (Dictionary<string, uGUI_EquipmentSlot>)uGUIequipment.GetPrivateField("allSlots");
 
-            BZLogger.Debug("uGUI_SlotTextHandler processing ALLSLOTS");
+            BZLogger.Debug("uGUI_SlotTextHandler processing ALLSLOTS...");
 
             foreach (KeyValuePair<string, uGUI_EquipmentSlot> item in ALLSLOTS)
             {

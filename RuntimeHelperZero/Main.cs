@@ -24,8 +24,7 @@ namespace RuntimeHelperZero
             try
             {                
                 RuntimeHelperZero_Config.LoadConfig();
-                RuntimeHelperZero_Config.InitConfig();
-                DevConsole.disableConsole = false;                
+                RuntimeHelperZero_Config.InitConfig();                                
 
                 SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);                
             }

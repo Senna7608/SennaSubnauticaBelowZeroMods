@@ -12,7 +12,7 @@ namespace SeaTruckFlyModule
         {
             __instance.gameObject.EnsureComponent<FlyManager>();
 
-            BZLogger.Debug("SeaTruckFlyModule", $"Seatruck Fly Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
+            BZLogger.Debug($"Seatruck Fly Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
         }
     }
 

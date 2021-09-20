@@ -2,7 +2,7 @@
   "Id": "SeaTruckScannerModule",
   "DisplayName": "SeaTruckScannerModule",
   "Author": "Senna",
-  "Version": "1.0",
+  "Version": "1.2",
   "Dependencies": ["SMLHelper", "SlotExtenderZero"],  
   "Enable": true,
   "Game": "BelowZero",

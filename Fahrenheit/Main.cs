@@ -20,7 +20,7 @@ namespace Fahrenheit
         {
             try
             {
-                new FahrenheitChip_Prefab().Patch();
+                //new FahrenheitChip_Prefab().Patch();
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
 

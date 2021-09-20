@@ -1,0 +1,17 @@
+SeaTruckScannerModule:Module de scanner de l'aquatracteur
+Tooltip_SeaTruckScannerModule:Module fixable de l'aquatratceur permettant de localiser les matières premières et les épaves dans un rayon de 150m.
+SeatruckScanner_PowerSystemLabel:Système d'alimentation du scanner
+SeatruckScanner_PowerSystemInteract:Accéder au système d'alimentation du scanner
+SeatruckScanner_CabinUnpoweredText:Status: Module hors tension!
+SeatruckScanner_MainUnpoweredText:Status: Scanner hors tension!
+SeatruckScanner_FullUnpoweredText:Status: Module et scanner hors tension!
+SeatruckScanner_ScannerReadyText:Status: Prêt
+SeatruckScanner_PilotScannerModule:Piloter le module de scanner
+SeatruckScanner_PowerSwitch:Interrupteur d'alimentation
+SeaTruckScannerHUDChip:Puce HUD pour le module de scanner de l'aquatracteur
+Tooltip_SeaTruckScannerHUDChip:Transmet des données du module de scanner de l'aquatracteur vers le HUD
+SeaTruckScannerHUDChipUpgrade:Puce HUD pour le module de scanner de l'aquatracteur avec amélioration de distance
+Tooltip_SeaTruckScannerHUDChipUpgrade:Puce HUD du module se scanner avec une amélioration de la distance d'affichage
+SeaTruckScannerModuleFragment:Fragment du module de scanner de l'aquatracteur.
+Ency_SeaTruckScannerModule:Module de scanner de l'aquatracteur
+EncyDesc_SeaTruckScannerModule:Le module de scanner permet de localiser les matières premières et les épaves dans un rayon de 150m.\n\n - Le module dispose de sa propre alimentation murale pour le scanner, il ne consomme donc pas l'énergie de l'aquatracteur.\n Consommation d'énergie du module:\n - En mode veille: 0 énergie/sec\n - Allumé (scan des ressources à portée): 0,1 énergie/sec\n - Pendant le scan (scan des ressources souhaitées): 1 énergie/sec

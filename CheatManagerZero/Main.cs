@@ -26,9 +26,7 @@ namespace CheatManagerZero
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
 
-                Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");
-
-                DevConsole.disableConsole = false;
+                Harmony.CreateAndPatchAll(assembly, $"BelowZero.{assembly.GetName().Name}.mod");                
                 
                 SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);                                
             }

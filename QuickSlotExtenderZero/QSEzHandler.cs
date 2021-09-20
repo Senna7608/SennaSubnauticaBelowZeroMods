@@ -127,21 +127,30 @@ namespace QuickSlotExtenderZero
         internal void AddQuickSlotText(uGUI_QuickSlots instance)
         {
             if (instance == null)
-            {                
+            {
+                BZLogger.Debug("uGUI_QuickSlots instance is null!");
                 return;
             }
-            
+
+            BZLogger.Debug("uGUI_QuickSlots instance is ready.");
+
             icons = (uGUI_ItemIcon[])instance.GetPrivateField("icons");
 
             if (icons == null)
-            {               
+            {
+                BZLogger.Debug("Cannot get uGUI_ItemIcons array!");
                 return;
             }
 
+            BZLogger.Debug($"Found [{icons.Length}] uGUI_ItemIcon in array.");
+
             if (HandReticle.main == null)
-            {                
+            {
+                BZLogger.Debug("HandReticle.main is null!");
                 return;
             }
+
+            BZLogger.Debug("HandReticle.main is ready.");
 
             for (int i = 0; i < icons.Length; i++)
             {                

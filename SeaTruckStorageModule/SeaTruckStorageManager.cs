@@ -34,11 +34,11 @@ namespace SeaTruckStorage
 
             if (!request.TryGetPrefab(out GameObject prefab))
             {
-                BZLogger.Debug("SeaTruckStorage", "Cannot load Exosuit prefab!");
+                BZLogger.Debug("Cannot load Exosuit prefab!");
                 yield break;
             }
 
-            BZLogger.Debug("SeaTruckStorage", "Exosuit prefab loaded!");
+            BZLogger.Debug("Exosuit prefab loaded!");
 
             GameObject exosuitResource = UWE.Utils.InstantiateDeactivated(prefab, transform, Vector3.zero, Quaternion.identity);
 
@@ -119,7 +119,7 @@ namespace SeaTruckStorage
 
         private void OnDestroy()
         {
-            BZLogger.Debug("SeaTruckStorageManager", "Removing unused handlers...");
+            BZLogger.Debug("Removing unused handlers...");
 
             helper.TruckEquipment.isAllowedToRemove -= IsAllowedToRemove;
             helper.TruckEquipment.onEquip -= OnEquip;

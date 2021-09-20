@@ -127,6 +127,11 @@ namespace CheatManagerZero
                     case EquipmentType.Hand:
                         TechnologyMatrix[(int)TechCategory.Tools].Add(new TechTypeData(kvp.Value, Language.main.Get(TechTypeExtensions.AsString(kvp.Value, false))));
                         break;
+
+                    case EquipmentType.BatteryCharger:
+                    case EquipmentType.PowerCellCharger:
+                        TechnologyMatrix[(int)TechCategory.Electronics].Add(new TechTypeData(kvp.Value, Language.main.Get(TechTypeExtensions.AsString(kvp.Value, false))));
+                        break;
                 }
 
                 if (kvp.Key.Equals("SeaTruckScannerModule"))
@@ -201,8 +206,7 @@ namespace CheatManagerZero
                 new TechType[]
                 {                    
                     TechType.ReinforcedDiveSuit,
-                    TechType.ReinforcedGloves,
-                    TechType.Stillsuit,
+                    TechType.ReinforcedGloves,                    
                     TechType.Fins,
                     TechType.UltraGlideFins,
                     TechType.SwimChargeFins,
@@ -332,8 +336,7 @@ namespace CheatManagerZero
                     TechType.Coffee,
                     TechType.FirstAidKit,
                     TechType.FilteredWater,
-                    TechType.DisinfectedWater,
-                    TechType.StillsuitWater,
+                    TechType.DisinfectedWater,                    
                     TechType.BigFilteredWater,                    
                     TechType.CookedArcticPeeper,
                     TechType.CookedArrowRay,

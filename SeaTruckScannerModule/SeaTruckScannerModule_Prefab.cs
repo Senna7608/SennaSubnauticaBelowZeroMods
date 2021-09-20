@@ -143,15 +143,26 @@ namespace SeaTruckScannerModule
             GameObjectClone = UWE.Utils.InstantiateDeactivated(seatruckFabricatorModulePrefab, null, Vector3.zero, Quaternion.identity);
 
             SetupScannerModule();
-            
+
+            /*
             IAssetBundleWrapperCreateRequest bundleRequest = AssetBundleManager.LoadBundleAsync("basegeneratorpieces");
             yield return bundleRequest;
-
             IAssetBundleWrapper bundle = bundleRequest.assetBundle;
             IAssetBundleWrapperRequest loadRequest_02 = bundle.LoadAssetAsync<GameObject>("Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab");
+            yield return loadRequest_02;            
+            GameObject maproom = loadRequest_02.asset as GameObject;
+            */
+            AsyncOperationHandle<GameObject> loadRequest_02 = AddressablesUtility.LoadAsync<GameObject>("Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab");
+
             yield return loadRequest_02;
 
-            GameObject maproom = loadRequest_02.asset as GameObject;
+            if (loadRequest_02.Status == AsyncOperationStatus.Failed)
+            {
+                BZLogger.Error("Cannot find Prefab at path 'Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab'");
+                yield break;
+            }
+
+            GameObject maproom = loadRequest_02.Result;
 
             if (!maproom)
             {

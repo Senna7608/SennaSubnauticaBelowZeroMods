@@ -2,7 +2,7 @@
   "Id": "SeaTruckArms",
   "DisplayName": "Seatruck Arms",
   "Author": "Senna",
-  "Version": "1.3",
+  "Version": "1.5",
   "Dependencies": ["SMLHelper", "SlotExtenderZero"],   
   "Enable": true,
   "Game": "BelowZero",

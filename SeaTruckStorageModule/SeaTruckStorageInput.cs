@@ -165,10 +165,25 @@ namespace SeaTruckStorage
 
         public void OnHandHover(GUIHand hand)
         {
+            
+
             HandReticle main = HandReticle.main;
             main.SetText(HandReticle.TextType.Hand, "OpenStorage", true, GameInput.Button.LeftHand);
-            main.SetText(HandReticle.TextType.HandSubscript, string.Empty, false, GameInput.Button.None);
+            //main.SetText(HandReticle.TextType.HandSubscript, string.Empty, false, GameInput.Button.None);
+            main.SetText(HandReticle.TextType.HandSubscript, IsEmpty() ? "Empty" : string.Empty, true, GameInput.Button.None);
             HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
+        }
+
+        public bool IsEmpty()
+        {
+            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
+
+            if (!isStorageTypeExists)
+                return false;
+
+            ItemsContainer container = helper.GetSeamothStorageInSlot(slotID, techType);
+
+            return container.count <= 0;
         }
 
         public void OnHandClick(GUIHand hand)

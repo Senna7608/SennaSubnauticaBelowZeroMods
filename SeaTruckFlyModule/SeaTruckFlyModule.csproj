@@ -57,7 +57,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
-	<Reference Include="Unity.ResourceManager">
+    <Reference Include="Unity.ResourceManager">
       <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.ResourceManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -115,7 +115,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlyManager_AsyncLoader.cs" />
     <Compile Include="DebugHUD.cs" />
+    <Compile Include="FlyManager_CallBack.cs" />
     <Compile Include="FlyManager_OnLanding.cs" />
     <Compile Include="FlyManager_OnTakeOff.cs" />
     <Compile Include="Main.cs" />
@@ -136,6 +138,14 @@
     <Content Include="Assets\SeatruckFlyModule.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SlotExtenderZero\SlotExtenderZero.csproj">
+      <Project>{0f852683-7a27-4146-866e-388660b6cab3}</Project>
+      <Name>SlotExtenderZero</Name>
+      <Private>False</Private>
+      <Aliases>SEZero</Aliases>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\BZCommon\BZCommon.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

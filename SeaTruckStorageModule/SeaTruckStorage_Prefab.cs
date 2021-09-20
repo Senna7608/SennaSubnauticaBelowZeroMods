@@ -57,7 +57,7 @@ namespace SeaTruckStorage
         {
             SeamothStorageContainer container = GameObjectClone.GetComponent<SeamothStorageContainer>();
                         
-            container.width = 8;
+            container.width = 7;
             container.height = 8;
         }
 

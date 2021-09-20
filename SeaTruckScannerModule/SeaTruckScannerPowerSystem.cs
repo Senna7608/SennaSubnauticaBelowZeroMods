@@ -268,7 +268,7 @@ namespace SeaTruckScannerModule
                     amount = (amount > totalPower) ? totalPower : amount;
                     amount = amount / sourceCount;
 
-                    //print($"consume power: amount: {amount}, sources: {sourceCount}");
+                    BZLogger.Debug($"consume power: amount: {amount}, sources: {sourceCount}");
 
                     foreach (KeyValuePair<string, IBattery> kvp in batteries)
                     {
@@ -296,6 +296,13 @@ namespace SeaTruckScannerModule
             TechType techType = pickupable.GetTechType();
 
             if (compatibleTech.Contains(techType))
+            {
+                return true;
+            }
+
+            EquipmentType equipmentType = TechData.GetEquipmentType(techType);
+
+            if (equipmentType == EquipmentType.BatteryCharger)
             {
                 return true;
             }

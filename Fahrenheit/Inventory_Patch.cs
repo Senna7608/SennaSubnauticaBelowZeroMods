@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿/*
+using HarmonyLib;
 
 namespace Fahrenheit
 {
@@ -58,3 +59,4 @@ namespace Fahrenheit
     }
 
 }
+*/

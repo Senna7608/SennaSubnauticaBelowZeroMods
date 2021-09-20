@@ -25,7 +25,7 @@ namespace SeaTruckScannerModule
 
         private const float baseScanTime = 7f;
 
-        private const float powerPerSecond = 1f;
+        private const float powerPerSecond = 0.8f;
 
         private const float idlePowerPerSecond = 0.1f;        
 

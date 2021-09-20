@@ -2,6 +2,9 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.Rendering;
+using UWE;
+using System.Collections;
+using BZCommon;
 
 namespace SeaTruckFlyModule
 {
@@ -25,11 +28,14 @@ namespace SeaTruckFlyModule
        
         TextMeshProUGUI hudTextAltitude;       
 
-        private void Init_Graphics()
+        private IEnumerator Init_Graphics()
         {
-            HUD = helper.TruckHUD.root;
+            while (robotArmResource == null)
+            {
+                yield return null;
+            }
 
-            InitDebugHUD();
+            HUD = helper.TruckHUD.root;
 
             GameObject DepthCompass = HUD.transform.parent.gameObject.FindChild("DepthCompass");
             GameObject SubmersibleDepth = DepthCompass.FindChild("SubmersibleDepth");
@@ -40,41 +46,15 @@ namespace SeaTruckFlyModule
             
             altitudeMeter = objectHelper.CreateGameObject("altitudeMeter", transform);
             Utils.ZeroTransform(altitudeMeter.transform);
-            altitudeMeter.transform.localPosition = new Vector3(0f, -3f, 0.94f);
-
-            /*
-            Shader shader = Shader.Find("Hidden/Internal-Colored");
-
-            Material lineMaterial = new Material(shader)
-            {
-                hideFlags = HideFlags.HideAndDontSave
-            };
-
-            lineMaterial.SetInt(ShaderPropertyID._SrcBlend, 5);
-            lineMaterial.SetInt(ShaderPropertyID._DstBlend, 10);
-
-            LineRenderer lineRenderer = altitudeMeter.EnsureComponent<LineRenderer>();
-            lineRenderer.material = lineMaterial;
-            lineRenderer.useWorldSpace = true;
-            lineRenderer.startWidth = 0.008f;
-            lineRenderer.endWidth = 0.008f;
-            lineRenderer.startColor = Color.green;
-            lineRenderer.endColor = Color.red;
-            lineRenderer.receiveShadows = false;
-            lineRenderer.loop = false;
-            lineRenderer.textureMode = LineTextureMode.Stretch;
-            lineRenderer.alignment = LineAlignment.View;
-            lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
-            lineRenderer.positionCount = 2;            
-            */
+            altitudeMeter.transform.localPosition = new Vector3(0f, -3f, 0.94f);            
 
             landingFoots = objectHelper.CreateGameObject("landingFoots", transform);
 
-            GameObject frontFoots = objectHelper.CreateGameObject("frontFoots", landingFoots.transform);            
+            GameObject frontFoots = objectHelper.CreateGameObject("frontFoots", landingFoots.transform);
 
-            var resource = Resources.Load<GameObject>("worldentities/alterra/base/biodome_robot_arm");
+            //var resource = Resources.Load<GameObject>("worldentities/alterra/base/biodome_robot_arm");
 
-            GameObject biodome_robot_arm = Instantiate(resource.FindChild("biodome_Robot_Arm"), null);
+            GameObject biodome_robot_arm = Instantiate(robotArmResource.FindChild("biodome_Robot_Arm"), null);
 
             objectHelper.GetPrefabClone(ref biodome_robot_arm, frontFoots.transform, true, "frontFootLeft", out GameObject frontFootLeft);
 
@@ -168,6 +148,12 @@ namespace SeaTruckFlyModule
             landingFoots.SetActive(false);
 
             Destroy(biodome_robot_arm);
+
+            isGraphicsComplete = true;
+
+            BZLogger.Debug("Init_Graphics() completed.");
+
+            yield break;
         }
     }
 }

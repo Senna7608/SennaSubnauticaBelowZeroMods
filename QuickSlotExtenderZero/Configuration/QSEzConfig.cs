@@ -83,6 +83,7 @@ namespace QuickSlotExtenderZero.Configuration
             
             foreach (KeyValuePair<string, string> kvp in SLOTKEYS)
             {
+                BZLogger.Debug($"Adding slotkey [{kvp.Value}] to slot [{kvp.Key}]");
                 SLOTKEYSLIST.Add(kvp.Value);
             }
         }

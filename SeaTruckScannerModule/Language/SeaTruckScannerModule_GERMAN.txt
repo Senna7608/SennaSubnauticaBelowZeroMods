@@ -10,6 +10,8 @@ SeatruckScanner_PilotScannerModule:Scannerabteil steuern
 SeatruckScanner_PowerSwitch:Hauptschalter
 SeaTruckScannerHUDChip:Scannerabteil-Sichtfeld-Chip
 Tooltip_SeaTruckScannerHUDChip:Überträgt Scannermoduldaten an die Sichtfeldanzeige.
+SeaTruckScannerHUDChipUpgrade:Scannerabteil-Sichtfeld-Chip mit Entfernung upgrade
+Tooltip_SeaTruckScannerHUDChipUpgrade:Fortschrittlicherer Display-Chip mit Entfernungsanzeige.
 SeaTruckScannerModuleFragment:Fragment eines Seebahn-Scannerabteils
 Ency_SeaTruckScannerModule:Seebahn-Scannerabteil
 EncyDesc_SeaTruckScannerModule:Das Scannerabteil kann Rohstoffe und Wracks in einer Entfernung von 150 m erkennen.\n\n - Dieses Seebahn-Abteil verfügt über ein eigenes an der Wand montiertes Energieversorgungssystem für den Scanner, sodass es keinen Strom von Seatruck verbraucht.\n Stromverbrauch des Moduls:\n - Im Standby-Modus: 0 Leistung / Sek\n - Ein (Ressourcenerkennung): 0,1 Leistung / Sek\n - Während des Scannens (Erkennung der ausgewählten Ressource): 1 Leistung / Sek

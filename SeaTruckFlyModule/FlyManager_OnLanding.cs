@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using BZCommon;
+using System.Collections;
 using UnityEngine;
 
 namespace SeaTruckFlyModule
@@ -12,15 +13,29 @@ namespace SeaTruckFlyModule
             while (!IsSafePitch())
             {
                 StabilizePitch();
-
+                BZLogger.Debug("[OnLanding] Stabilizing Pitch...");
                 yield return null;
             }
+
+            if (!landingFoots.activeSelf)
+            {
+                BZLogger.Debug("[OnLanding] Extending landing foots");
+                SetLandingFoots(true);
+            }
+
+            ErrorMessage.AddDebug("Landing sequence started");
+            engineSound.Stop();
+
+            //helper.thisWorldForces.aboveWaterGravity = 9.81f;
+            timer = 0.0f;
 
             while (!IsFootsContactWithTerrain())
             {
                 SeatruckState = TruckState.Landing;
 
                 timer += 0.01f;//Mathf.Max(Mathf.Abs(rigidbody.velocity.y) * 0.009f, 0.008f);
+
+                //timer += altitude / 1000;
 
                 if (timer > 5.0f)
                 {
@@ -32,7 +47,7 @@ namespace SeaTruckFlyModule
                 {
                     rigidbody.velocity = Vector3.Lerp(velocity, landingVelocity, timer);
 
-                    print($"timer: {timer}, velocity: {rigidbody.velocity}");
+                    BZLogger.Debug($"[OnLanding] timer: {timer}, velocity: {rigidbody.velocity}");
                 }
 
                 yield return null;
@@ -54,9 +69,7 @@ namespace SeaTruckFlyModule
                 ErrorMessage.AddDebug("Roll angle unsafe!");
                 OnLandingFailed();
                 yield break;
-            }
-
-            
+            }            
 
             rigidbody.velocity = Vector3.zero;
 
@@ -75,6 +88,21 @@ namespace SeaTruckFlyModule
             }
 
             yield break;
+        }
+
+        public void OnLandingFailed()
+        {
+            BZLogger.Debug("[OnLanding] Landiing failed!");
+            if (SeatruckState == TruckState.Landing)
+            StartCoroutine(OnTakeOff());
+            /*
+            rigidbody.AddForce(jump, ForceMode.Impulse);
+
+            if (!isFlying.value)
+            {
+                isFlying.Update(true);
+            }
+            */
         }
     }
 }

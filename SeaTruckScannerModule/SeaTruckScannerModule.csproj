@@ -166,6 +166,9 @@
     <Content Include="Assets\Seatruck_ScannerModule_ency.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Language\SeaTruckScannerModule_FRENCH.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Language\SeaTruckScannerModule_GERMAN.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

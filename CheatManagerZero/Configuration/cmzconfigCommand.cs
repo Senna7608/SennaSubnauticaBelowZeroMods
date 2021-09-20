@@ -10,7 +10,7 @@ namespace CheatManagerZero.Configuration
         public void Awake()
         {            
             DevConsole.RegisterConsoleCommand(this, "cmzconfig", false, false);
-            BZLogger.Log($"[{CmZConfig.PROGRAM_NAME}] Information: Enter 'cmzconfig' command for configuration window.");
+            BZLogger.Log("Information: Enter 'cmzconfig' command for configuration window.");
         }
 
         private void OnConsoleCommand_cmzconfig(NotificationCenter.Notification n)
