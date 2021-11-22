@@ -302,7 +302,7 @@ namespace SeaTruckScannerModule
 
             EquipmentType equipmentType = TechData.GetEquipmentType(techType);
 
-            if (equipmentType == EquipmentType.BatteryCharger)
+            if (equipmentType == EquipmentType.BatteryCharger || equipmentType == EquipmentType.PowerCellCharger)
             {
                 return true;
             }
