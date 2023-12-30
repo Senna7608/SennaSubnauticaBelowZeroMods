@@ -1,4 +1,4 @@
-﻿using BZCommon;
+﻿using BZHelper;
 using System.Collections.Generic;
 using UnityEngine;
 using ZHelper.Helpers;
@@ -35,15 +35,16 @@ namespace ZHelper.Components
 
             transforms.Sort(SortByName);
 
-            if (gameObject.transform.IsRoot())
-            {
-                transforms.Insert(0, gameObject.transform);
-            }
-            else
-            {
+            if (!gameObject.transform.IsRoot())
+            {                
                 transforms.Insert(0, gameObject.transform.parent);
                 transforms.Insert(1, gameObject.transform);
             }
+            else
+            {                
+                transforms.Insert(0, gameObject.transform);
+            }
+
         }
 
         public static int SortByName(Transform transform_1, Transform transform_2)

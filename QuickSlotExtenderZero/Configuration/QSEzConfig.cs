@@ -4,9 +4,8 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
-using BZCommon;
-using BZCommon.ConfigurationParser;
-using BZCommon.Helpers;
+using BZHelper.ConfigurationParser;
+using BZHelper;
 
 namespace QuickSlotExtenderZero.Configuration
 {
@@ -53,13 +52,13 @@ namespace QuickSlotExtenderZero.Configuration
         {
             new ConfigData(SECTIONS[1], SECTION_Settings[0], 12.ToString()),
             new ConfigData(SECTIONS[1], SECTION_Settings[1], COLORS.Green.ToString()),            
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[0], InputHelper.KeyCodeToString(KeyCode.Alpha6)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[1], InputHelper.KeyCodeToString(KeyCode.Alpha7)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[2], InputHelper.KeyCodeToString(KeyCode.Alpha8)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[3], InputHelper.KeyCodeToString(KeyCode.Alpha9)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[4], InputHelper.KeyCodeToString(KeyCode.Alpha0)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[5], InputHelper.KeyCodeToString(KeyCode.Slash)),
-            new ConfigData(SECTIONS[0], SECTION_Hotkeys[6], InputHelper.KeyCodeToString(KeyCode.Equals))            
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[0], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha6)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[1], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha7)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[2], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha8)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[3], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha9)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[4], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha0)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[5], InputHelper.GetKeyCodeAsInputName(KeyCode.Slash)),
+            new ConfigData(SECTIONS[0], SECTION_Hotkeys[6], InputHelper.GetKeyCodeAsInputName(KeyCode.Equals))            
         };        
 
         internal static void InitSLOTKEYS()
@@ -72,13 +71,13 @@ namespace QuickSlotExtenderZero.Configuration
             SLOTKEYS.Add("Slot3", GameInput.GetBindingName(GameInput.Button.Slot3, GameInput.BindingSet.Primary));
             SLOTKEYS.Add("Slot4", GameInput.GetBindingName(GameInput.Button.Slot4, GameInput.BindingSet.Primary));
             SLOTKEYS.Add("Slot5", GameInput.GetBindingName(GameInput.Button.Slot5, GameInput.BindingSet.Primary));
-            SLOTKEYS.Add("Slot6", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[0]]));
-            SLOTKEYS.Add("Slot7", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[1]]));
-            SLOTKEYS.Add("Slot8", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[2]]));
-            SLOTKEYS.Add("Slot9", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[3]]));
-            SLOTKEYS.Add("Slot10", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[4]]));
-            SLOTKEYS.Add("Slot11", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[5]]));
-            SLOTKEYS.Add("Slot12", InputHelper.KeyCodeToString(KEYBINDINGS[SECTION_Hotkeys[6]]));
+            SLOTKEYS.Add("Slot6", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[0]]));
+            SLOTKEYS.Add("Slot7", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[1]]));
+            SLOTKEYS.Add("Slot8", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[2]]));
+            SLOTKEYS.Add("Slot9", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[3]]));
+            SLOTKEYS.Add("Slot10", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[4]]));
+            SLOTKEYS.Add("Slot11", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[5]]));
+            SLOTKEYS.Add("Slot12", InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[SECTION_Hotkeys[6]]));
 
             
             foreach (KeyValuePair<string, string> kvp in SLOTKEYS)
@@ -149,7 +148,7 @@ namespace QuickSlotExtenderZero.Configuration
         {
             foreach (string key in SECTION_Hotkeys)
             {
-                Section_hotkeys[key] = InputHelper.KeyCodeToString(KEYBINDINGS[key]);                
+                Section_hotkeys[key] = InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[key]);                
             }
 
             WriteConfig();
@@ -165,7 +164,7 @@ namespace QuickSlotExtenderZero.Configuration
             {
                 try
                 {                    
-                    KEYBINDINGS.Add(kvp.Key, InputHelper.StringToKeyCode(kvp.Value));
+                    KEYBINDINGS.Add(kvp.Key, InputHelper.GetInputNameAsKeyCode(kvp.Value));
                 }
                 catch (ArgumentException)
                 {
@@ -175,7 +174,7 @@ namespace QuickSlotExtenderZero.Configuration
                     {
                         if (DEFAULT_CONFIG[i].Key.Equals(kvp.Key))
                         {
-                            KEYBINDINGS.Add(kvp.Key, InputHelper.StringToKeyCode(DEFAULT_CONFIG[i].Value));
+                            KEYBINDINGS.Add(kvp.Key, InputHelper.GetInputNameAsKeyCode(DEFAULT_CONFIG[i].Value));
                             sync = true;
                         }
                     }
@@ -204,13 +203,13 @@ namespace QuickSlotExtenderZero.Configuration
                 return false;
             }
 
-            if (!ParserHelper.IsSectionKeysExists(FILENAME, SECTIONS[0], SECTION_Hotkeys))
+            if (!ParserHelper.CheckSectionKeys(FILENAME, SECTIONS[0], SECTION_Hotkeys))
             {
                 BZLogger.Error($"Configuration {SECTIONS[0]} section error!");
                 return false;
             }
 
-            if (!ParserHelper.IsSectionKeysExists(FILENAME, SECTIONS[1], SECTION_Settings))
+            if (!ParserHelper.CheckSectionKeys(FILENAME, SECTIONS[1], SECTION_Settings))
             {
                 BZLogger.Error($"Configuration {SECTIONS[1]} section error!");
                 return false;

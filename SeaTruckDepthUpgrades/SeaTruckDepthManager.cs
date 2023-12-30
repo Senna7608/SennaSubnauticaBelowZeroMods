@@ -1,94 +1,86 @@
 ﻿extern alias SEZero;
 
 using UnityEngine;
-using BZCommon;
-using System.Collections.Generic;
+using BZHelper;
 using SEZero::SlotExtenderZero.API;
+using System.Collections;
 
 namespace SeaTruckDepthUpgrades
 {
     public class SeaTruckDepthManager : MonoBehaviour
     {
-        private SeaTruckHelper helper;
-
-        public Dictionary<TechType, float> CrushDepths => crushDepths;        
-        
-        private static readonly Dictionary<TechType, float> crushDepths = new Dictionary<TechType, float>
+        private SeatruckHelper _helper;
+        private SeatruckHelper helper
         {
+            get
             {
-                TechType.SeaTruckUpgradeHull1,
-                150f
-            },
-            {
-                TechType.SeaTruckUpgradeHull2,
-                500f
-            },
-            {
-                TechType.SeaTruckUpgradeHull3,
-                850f
-            },
-            {
-                SeaTruckDepthMK4_Prefab.TechTypeID,
-                1200f
-            },
-            {
-                SeaTruckDepthMK5_Prefab.TechTypeID,
-                1550f
-            },
-            {
-                SeaTruckDepthMK6_Prefab.TechTypeID,
-                1900f
-            }
-        };
+                if (_helper == null)
+                {
+                    _helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
+                }
+
+                return _helper;
+            }            
+        }        
 
         public void Awake()
         {
-            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
-            
-            BZLogger.Debug("Adding slot listener handlers...");
-
-            helper.onUpgradeModuleEquip += OnUpgradeModuleChanged;
-            helper.onUpgradeModuleUnEquip += OnUpgradeModuleChanged;
-        }       
-
-        private void OnUpgradeModuleChanged(int slotID, TechType techType)
-        {
-            if (crushDepths.ContainsKey(techType))
+            if (!SeaTruckUpgrades.crushDepths.ContainsKey(SeaTruckDepthMK4_Prefab.TechTypeID))
             {
-                CheckSlotsForDepthUpgrades();
+                SeaTruckUpgrades.crushDepths.Add(SeaTruckDepthMK4_Prefab.TechTypeID, 1200f);
             }
-        }
 
-        private void OnDestroy()
-        {
-            BZLogger.Debug("Removing unused handlers...");
+            if (!SeaTruckUpgrades.crushDepths.ContainsKey(SeaTruckDepthMK5_Prefab.TechTypeID))
+            {
+                SeaTruckUpgrades.crushDepths.Add(SeaTruckDepthMK5_Prefab.TechTypeID, 1550f);
+            }
 
-            helper.onUpgradeModuleEquip -= OnUpgradeModuleChanged;
-            helper.onUpgradeModuleUnEquip -= OnUpgradeModuleChanged;           
-        }
+            if (!SeaTruckUpgrades.crushDepths.ContainsKey(SeaTruckDepthMK6_Prefab.TechTypeID))
+            {
+                SeaTruckUpgrades.crushDepths.Add(SeaTruckDepthMK6_Prefab.TechTypeID, 1900f);
+            }
+
+            BZLogger.Log($"SeaTruck 'crushDepths' patched in 'SeaTruckDepthManager.Awake' method. ID: {gameObject.GetInstanceID()}");            
+        }        
 
         public void WakeUp()
         {
-            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
-
-            CheckSlotsForDepthUpgrades();
+            BZLogger.Log("Received SlotExtenderZero 'WakeUp' message.");
+                        
+            StartCoroutine(CheckDepthUpgradesAsync());           
         }
 
-        public void CheckSlotsForDepthUpgrades()
+        public void Start()
         {
+            StartCoroutine(CheckDepthUpgradesAsync());
+        }
+
+        public IEnumerator CheckDepthUpgradesAsync()
+        {
+            BZLogger.Log("CheckDepthUpgradesAsync has started.");            
+
+            while (helper == null && !helper.IsReady)
+            {
+                yield return null;
+            }
+
             float extraCrushDepth = 0f;
 
             foreach (string slot in helper.TruckSlotIDs)
             {
                 TechType techType = helper.TruckEquipment.GetTechTypeInSlot(slot);
 
-                if (crushDepths.TryGetValue(techType, out float crushDepth) && crushDepth > extraCrushDepth)
+                if (SeaTruckUpgrades.crushDepths.TryGetValue(techType, out float crushDepth) && crushDepth > extraCrushDepth)
                 {
                     extraCrushDepth = crushDepth;
                 }
             }
 
             helper.TruckUpgrades.crushDamage.SetExtraCrushDepth(extraCrushDepth);
+
+            BZLogger.Log($"CheckDepthUpgradesAsync has completed, crushdepth set to: [{extraCrushDepth + 150}] m.");
+
+            yield break;
         }        
     }
 }

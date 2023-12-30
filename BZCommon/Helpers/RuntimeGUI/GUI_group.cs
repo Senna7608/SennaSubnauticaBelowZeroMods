@@ -36,6 +36,7 @@ namespace BZCommon.Helpers.RuntimeGUI
 
         public int groupID { get; }
         public int windowID { get; }
+        public GUI_Group_type groupType { get => _group.groupType; }
 
         protected readonly Group _group;
         protected readonly GUI_window _guiWindow;
@@ -177,7 +178,7 @@ namespace BZCommon.Helpers.RuntimeGUI
                     continue;
                 }
 
-                float result = _guiItems[i].DrawItem();
+                float result = _guiItems[i].DrawItem(this, i + 1 < _guiItems.Count ? _guiItems[i + 1] : null);
 
                 switch (_guiItems[i].ContentType)
                 {
@@ -193,14 +194,15 @@ namespace BZCommon.Helpers.RuntimeGUI
                     case GUI_Item_Type.TOGGLEBUTTON:
 
                         if (result != -1)
-                        {
+                        {                           
                             if (result == 0)
                             {
-                                _guiItems[i].InvertState();                                
-                            }
+                                 _guiItems[i].InvertState();                                
+                            }                            
                             
                             _eventHandler(new GUI_event(windowID, groupID, _guiItems[i], (int)result));
                         }
+
                         break;
 
                     case GUI_Item_Type.TAB:
@@ -224,7 +226,7 @@ namespace BZCommon.Helpers.RuntimeGUI
                             _eventHandler(new GUI_event(windowID, groupID, _guiItems[i], result));
                         }
                         
-                        break;
+                        break;                    
                 }
             }            
         }
@@ -260,6 +262,19 @@ namespace BZCommon.Helpers.RuntimeGUI
             return null;
         }
 
+        public GUI_content GetContentByItemID(int ID)
+        {
+            for (int i = 0; i < _guiItems.Count; i++)
+            {
+                if (_guiItems[i].ID == ID)
+                {
+                    return _guiItems[i].gUI_Content;
+                }
+            }
+
+            return null;
+        }
+
         public virtual void Refresh()
         {
             isRefresh = true;            
@@ -275,5 +290,14 @@ namespace BZCommon.Helpers.RuntimeGUI
         {
             _groupLabel = text;
         }
+
+        public GUIEventHandler GetEventHandler()
+        {
+            return _eventHandler;
+        }
+
+        public virtual void SetAutoScroll(bool value) { }
+
+        public virtual void IncrementClientHeight(float value) { }
     }
 }

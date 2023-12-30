@@ -1,34 +1,31 @@
-﻿using System.Collections.Generic;
-using SMLHelper.V2.Crafting;
-using BZCommon.Helpers.SMLHelpers;
-using SeaTruckArms.API;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using SeaTruckArms.ArmHandlerRequesters;
+using ModdedArmsHelperBZ.API;
+using Nautilus.Crafting;
+using BZHelper.NautilusHelpers;
 
 namespace SeaTruckArms.ArmPrefabs
 {
-    internal class SeaTruckClawArm_Prefab : CraftableSeaTruckArm
+    internal class SeatruckClawArm_Prefab : CraftableModdedArm
     {
-        public static TechType TechTypeID { get; private set; }
-
-        internal SeaTruckClawArm_Prefab(SeaTruckArmFragment fragment)
+        internal SeatruckClawArm_Prefab(SpawnableArmFragment fragment)
             : base(
-                  techTypeName: "SeaTruckClawArmModule",
+                  techTypeName: "SeaTruckClawArm",
                   friendlyName: "Seatruck claw arm",
-                  description: "Allows Seatruck to use claw arm.",                  
+                  description: "Allows Seatruck to use claw arm.",
+                  armType: ArmType.SeatruckArm,
                   armTemplate: ArmTemplate.ClawArm,
-                  requiredForUnlock: TechType.None,
+                  requiredForUnlock: TechType.Exosuit,
                   fragment: fragment
                   )
         {
         }
 
-        protected override void PrePatch()
+        protected override RegisterArmRequest RegisterArm()
         {
-            TechTypeID = TechType;
-        }
-
-        protected override void PostPatch()
-        {
+            return new RegisterArmRequest(this, new ClawArmModdingRequest());
         }
 
         protected override RecipeData GetRecipe()
@@ -50,8 +47,14 @@ namespace SeaTruckArms.ArmPrefabs
             return null;
         }
 
-        protected override void PostModify()
+        protected override void SetCustomLanguageText()
         {
+        }
+
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
+        {
+            success.Set(true);
+            yield break;
         }
 
         protected override Sprite GetItemSprite()

@@ -12,8 +12,7 @@ namespace ZHelper
     [QModCore]
     public static class Main
     {
-        public static Zhelper Instance { get; internal set; }
-        public static List<GameObject> AllVisuals = new List<GameObject>();
+        public static ZHelper Instance { get; internal set; }        
         public static CommandRoot commandRoot = null;
         
 
@@ -22,9 +21,9 @@ namespace ZHelper
         {
             try
             {
-                commandRoot = new CommandRoot("zhelperBase");
+                commandRoot = new CommandRoot("zhelperBase", true);
 
-                commandRoot.AddCommand<ZHelperCommand>();                
+                commandRoot.AddCommand<ZHelper_Command>();                
             }
             catch (Exception ex)
             {

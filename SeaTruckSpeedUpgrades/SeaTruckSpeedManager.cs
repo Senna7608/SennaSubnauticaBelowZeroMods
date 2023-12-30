@@ -3,13 +3,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SEZero::SlotExtenderZero.API;
-using BZCommon;
+using BZHelper;
 
 namespace SeaTruckSpeedUpgrades
 {
     public class SeaTruckSpeedManager : MonoBehaviour
     {
-        private SeaTruckHelper helper;
+        private SeatruckHelper helper;
 
         public Dictionary<TechType, float> Accelerations => accelerations;        
 
@@ -56,7 +56,7 @@ namespace SeaTruckSpeedUpgrades
 
         public void WakeUp()
         {
-            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
+            BZLogger.Log("Received SlotExtenderZero 'WakeUp' message.");
 
             CheckSlotsForSpeedUpgrades();
         }

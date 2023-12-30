@@ -1,0 +1,7 @@
+﻿FreezeCannonArmFragment:Fagyasztó ágyú kar töredék
+FreezeCannonArm:Fagyasztó ágyú kar
+Tooltip_FreezeCannonArm:Lefagyassza a lényeket egy ideig.
+FreezeCannonArm_Targeting:Célkeresés...
+FreezeCannonArm_Lock:Célpont befogása
+FreezeCannonArm_Release:Célpont elengedése
+FreezeCannonArm_Freeze:Célpont fagyasztása

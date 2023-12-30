@@ -17,7 +17,7 @@ namespace CheatManagerZero.NewCommands
         private void OnConsoleCommand_resistcold(NotificationCenter.Notification n)
         {
             ResistCold = !ResistCold;
-            SetResistColdCheat();
+            ToggleResistColdCheat();
             ErrorMessage.AddMessage($"resistcold cheat is now {ResistCold}");
         }
 
@@ -26,7 +26,14 @@ namespace CheatManagerZero.NewCommands
             return ResistCold;
         }
 
-        public void SetResistColdCheat()
+        public void SetResistColdCheat(bool value)
+        {
+            ResistCold = value;
+            var component = Player.main.GetComponent<BodyTemperature>();
+            component.enabled = !ResistCold;        
+        }
+
+        public void ToggleResistColdCheat()
         {
             var component = Player.main.GetComponent<BodyTemperature>();
 

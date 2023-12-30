@@ -135,6 +135,8 @@ namespace BZCommon.Helpers.RuntimeGUI
                 toolTipRect.height = guiStyle.CalcHeight(ToolTip, toolTipRect.width);
 
                 GUI.Label(toolTipRect, ToolTip.text, guiStyle);
+
+                GUI.BringWindowToFront(ID);
             }
         }
                 
@@ -174,8 +176,10 @@ namespace BZCommon.Helpers.RuntimeGUI
             {                
                 if (GUI.Button(_closeButtonRect, "\u03A7", GUI_style.GetGuiStyle(GUI_Item_Type.TITLEBUTTON, align: TextAnchor.MiddleCenter)))
                 {
-                    Enabled = false;
+
+                    //Enabled = false;
                     CloseHandler(ID);
+                    UnityEngine.Object.DestroyImmediate(GuiBase.gameObject);
                 }
             }            
               

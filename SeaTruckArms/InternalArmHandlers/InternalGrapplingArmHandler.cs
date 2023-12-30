@@ -1,20 +1,29 @@
 ﻿using UnityEngine;
-using SeaTruckArms.API;
-using SeaTruckArms.API.ArmHandlers;
-using SeaTruckArms.API.Interfaces;
+using ModdedArmsHelperBZ.API;
+using ModdedArmsHelperBZ.API.Interfaces;
+using ModdedArmsHelperBZ.API.ArmHandlers;
 
 namespace SeaTruckArms.InternalArmHandlers
 {
-    internal class InternalGrapplingArmHandler : GrapplingArmHandler, ISeaTruckArmHandler
+    internal class InternalGrapplingArmHandler : SeatruckGrapplingArmHandler, ISeatruckArm
     {
-        GameObject ISeaTruckArmHandler.GetGameObject()
+        public override void Start()
+        {
+        }
+
+        GameObject ISeatruckArm.GetGameObject()
         {
             return gameObject;
         }
 
-        void ISeaTruckArmHandler.SetSide(SeaTruckArm arm)
+        GameObject ISeatruckArm.GetInteractableRoot(GameObject target)
         {
-            if (arm == SeaTruckArm.Right)
+            return null;
+        }
+
+        void ISeatruckArm.SetSide(SeatruckArm arm)
+        {
+            if (arm == SeatruckArm.Right)
             {
                 transform.localScale = new Vector3(-0.80f, 0.80f, 0.80f);
             }
@@ -24,7 +33,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        bool ISeaTruckArmHandler.OnUseDown(out float cooldownDuration)
+        bool ISeatruckArm.OnUseDown(out float cooldownDuration)
         {
             animator.SetBool("use_tool", true);
 
@@ -38,13 +47,13 @@ namespace SeaTruckArms.InternalArmHandlers
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnUseHeld(out float cooldownDuration)
+        bool ISeatruckArm.OnUseHeld(out float cooldownDuration)
         {
             cooldownDuration = 0f;
             return false;
         }
 
-        bool ISeaTruckArmHandler.OnUseUp(out float cooldownDuration)
+        bool ISeatruckArm.OnUseUp(out float cooldownDuration)
         {
             animator.SetBool("use_tool", false);
             ResetHook();
@@ -52,16 +61,16 @@ namespace SeaTruckArms.InternalArmHandlers
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnAltDown()
+        bool ISeatruckArm.OnAltDown()
         {
             return false;
         }
 
-        void ISeaTruckArmHandler.Update(ref Quaternion aimDirection)
+        void ISeatruckArm.Update(ref Quaternion aimDirection)
         {
         }
 
-        void ISeaTruckArmHandler.Reset()
+        void ISeatruckArm.ResetArm()
         {
             animator.SetBool("use_tool", false);
             ResetHook();
@@ -96,7 +105,7 @@ namespace SeaTruckArms.InternalArmHandlers
             GameObject x = null;
             Vector3 a = default(Vector3);
 
-            UWE.Utils.TraceFPSTargetPosition(TruckHelper.MainCab, 100f, ref x, ref a, out Vector3 normal, false);
+            UWE.Utils.TraceFPSTargetPosition(seatruck.mainCab, 100f, ref x, ref a, out Vector3 normal, false);
 
             if (x == null || x == hook.gameObject)
             {
@@ -108,7 +117,7 @@ namespace SeaTruckArms.InternalArmHandlers
             hook.rb.velocity = a2 * 25f;
             Utils.PlayFMODAsset(shootSound, front, 15f);
 
-            grapplingStartPos = TruckHelper.MainCab.transform.position;
+            grapplingStartPos = seatruck.mainCab.transform.position;
         }
 
         public void FixedUpdate()
@@ -123,12 +132,12 @@ namespace SeaTruckArms.InternalArmHandlers
 
                 if (value.magnitude > 1f)
                 {
-                    if (!IsUnderwater() && TruckHelper.MainCab.transform.position.y + 0.2f >= grapplingStartPos.y)
+                    if (!IsUnderwater() && seatruck.mainCab.transform.position.y + 0.2f >= grapplingStartPos.y)
                     {
                         vector.y = Mathf.Min(vector.y, 0f);
                     }
 
-                    TruckHelper.MainCab.GetComponent<Rigidbody>().AddForce(vector * seamothGrapplingAccel, ForceMode.Acceleration);
+                    seatruck.mainCab.GetComponent<Rigidbody>().AddForce(vector * seatruckGrapplingAccel, ForceMode.Acceleration);
                     hook.GetComponent<Rigidbody>().AddForce(-vector * 400f, ForceMode.Force);
                 }
 
@@ -152,25 +161,30 @@ namespace SeaTruckArms.InternalArmHandlers
             
         }
 
-        bool ISeaTruckArmHandler.HasClaw()
+        bool ISeatruckArm.HasClaw()
         {
             return false;
         }
 
-        bool ISeaTruckArmHandler.HasDrill()
+        bool ISeatruckArm.HasDrill()
         {
             return false;
         }
 
-        void ISeaTruckArmHandler.SetRotation(SeaTruckArm arm, bool isDocked)
+        bool ISeatruckArm.HasPropCannon()
         {
-            if (isDocked)
+            return false;
+        }
+
+        void ISeatruckArm.SetRotation(SeatruckArm arm, bool isDocked)
+        {
+            if (isDocked && !seatruck.seatruckHelper.TruckDockable.isInTransition)
             {
-                BaseRoot baseRoot = TruckHelper.MainCab.GetComponentInParent<BaseRoot>();
+                BaseRoot baseRoot = seatruck.mainCab.GetComponentInParent<BaseRoot>();
 
                 if (baseRoot.isBase)
                 {
-                    if (arm == SeaTruckArm.Right)
+                    if (arm == SeatruckArm.Right)
                     {
                         transform.localRotation = Quaternion.Euler(20, 6, 0);
                     }
@@ -182,7 +196,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
             else
             {
-                if (arm == SeaTruckArm.Right)
+                if (arm == SeatruckArm.Right)
                 {
                     transform.localRotation = Quaternion.Euler(0, 0, 0);
                 }
@@ -200,12 +214,18 @@ namespace SeaTruckArms.InternalArmHandlers
 
         private bool IsUnderwater()
         {
-            return TruckHelper.MainCab.transform.position.y < worldForces.waterDepth + 2f;
+            return seatruck.mainCab.transform.position.y < seatruck.worldForces.waterDepth + 2f;
         }
 
         public bool GetIsGrappling()
         {
             return hook != null && hook.attached;
+        }
+
+        bool ISeatruckArm.GetCustomUseText(out string customText)
+        {
+            customText = string.Empty;
+            return false;
         }
     }
 }

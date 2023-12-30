@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using BZCommon;
+﻿using BZHelper;
+using UnityEngine;
 
 namespace QuickSlotExtenderZero.Configuration
 {

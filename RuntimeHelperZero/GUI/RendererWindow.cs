@@ -199,9 +199,10 @@ namespace RuntimeHelperZero
             Renderer renderer = selectedObject.GetComponent<Renderer>();            
             
             string shaderKeyword = _materialInfos[materialIndex].ActiveShaders[shaderIndex].Keyword;
-            string shaderName = _materialInfos[materialIndex].ActiveShaders[shaderIndex].Name;            
+            string shaderName = _materialInfos[materialIndex].ActiveShaders[shaderIndex].Name;
 
-            Shader newShader = Shader.Find(shaderName);
+
+            Shader newShader = ShaderManager.preloadedShaders.marmosetUBER;
 
             Material newMaterial = new Material(newShader)
             {

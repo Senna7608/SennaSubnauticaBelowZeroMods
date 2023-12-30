@@ -1,5 +1,4 @@
-﻿using BZCommon;
-using RuntimeHelperZero.Logger;
+﻿using BZHelper;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,12 +22,12 @@ namespace RuntimeHelperZero.Components
                 for (int i = 0; i < childCount; i++)
                 {
                     Transform transform = gameObject.transform.GetChild(i);
-
-                    if (transform.name.StartsWith("RH_"))
+#if RELEASE
+                    if (transform.name.StartsWith("RHZ_"))
                     {
                         continue;
                     }
-
+#endif       
                     transforms.Add(transform);
                 }
             }
@@ -101,7 +100,7 @@ namespace RuntimeHelperZero.Components
             transform.localRotation = Quaternion.Euler(Vector3.zero);
         }               
 
-        public static void SetTransformInfo(this Transform destination, ref TransformInfo transformInfo)
+        public static void SetTransformInfo(this Transform destination, TransformInfo transformInfo)
         {
             destination.parent = transformInfo.Parent;
             destination.position = transformInfo.Position;

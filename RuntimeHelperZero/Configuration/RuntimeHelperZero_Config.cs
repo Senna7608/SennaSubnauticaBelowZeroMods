@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using BZCommon;
-using BZCommon.ConfigurationParser;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using BZHelper.ConfigurationParser;
+using BZHelper;
 
 namespace RuntimeHelperZero.Configuration
 {
@@ -15,7 +15,9 @@ namespace RuntimeHelperZero.Configuration
         internal static string PROGRAM_VERSION = string.Empty;
         internal static string CONFIG_VERSION = string.Empty;
         public static bool AUTOSTART = false;
-        private static readonly string FILENAME = $"{Environment.CurrentDirectory}/QMods/{PROGRAM_NAME}/config.txt";
+
+        private static readonly string modFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static readonly string FILENAME = $"{modFolder}/config.txt";
 
         private static readonly string[] SECTIONS = { "Settings", "Hotkeys"};
 

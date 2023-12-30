@@ -7,7 +7,7 @@ using ZHelper.Helpers;
 namespace ZHelper.VisualHelpers
 {
     public static class ColliderHelper
-    {     
+    {
         public static bool IsExistsCollider(this GameObject gameObject)
         {
             return gameObject.GetComponent<Collider>() ? true : false;
@@ -16,23 +16,23 @@ namespace ZHelper.VisualHelpers
         public static ColliderType GetColliderType(this Collider collider)
         {
             if (!collider)
-            {                             
+            {
                 return ColliderType.None;
             }
 
             Type thisCollider = collider.GetType();
 
             if (thisCollider == typeof(BoxCollider))
-            {                
-                return ColliderType.BoxCollider;                
+            {
+                return ColliderType.BoxCollider;
             }
             else if (thisCollider == typeof(CapsuleCollider))
-            {               
-                return ColliderType.CapsuleCollider;                
+            {
+                return ColliderType.CapsuleCollider;
             }
             else if (thisCollider == typeof(SphereCollider))
-            {                
-                return ColliderType.SphereCollider;                
+            {
+                return ColliderType.SphereCollider;
             }
             else if (thisCollider == typeof(MeshCollider))
             {
@@ -40,7 +40,7 @@ namespace ZHelper.VisualHelpers
             }
             else
             {
-                Main.Instance.OutputWindow_Log($"Unsupported collider: [{thisCollider}]", LogType.Warning);
+                //Main.Instance.OutputWindow_Log($"Unsupported collider: [{thisCollider}]", LogType.Warning);
 
                 return ColliderType.None;
             }
@@ -50,11 +50,11 @@ namespace ZHelper.VisualHelpers
         {
             switch (collider.GetColliderType())
             {
-                case ColliderType.BoxCollider:                    
+                case ColliderType.BoxCollider:
                     BoxCollider bc = collider as BoxCollider;
                     colliderBase.ColliderType = ColliderType.BoxCollider;
                     colliderBase.Size = bc.size;
-                    colliderBase.Center = bc.center;                    
+                    colliderBase.Center = bc.center;
                     break;
 
                 case ColliderType.CapsuleCollider:
@@ -63,24 +63,24 @@ namespace ZHelper.VisualHelpers
                     colliderBase.Radius = cc.radius;
                     colliderBase.Center = cc.center;
                     colliderBase.Direction = cc.direction;
-                    colliderBase.Height = cc.height;                   
+                    colliderBase.Height = cc.height;
                     break;
 
                 case ColliderType.SphereCollider:
                     SphereCollider sc = collider as SphereCollider;
                     colliderBase.ColliderType = ColliderType.SphereCollider;
                     colliderBase.Radius = sc.radius;
-                    colliderBase.Center = sc.center;                    
+                    colliderBase.Center = sc.center;
                     break;
 
                 case ColliderType.MeshCollider:
                     MeshCollider mc = collider as MeshCollider;
-                    colliderBase.ColliderType = ColliderType.MeshCollider;                    
+                    colliderBase.ColliderType = ColliderType.MeshCollider;
                     colliderBase.Center = mc.bounds.center;
                     break;
             }
         }
-                     
+
         public static void ResetCollider(this GameObject gameObject, ColliderInfo colliderBase, int ID)
         {
             switch (colliderBase.ColliderType)
@@ -88,7 +88,7 @@ namespace ZHelper.VisualHelpers
                 case ColliderType.BoxCollider:
                     BoxCollider bc = gameObject.FindComponentWithID<BoxCollider>(ID);
                     bc.size = colliderBase.Size;
-                    bc.center = colliderBase.Center;                                        
+                    bc.center = colliderBase.Center;
                     break;
 
                 case ColliderType.CapsuleCollider:
@@ -96,51 +96,29 @@ namespace ZHelper.VisualHelpers
                     cc.radius = colliderBase.Radius;
                     cc.center = colliderBase.Center;
                     cc.direction = colliderBase.Direction;
-                    cc.height = colliderBase.Height;                                        
+                    cc.height = colliderBase.Height;
                     break;
 
                 case ColliderType.SphereCollider:
                     SphereCollider sc = gameObject.FindComponentWithID<SphereCollider>(ID);
                     sc.radius = colliderBase.Radius;
-                    sc.center = colliderBase.Center;                                       
+                    sc.center = colliderBase.Center;
                     break;
-            }            
+            }
         }
 
         public static void DrawBoxColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, ColliderInfo colliderInfo)
         {
             //Vector3 scale = gameObject.transform.localScale;
-                        
+
             //lineContainers.SetLineWidth(Mathf.Max(colliderInfo.Size.x, colliderInfo.Size.y, colliderInfo.Size.z), scale);
 
             lineContainers.DrawBox(colliderInfo.Center, colliderInfo.Size);
         }
 
-        public static void GetMeshVertices(Mesh mesh, out Vector3[] points)
+        public static void DrawMeshColliderBounds(this GameObject gameObject, ref List<GameObject> triangleContainers, MeshCollider meshCollider)
         {
-            int[] triangles = (int[])mesh.triangles.Clone();
-            Vector3[] vertices = (Vector3[])mesh.vertices.Clone();
-            List<Vector3> cleanVertices = new List<Vector3>();
-
-            for (int i = 0; i < triangles.Length; i++)
-            {
-                Vector3 point = vertices[triangles[i]];
-
-                if (cleanVertices.Contains(point))
-                    continue;
-                else
-                    cleanVertices.Add(point);
-            }
-
-            points = cleanVertices.ToArray();
-
-        }
-
-        public static void DrawMeshColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, MeshCollider meshCollider)
-        {
-            GetMeshVertices(meshCollider.sharedMesh, out Vector3[] vertices);
-
-            lineContainers[0].DrawContinuousLine(vertices);
+            gameObject.DrawMesh(ref triangleContainers, meshCollider.sharedMesh);
         }
 
         public static void DrawSphereColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, ColliderInfo colliderInfo)
@@ -155,22 +133,22 @@ namespace ZHelper.VisualHelpers
             {
                 lineContainer.transform.localPosition = colliderInfo.Center;
                 lineContainer.DrawCircle(colliderInfo.Radius, 360);
-            }                  
-        }        
-        
+            }
+        }
+
         public static void DrawCapsuleColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, ColliderInfo cInfo)
         {
-            lineContainers.SetLineWidth(cInfo.Radius);            
+            lineContainers.SetLineWidth(cInfo.Radius);
 
             int angleX = 360;
             int angleY = 360;
             int angleZ = 360;
-            
+
             for (int i = 0; i < lineContainers.Count; i++)
             {
                 lineContainers[i].transform.localPosition = cInfo.Center;
             }
-            
+
             if (cInfo.Radius * 2.0f < cInfo.Height)
             {
                 for (int i = 3; i < 10; i++)
@@ -268,7 +246,7 @@ namespace ZHelper.VisualHelpers
                         lineContainers[3].transform.localRotation = Quaternion.Euler(-90f, 0, 90f);
                         lineContainers[4].transform.localRotation = Quaternion.Euler(0, 90f, 0);
                         lineContainers[5].transform.localRotation = Quaternion.Euler(90f, 0, 180f);
-                        
+
                         distance = Vector3.Distance(axisZpositive, axisZnegative);
 
                         lineContainers[6].DrawLine(new Vector3(-cInfo.Radius, 0, distance * 0.5f), new Vector3(-cInfo.Radius, 0, distance * -0.5f));
@@ -288,7 +266,7 @@ namespace ZHelper.VisualHelpers
                 for (int i = 3; i < 10; i++)
                 {
                     lineContainers[i].DisableContainer();
-                }                
+                }
 
                 lineContainers[0].transform.localRotation = Quaternion.Euler(0, 0, 0);
                 lineContainers[1].transform.localRotation = Quaternion.Euler(90f, 0, 0);
@@ -297,7 +275,7 @@ namespace ZHelper.VisualHelpers
 
             lineContainers[0].DrawCircle(cInfo.Radius, angleX);
             lineContainers[1].DrawCircle(cInfo.Radius, angleY);
-            lineContainers[2].DrawCircle(cInfo.Radius, angleZ);            
-        }             
+            lineContainers[2].DrawCircle(cInfo.Radius, angleZ);
+        }
     }
 }

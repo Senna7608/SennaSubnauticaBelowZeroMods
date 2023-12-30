@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using RuntimeHelperZero.Logger;
-using BZCommon;
 using RuntimeHelperZero.Components;
 
 namespace RuntimeHelperZero.VisualHelpers
@@ -115,33 +113,11 @@ namespace RuntimeHelperZero.VisualHelpers
             //lineContainers.SetLineWidth(Mathf.Max(colliderInfo.Size.x, colliderInfo.Size.y, colliderInfo.Size.z), scale);
 
             lineContainers.DrawBox(colliderInfo.Center, colliderInfo.Size);
-        }
+        }        
 
-        public static void GetMeshVertices(Mesh mesh, out Vector3[] points)
+        public static void DrawMeshColliderBounds(this GameObject gameObject, ref List<GameObject> triangleContainers, MeshCollider meshCollider)
         {
-            int[] triangles = (int[])mesh.triangles.Clone();
-            Vector3[] vertices = (Vector3[])mesh.vertices.Clone();
-            List<Vector3> cleanVertices = new List<Vector3>();
-
-            for (int i = 0; i < triangles.Length; i++)
-            {
-                Vector3 point = vertices[triangles[i]];
-
-                if (cleanVertices.Contains(point))
-                    continue;
-                else
-                    cleanVertices.Add(point);
-            }
-
-            points = cleanVertices.ToArray();
-
-        }
-
-        public static void DrawMeshColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, MeshCollider meshCollider)
-        {
-            GetMeshVertices(meshCollider.sharedMesh, out Vector3[] vertices);
-
-            lineContainers[0].DrawContinuousLine(vertices);
+            gameObject.DrawMesh(ref triangleContainers, meshCollider.sharedMesh);            
         }
 
         public static void DrawSphereColliderBounds(this GameObject gameObject, ref List<GameObject> lineContainers, ColliderInfo colliderInfo)

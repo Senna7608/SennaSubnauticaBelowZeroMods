@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using SMLHelper.V2.Crafting;
-using BZCommon.Helpers.SMLHelpers;
-using SMLHelper.V2.Utility;
+using System.Collections;
+using BZHelper.NautilusHelpers;
+using Nautilus.Crafting;
+using Nautilus.Utility;
 
 namespace SeaTruckArmorUpgrades
 {
@@ -14,7 +15,8 @@ namespace SeaTruckArmorUpgrades
             : base(techTypeName: "SeaTruckArmorMK1",                  
                   friendlyName: "Seatruck Armor Upgrade MK1",
                   description: "Increases Seatruck hull strength by 25%.\nDoes not stack.",
-                  template: TechType.SeaTruckUpgradeHull1,               
+                  template: TechType.SeaTruckUpgradeHull1,
+                  gamerResourceFileName: null,
                   requiredAnalysis: TechType.Exosuit,
                   groupForPDA: TechGroup.VehicleUpgrades,
                   categoryForPDA: TechCategory.VehicleUpgrades,
@@ -26,14 +28,13 @@ namespace SeaTruckArmorUpgrades
                   )
         {
         }
-
         protected override void PrePatch()
         {
-            TechTypeID = TechType;
         }
 
         protected override void PostPatch()
         {
+            TechTypeID = Info.TechType;
         }
 
         protected override RecipeData GetRecipe()
@@ -49,8 +50,10 @@ namespace SeaTruckArmorUpgrades
             };
         }
 
-        protected override void ModifyGameObject()
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
         {
+            success.Set(true);
+            yield break;
         }
 
         protected override EncyData GetEncyclopediaData()
@@ -64,22 +67,19 @@ namespace SeaTruckArmorUpgrades
             {
                 TreeTypes = new List<CraftTreeType>()
                 {
-                    new CraftTreeType(CraftTree.Type.Fabricator, new string[] { "Upgrades", "SeatruckUpgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeaTruckFabricator, new string[] { "Upgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeamothUpgrades, new string[] { "SeaTruckUpgrade" } ),
-                    new CraftTreeType(CraftTree.Type.Workbench, new string[] { "SeaTruckWBUpgrades" } )
+                    new CraftTreeType(CraftTree.Type.Fabricator, new string[] { "Upgrades", "SeatruckUpgrades" } )                    
                 }
             };
         }
 
         protected override TabNode GetTabNodeData()
         {
-            return new TabNode(CraftTree.Type.Workbench, "SeaTruckWBUpgrades", "Seatruck Upgrades", SpriteManager.Get(TechType.SeaTruck));
+            return null;
         }
 
         protected override Sprite GetItemSprite()
         {
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/SeatruckArmor_MK1.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckArmorUpgrades_Main.modFolder}/Assets/SeatruckArmor_MK1.png");
         }
     }
 }

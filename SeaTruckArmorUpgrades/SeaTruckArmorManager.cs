@@ -3,14 +3,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
-using BZCommon;
+using BZHelper;
 using SEZero::SlotExtenderZero.API;
 
 namespace SeaTruckArmorUpgrades
 {
     public class SeaTruckArmorManager : MonoBehaviour
     {
-        private SeaTruckHelper helper;
+        private SeatruckHelper helper;
 
         public Dictionary<TechType, float> ArmorRatings => armorRatings;        
 
@@ -81,7 +81,7 @@ namespace SeaTruckArmorUpgrades
 
         public void WakeUp()
         {
-            BZLogger.Debug("Received SlotExtenderZero 'WakeUp' message.");
+            BZLogger.Log("Received SlotExtenderZero 'WakeUp' message.");
 
             CheckSlotsForArmorUpgrades();                      
         }

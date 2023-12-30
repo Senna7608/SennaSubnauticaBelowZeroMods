@@ -1,20 +1,33 @@
 ﻿using UnityEngine;
-using SeaTruckArms.API;
-using SeaTruckArms.API.ArmHandlers;
-using SeaTruckArms.API.Interfaces;
+using ModdedArmsHelperBZ.API;
+using ModdedArmsHelperBZ.API.Interfaces;
+using ModdedArmsHelperBZ.API.ArmHandlers;
 
 namespace SeaTruckArms.InternalArmHandlers
 {
-    internal class InternalPropulsionArmHandler : PropulsionArmHandler, ISeaTruckArmHandler
+    internal class InternalPropulsionArmHandler : PropulsionArmHandler, ISeatruckArm
     {
-        GameObject ISeaTruckArmHandler.GetGameObject()
+        public override void Start()
+        {
+        }
+
+        GameObject ISeatruckArm.GetGameObject()
         {
             return gameObject;
         }
 
-        void ISeaTruckArmHandler.SetSide(SeaTruckArm arm)
+        GameObject ISeatruckArm.GetInteractableRoot(GameObject target)
         {
-            if (arm == SeaTruckArm.Right)
+            if (propulsionCannon.ValidateObject(target))
+            {
+                return target;
+            }
+            return null;
+        }
+
+        void ISeatruckArm.SetSide(SeatruckArm arm)
+        {
+            if (arm == SeatruckArm.Right)
             {
                 transform.localScale = new Vector3(-0.8f, 0.8f, 0.8f);
                 propulsionCannon.localObjectOffset = new Vector3(0.75f, 0f, 0f);
@@ -26,27 +39,27 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        bool ISeaTruckArmHandler.OnUseDown(out float cooldownDuration)
+        bool ISeatruckArm.OnUseDown(out float cooldownDuration)
         {
             usingTool = true;
             cooldownDuration = 1f;
             return propulsionCannon.OnShoot();
         }
 
-        bool ISeaTruckArmHandler.OnUseHeld(out float cooldownDuration)
+        bool ISeatruckArm.OnUseHeld(out float cooldownDuration)
         {
             cooldownDuration = 0f;
             return false;
         }
 
-        bool ISeaTruckArmHandler.OnUseUp(out float cooldownDuration)
+        bool ISeatruckArm.OnUseUp(out float cooldownDuration)
         {
             usingTool = false;
             cooldownDuration = 0f;
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnAltDown()
+        bool ISeatruckArm.OnAltDown()
         {
             if (propulsionCannon.IsGrabbingObject())
             {
@@ -56,37 +69,47 @@ namespace SeaTruckArms.InternalArmHandlers
             return true;
         }
 
-        void ISeaTruckArmHandler.Update(ref Quaternion aimDirection)
+        void ISeatruckArm.Update(ref Quaternion aimDirection)
         {
             propulsionCannon.usingCannon = usingTool;
             propulsionCannon.UpdateActive();
         }
 
-        void ISeaTruckArmHandler.Reset()
+        void ISeatruckArm.ResetArm()
         {
             propulsionCannon.usingCannon = (usingTool = false);
             propulsionCannon.ReleaseGrabbedObject();
         }
 
-        bool ISeaTruckArmHandler.HasClaw()
+        bool ISeatruckArm.HasClaw()
         {
             return false;
         }
 
-        bool ISeaTruckArmHandler.HasDrill()
+        bool ISeatruckArm.HasDrill()
         {
             return false;
         }
 
-        void ISeaTruckArmHandler.SetRotation(SeaTruckArm arm, bool isDocked)
+        bool ISeatruckArm.HasPropCannon()
         {
-            if (isDocked)
+            return true;
+        }
+
+        float ISeatruckArm.GetEnergyCost()
+        {
+            return 0f;
+        }
+
+        void ISeatruckArm.SetRotation(SeatruckArm arm, bool isDocked)
+        {
+            if (isDocked && !seatruck.seatruckHelper.TruckDockable.isInTransition)
             {
-                BaseRoot baseRoot = TruckHelper.MainCab.GetComponentInParent<BaseRoot>();
+                BaseRoot baseRoot = seatruck.mainCab.GetComponentInParent<BaseRoot>();
 
                 if (baseRoot.isBase)
                 {
-                    if (arm == SeaTruckArm.Right)
+                    if (arm == SeatruckArm.Right)
                     {
                         transform.localRotation = Quaternion.Euler(20, 6, 0);
                     }
@@ -98,7 +121,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
             else
             {
-                if (arm == SeaTruckArm.Right)
+                if (arm == SeatruckArm.Right)
                 {
                     transform.localRotation = Quaternion.Euler(0, 0, 0);
                 }
@@ -109,9 +132,10 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        float ISeaTruckArmHandler.GetEnergyCost()
+        bool ISeatruckArm.GetCustomUseText(out string customText)
         {
-            return 0;
+            customText = string.Empty;
+            return false;
         }
     }
 }

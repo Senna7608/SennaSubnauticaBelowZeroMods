@@ -1,20 +1,36 @@
 ﻿using UnityEngine;
-using SeaTruckArms.API;
-using SeaTruckArms.API.ArmHandlers;
-using SeaTruckArms.API.Interfaces;
+using ModdedArmsHelperBZ.API;
+using ModdedArmsHelperBZ.API.Interfaces;
+using ModdedArmsHelperBZ.API.ArmHandlers;
 
 namespace SeaTruckArms.InternalArmHandlers
 {
-    internal class InternalDrillArmHandler : DrillArmHandler, ISeaTruckArmHandler
+    internal class InternalDrillArmHandler : DrillArmHandler, ISeatruckArm
     {
-        GameObject ISeaTruckArmHandler.GetGameObject()
+        public override void Start()
+        {
+        }
+
+        GameObject ISeatruckArm.GetGameObject()
         {
             return gameObject;
         }
 
-        public void SetSide(SeaTruckArm arm)
+        GameObject ISeatruckArm.GetInteractableRoot(GameObject target)
         {
-            if (arm == SeaTruckArm.Right)
+            SeatruckDrillable seatruckDrillable = target.GetComponent<SeatruckDrillable>();
+
+            if (seatruckDrillable != null)
+            {
+                return seatruckDrillable.gameObject;
+            }
+
+            return null;
+        }
+
+        void ISeatruckArm.SetSide(SeatruckArm arm)
+        {
+            if (arm == SeatruckArm.Right)
             {
                 transform.localScale = new Vector3(-0.80f, 0.80f, 0.80f);
             }
@@ -24,7 +40,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        bool ISeaTruckArmHandler.OnUseDown(out float cooldownDuration)
+        bool ISeatruckArm.OnUseDown(out float cooldownDuration)
         {
             animator.SetBool("use_tool", true);
             drilling = true;
@@ -34,14 +50,14 @@ namespace SeaTruckArms.InternalArmHandlers
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnUseHeld(out float cooldownDuration)
+        bool ISeatruckArm.OnUseHeld(out float cooldownDuration)
         {
             cooldownDuration = 0f;
             return false;
         }
 
 
-        bool ISeaTruckArmHandler.OnUseUp(out float cooldownDuration)
+        bool ISeatruckArm.OnUseUp(out float cooldownDuration)
         {
             animator.SetBool("use_tool", false);
             drilling = false;
@@ -50,14 +66,14 @@ namespace SeaTruckArms.InternalArmHandlers
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnAltDown()
+        bool ISeatruckArm.OnAltDown()
         {
             return false;
         }
 
         private bool isResetted = false;
 
-        void ISeaTruckArmHandler.Update(ref Quaternion aimDirection)
+        void ISeatruckArm.Update(ref Quaternion aimDirection)
         {
             if (!isResetted)
             {
@@ -80,7 +96,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        void ISeaTruckArmHandler.Reset()
+        void ISeatruckArm.ResetArm()
         {
             animator.SetBool("use_tool", false);
             drilling = false;
@@ -89,17 +105,13 @@ namespace SeaTruckArms.InternalArmHandlers
 
         public void OnHit()
         {
-#if DEBUG
-            if (true)
-#else
-            if (TruckHelper.IsPiloted())
-#endif
+            if (seatruck.seatruckHelper.IsPiloted())
             {
                 Vector3 pos = Vector3.zero;
                 GameObject hitObject = null;
                 drillTarget = null;
 
-                UWE.Utils.TraceFPSTargetPosition(TruckHelper.MainCab, attackDist, ref hitObject, ref pos, out Vector3 normal, true);
+                UWE.Utils.TraceFPSTargetPosition(seatruck.mainCab, attackDist, ref hitObject, ref pos, out Vector3 normal, true);
 
                 if (hitObject == null)
                 {
@@ -112,13 +124,13 @@ namespace SeaTruckArms.InternalArmHandlers
                 }
                 if (hitObject && drilling)
                 {
-                    var drillable = hitObject.FindAncestor<SeaTruckDrillable>();
+                    var drillable = hitObject.FindAncestor<SeatruckDrillable>();
 
                     loopHit.Play();
 
                     if (drillable)
                     {
-                        drillable.OnDrill(fxSpawnPoint.position, TruckHelper, out GameObject gameObject2);
+                        drillable.OnDrill(fxSpawnPoint.position, seatruck, out GameObject gameObject2);
 
                         if (!gameObject2)
                         {
@@ -186,30 +198,35 @@ namespace SeaTruckArms.InternalArmHandlers
             loopHit.Stop();
         }
 
-        bool ISeaTruckArmHandler.HasClaw()
+        bool ISeatruckArm.HasClaw()
         {
             return false;
         }
 
-        bool ISeaTruckArmHandler.HasDrill()
+        bool ISeatruckArm.HasDrill()
         {
             return true;
         }
 
-        float ISeaTruckArmHandler.GetEnergyCost()
+        bool ISeatruckArm.HasPropCannon()
+        {
+            return false;
+        }
+
+        float ISeatruckArm.GetEnergyCost()
         {
             return energyCost;
         }
 
-        void ISeaTruckArmHandler.SetRotation(SeaTruckArm arm, bool isDocked)
+        void ISeatruckArm.SetRotation(SeatruckArm arm, bool isDocked)
         {
-            if (isDocked)
+            if (isDocked && !seatruck.seatruckHelper.TruckDockable.isInTransition)
             {
-                BaseRoot baseRoot = TruckHelper.MainCab.GetComponentInParent<BaseRoot>();
+                BaseRoot baseRoot = seatruck.seatruckHelper.MainCab.GetComponentInParent<BaseRoot>();
 
                 if (baseRoot.isBase)
                 {
-                    if (arm == SeaTruckArm.Right)
+                    if (arm == SeatruckArm.Right)
                     {
                         transform.localRotation = Quaternion.Euler(20, 6, 0);
                     }
@@ -221,7 +238,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
             else
             {
-                if (arm == SeaTruckArm.Right)
+                if (arm == SeatruckArm.Right)
                 {
                     transform.localRotation = Quaternion.Euler(0, 0, 0);
                 }
@@ -230,6 +247,12 @@ namespace SeaTruckArms.InternalArmHandlers
                     transform.localRotation = Quaternion.Euler(0, 0, 0);
                 }
             }
+        }
+
+        bool ISeatruckArm.GetCustomUseText(out string customText)
+        {
+            customText = string.Empty;
+            return false;
         }
     }
 

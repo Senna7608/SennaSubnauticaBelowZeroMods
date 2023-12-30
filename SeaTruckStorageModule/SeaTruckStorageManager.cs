@@ -1,19 +1,18 @@
 ﻿extern alias SEZero;
 
 using UnityEngine;
-using BZCommon;
 using System.Collections.Generic;
-using BZCommon.Helpers;
 using SEZero::SlotExtenderZero.API;
 using System.Collections;
 using UWE;
+using BZHelper;
 
 namespace SeaTruckStorage
 {
     public class SeaTruckStorageManager : MonoBehaviour
     {
-        public SeaTruckHelper helper;
-        public ObjectHelper objectHelper = new ObjectHelper();
+        public SeatruckHelper helper;
+        //public ObjectHelper objectHelper = new ObjectHelper();
        
         public GameObject StorageRoot;
         public GameObject StorageLeft;
@@ -26,6 +25,16 @@ namespace SeaTruckStorage
                 
         private bool isGraphicsReady = false;
 
+        private Vector3 LeftBasePos = new Vector3(-1.27f, -1.41f, 1.15f);
+        private Vector3 LeftBaseRot = new Vector3(359, 273, 359);
+        private Vector3 LeftTransitPos = new Vector3(-2.70f, -0.68f, -0.36f);
+        private Vector3 LeftTransitRot = new Vector3(0f, 180f, 0f);
+
+        private Vector3 RightBasePos = new Vector3(1.27f, -1.41f, 1.15f);
+        private Vector3 RightBaseRot = new Vector3(359, 87, 1);
+        private Vector3 RightTransitPos = new Vector3(-1.80f, -0.68f, -0.36f);
+        private Vector3 RightTransitRot = new Vector3(0f, 180f, 360f);
+
         private IEnumerator LoadExosuitResourcesAsync()
         {
             IPrefabRequest request = PrefabDatabase.GetPrefabForFilenameAsync("WorldEntities/Tools/Exosuit.prefab");
@@ -34,11 +43,11 @@ namespace SeaTruckStorage
 
             if (!request.TryGetPrefab(out GameObject prefab))
             {
-                BZLogger.Debug("Cannot load Exosuit prefab!");
+                BZLogger.Error("Cannot load Exosuit prefab!");
                 yield break;
             }
 
-            BZLogger.Debug("Exosuit prefab loaded!");
+            BZLogger.Trace("Exosuit prefab loaded!");
 
             GameObject exosuitResource = UWE.Utils.InstantiateDeactivated(prefab, transform, Vector3.zero, Quaternion.identity);
 
@@ -47,22 +56,26 @@ namespace SeaTruckStorage
             exosuitResource.GetComponent<WorldForces>().enabled = false;
             UWE.Utils.ZeroTransform(exosuitResource.transform);
 
-            GameObject exoStorage = objectHelper.FindDeepChild(exosuitResource.transform, "Exosuit_01_storage");
+            GameObject exoStorage = UnityHelper.FindDeepChild(exosuitResource.transform, "Exosuit_01_storage");
 
-            objectHelper.GetPrefabClone(ref exoStorage, StorageLeft.transform, true, "model", out GameObject leftStorageModel);
+            GameObject leftStorageModel = exoStorage.GetPrefabClone(StorageLeft.transform, true, "model");
             leftStorageModel.SetActive(false);
 
-            objectHelper.GetPrefabClone(ref leftStorageModel, StorageRight.transform, true, "model", out GameObject rightStorageModel);
+            GameObject rightStorageModel = leftStorageModel.GetPrefabClone(StorageRight.transform, true, "model");
             rightStorageModel.SetActive(false);
 
             BoxCollider colliderLeft = StorageLeft.AddComponent<BoxCollider>();
             colliderLeft.enabled = false;
             colliderLeft.size = new Vector3(1.0f, 0.4f, 0.8f);
+            colliderLeft.center = new Vector3(0f, 0.27f, 0f);
+            colliderLeft.isTrigger = true;
 
             BoxCollider colliderRight = StorageRight.AddComponent<BoxCollider>();
             colliderRight.enabled = false;
             colliderRight.size = new Vector3(1.0f, 0.4f, 0.8f);
-            
+            colliderRight.center = new Vector3(0f, 0.27f, 0f);
+            colliderRight.isTrigger = true;
+
             ColorizationHelper.AddRendererToSkyApplier(gameObject, leftStorageModel, Skies.Auto);
             ColorizationHelper.AddRendererToColorCustomizer(gameObject, leftStorageModel, false, new int[] { 0 });
             
@@ -76,13 +89,15 @@ namespace SeaTruckStorage
             yield break;
         }
 
-
         private void Awake()
         {
-            StorageRoot = objectHelper.CreateGameObject("StorageRoot", transform);
-            StorageLeft = objectHelper.CreateGameObject("StorageLeft", StorageRoot.transform, new Vector3(-1.27f, -1.41f, 1.15f), new Vector3(359, 273, 359), new Vector3(0.80f, 0.86f, 0.47f));
-            StorageRight = objectHelper.CreateGameObject("StorageRight", StorageRoot.transform, new Vector3(1.27f, -1.41f, 1.15f), new Vector3(359, 87, 1), new Vector3(-0.80f, 0.86f, 0.47f));
-           
+            StorageRoot = UnityHelper.CreateGameObject("StorageRoot", transform);
+            StorageLeft = UnityHelper.CreateGameObject("StorageLeft", StorageRoot.transform, LeftBasePos, LeftBaseRot, new Vector3(0.80f, 0.86f, 0.47f), 13);
+            StorageRight = UnityHelper.CreateGameObject("StorageRight", StorageRoot.transform, RightBasePos, RightBaseRot, new Vector3(-0.80f, 0.86f, 0.47f), 13);
+            
+            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
+            helper.onDockedChanged += OnDockedChanged;
+
             StartCoroutine(LoadExosuitResourcesAsync());                                  
         }
 
@@ -97,8 +112,6 @@ namespace SeaTruckStorage
             {
                 yield return null;
             }
-            
-            helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
 
             helper.TruckEquipment.isAllowedToRemove += IsAllowedToRemove;
 
@@ -114,16 +127,36 @@ namespace SeaTruckStorage
             CheckStorageSlots();           
 
             yield break;
+        }
 
+        private void OnDockedChanged(bool isDocked, bool isInTransition)
+        {
+            if (isDocked && isInTransition)
+            {
+                StorageLeft.transform.localPosition = LeftTransitPos;
+                StorageLeft.transform.localRotation = Quaternion.Euler(LeftTransitRot);
+
+                StorageRight.transform.localPosition = RightTransitPos;
+                StorageRight.transform.localRotation = Quaternion.Euler(RightTransitRot);
+            }
+            else
+            {
+                StorageLeft.transform.localPosition = LeftBasePos;
+                StorageLeft.transform.localRotation = Quaternion.Euler(LeftBaseRot);
+
+                StorageRight.transform.localPosition = RightBasePos;
+                StorageRight.transform.localRotation = Quaternion.Euler(RightBaseRot);
+            }
         }
 
         private void OnDestroy()
         {
-            BZLogger.Debug("Removing unused handlers...");
+            BZLogger.Trace("Removing unused handlers...");
 
             helper.TruckEquipment.isAllowedToRemove -= IsAllowedToRemove;
             helper.TruckEquipment.onEquip -= OnEquip;
             helper.TruckEquipment.onUnequip -= OnUnequip;
+            helper.onDockedChanged -= OnDockedChanged;
         }
 
         private void CheckStorageSlots()

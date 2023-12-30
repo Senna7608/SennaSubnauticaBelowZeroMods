@@ -1,0 +1,18 @@
+﻿SeaTruckScannerModule:Модуль сканирования морехода
+Tooltip_SeaTruckScannerModule:Сканирует сырьё и обломки в радиусе 150 метров. Требует чип модуля сканирования морехода для работы.
+SeatruckScanner_PowerSystemLabel:Система питания модуля сканирования
+SeatruckScanner_PowerSystemInteract:Доступ к системе электроснабжения
+SeatruckScanner_CabinUnpoweredText:Status: Мореход обесточен
+SeatruckScanner_MainUnpoweredText:Status: Модуль сканирования обесточен
+SeatruckScanner_FullUnpoweredText:Status: Мореход и модуль сканирования обесточены
+SeatruckScanner_ScannerReadyText:Status: Ожидайте
+SeatruckScanner_PilotScannerModule:Управление модулем сканирования
+SeatruckScanner_PowerSwitch:Главный выключатель
+SeatruckScanner_PowerSwitchDocked:Не функционирует в док-станции
+SeaTruckScannerHUDChip:Чип интерфейса модуля сканирования морехода
+Tooltip_SeaTruckScannerHUDChip:Отображает отсканированное на индивидуальном интерфейсе дополненной реальности Альтерры
+SeaTruckScannerHUDChipUpgrade:Улучшение дальности чипа интерфейса модуля сканирования
+Tooltip_SeaTruckScannerHUDChipUpgrade:Улучшенный чип интерфейса отображает расстояние до сканируемых ресурсов
+SeaTruckScannerModuleFragment:Фрагмент модуля сканирования морехода
+Ency_SeaTruckScannerModule:Модуль сканирования морехода
+EncyDesc_SeaTruckScannerModule:Модуль сканирования морехода сканирует сырьё и обломки в радиусе 150 метров.\n\n - Этот отсек морехода имеет встроенную систему электроснабжения сканеров ближнего действия и не зависит от подключения к головному отсеку.\n Энергопотребление модуля: \n - В режиме бездействия: 0 энергии в секунду\n - В режиме сканирования местности: 1 энергия в секунду\n - По окончании сканирования: 0.1 энергия в секунду

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using SMLHelper.V2.Crafting;
 using UnityEngine;
-using BZCommon.Helpers.SMLHelpers;
-using SMLHelper.V2.Utility;
+using System.Collections;
+using BZHelper.NautilusHelpers;
+using Nautilus.Crafting;
+using Nautilus.Utility;
 
 namespace SeaTruckDepthUpgrades
 {
@@ -16,6 +17,7 @@ namespace SeaTruckDepthUpgrades
                   friendlyName: "Seatruck Depth Upgrade MK4",
                   description: "Increases Seatruck safe diving depth to 1350m.\nDoes not stack.",
                   template: TechType.SeaTruckUpgradeHull1,
+                  gamerResourceFileName: null,
                   requiredAnalysis: TechType.BaseMoonpool,
                   groupForPDA: TechGroup.VehicleUpgrades,
                   categoryForPDA: TechCategory.VehicleUpgrades,
@@ -30,11 +32,11 @@ namespace SeaTruckDepthUpgrades
 
         protected override void PrePatch()
         {
-            TechTypeID = TechType;
         }
 
         protected override void PostPatch()
         {
+            TechTypeID = Info.TechType;
         }
 
         protected override RecipeData GetRecipe()
@@ -51,8 +53,10 @@ namespace SeaTruckDepthUpgrades
             };
         }
 
-        protected override void ModifyGameObject()
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
         {
+            success.Set(true);
+            yield break;
         }
 
         protected override EncyData GetEncyclopediaData()
@@ -64,24 +68,21 @@ namespace SeaTruckDepthUpgrades
         {
             return new CrafTreeTypesData()
             {
-                TreeTypes = new List<CraftTreeType>(new CraftTreeType[4]
-                {
-                    new CraftTreeType(CraftTree.Type.Fabricator, new string[] { "Upgrades", "SeatruckUpgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeaTruckFabricator, new string[] { "Upgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeamothUpgrades, new string[] { "SeaTruckUpgrade" } ),
-                    new CraftTreeType(CraftTree.Type.Workbench, new string[] { "SeaTruckWBUpgrades" } )
-                })
+                TreeTypes = new List<CraftTreeType>()
+                {                    
+                    new CraftTreeType(CraftTree.Type.Workbench, new string[] { "ModdedWorkbench" } )
+                }
             };
         }
 
         protected override TabNode GetTabNodeData()
         {
-            return new TabNode(CraftTree.Type.Workbench, "SeaTruckWBUpgrades", "Seatruck Upgrades", SpriteManager.Get(TechType.SeaTruck));
+            return null;
         }
 
         protected override Sprite GetItemSprite()
         {
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/SeaTruckDepthUpgrade_MK4.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckDepthUpgrades_Main.modFolder}/Assets/SeaTruckDepthUpgrade_MK4.png");
         }
     }
 }

@@ -19,69 +19,75 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\CheatManagerZero\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\CheatManagerZero\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\CheatManagerZero\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\CheatManagerZero\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Trace|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\CheatManagerZero\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ButtonControl.cs" />
     <Compile Include="ButtonText.cs" />
-    <Compile Include="CheatManagerZero.cs" />
+    <Compile Include="CheatManagerZeroControl.cs" />
     <Compile Include="CMZ_InfoBar.cs" />
-    <Compile Include="CMZ_Console.cs" />
-    <Compile Include="Configuration\CmZConfigCommand.cs" />
-    <Compile Include="Configuration\CmZConfig.cs" />
-    <Compile Include="Configuration\CmZConfigUI.cs" />
+    <Compile Include="CMZ_Logger.cs" />
+    <Compile Include="Configuration\CMZ_Config.cs" />
+    <Compile Include="Configuration\CMZ_Options.cs" />
+    <Compile Include="FragmentTracker.cs" />
     <Compile Include="OverDrives\ExosuitOverDrive.cs" />
     <Compile Include="OverDrives\HoverbikeOverDrive.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="CheatManagerZero.cs" />
     <Compile Include="NewCommands\ResistColdConsoleCommand.cs" />
     <Compile Include="NewCommands\AlwaysDayConsoleCommand.cs" />
     <Compile Include="NewCommands\OverPowerConsoleCommand.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OverDrives\SeaglideOverDrive.cs" />
-    <Compile Include="OverDrives\SeamothOverDrive.cs" />
     <Compile Include="TechnologyMatrix.cs" />
     <Compile Include="WarpHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="mod.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass_publicized">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="QModInstaller">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SMLHelper">
-      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
+    <Reference Include="Nautilus">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -143,5 +149,6 @@
     </Reference>
   </ItemGroup>
   <Import Project="..\BZCommon\BZCommon.projitems" Label="Shared" />
+  <Import Project="..\BZHelper\BZHelper.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

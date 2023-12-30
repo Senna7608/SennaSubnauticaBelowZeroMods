@@ -1,10 +1,7 @@
-﻿using BZCommon;
-using System;
+﻿extern alias SEZero;
+using BZCommon;
+using SEZero::SlotExtenderZero.API;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SeaTruckFlyModule
@@ -15,8 +12,8 @@ namespace SeaTruckFlyModule
         {
             //isEnabled = true;
             //enabled = true;
-
-            yield return StartCoroutine(OnTakeOff());
+            StartCoroutine(OnTakeOff());
+            //yield return StartCoroutine(OnTakeOff());
 
             /*
             while (SeatruckState != TruckState.Flying)
@@ -25,7 +22,12 @@ namespace SeaTruckFlyModule
             }
             */
 
-            SeatruckState = TruckState.AutoFly;
+            while (telemetry.SeatruckState == TruckState.TakeOff)
+            {
+                yield return null;
+            }
+
+            telemetry.ForceStateChange(TruckState.AutoFly);
             
             Vector3 playerDirection = Player.main.transform.position - mainCab.transform.position;            
             
@@ -33,9 +35,13 @@ namespace SeaTruckFlyModule
             
             BZLogger.Debug("[SeatruckCallBack] Rotating Seatruck towards to player direction");
 
-            while (mainCab.transform.forward != playerDirection.normalized)
+            bool rotateComplete = false;
+
+            while (!rotateComplete)
             {
-                mainCab.transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(mainCab.transform.forward, playerDirection, Time.deltaTime, 0.0f));                
+                mainCab.transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(mainCab.transform.forward, playerDirection, Time.deltaTime, 0.0f));
+
+                rotateComplete = mainCab.transform.forward == playerDirection.normalized;
 
                 yield return null;
             }
@@ -46,7 +52,7 @@ namespace SeaTruckFlyModule
             {
                 mainCab.transform.Translate(Vector3.forward * 8 * Time.deltaTime, Space.Self);
 
-                if (Physics.Raycast(altitudeMeter.transform.position, altitudeMeter.transform.TransformDirection(Vector3.forward), out RaycastHit raycastForward, 30f, -1, QueryTriggerInteraction.Ignore))
+                if (Physics.Raycast(telemetry.altitudeMeter.transform.position, telemetry.altitudeMeter.transform.TransformDirection(Vector3.forward), out RaycastHit raycastForward, 30f, -1, QueryTriggerInteraction.Ignore))
                 {
                     GameObject gameObject = raycastForward.collider.gameObject;
 
@@ -70,7 +76,7 @@ namespace SeaTruckFlyModule
             }
             */
 
-            StartCoroutine(OnLanding(new Vector3(0, distanceFromSurface * -1, 0)));
+            StartCoroutine(OnLanding(new Vector3(0, telemetry.distanceFromSurface * -1, 0)));
 
             yield break;
         }

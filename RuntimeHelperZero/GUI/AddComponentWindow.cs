@@ -48,26 +48,17 @@ namespace RuntimeHelperZero
 
                 Component addedComponent = selectedObject.AddComponent(AvailableComponents[x]);
 
-
-
                 OutputWindow_Log(MESSAGE_TEXT[MESSAGES.COMPONENT_ADDED], GetComponentShortType(addedComponent), selectedObject.name);
 
                 showAddComponentWindow = false;
 
                 UpdateVisuals();
 
-                try
+                if (addedComponent.GetType() == typeof(Collider))
                 {
-                    selectedObject.GetComponentInChildren<DrawColliderControl>().Rescan();
-                }
-                catch
-                {
-                    GameObject containerObjectBase = selectedObject.GetVisualBase(BaseType.Object);
-                    GameObject colliderContainerBase = containerObjectBase.GetOrAddVisualBase(BaseType.Collider);
-                    colliderContainerBase.AddComponent<DrawColliderControl>();
-                }
+                    selectedObject.GetComponentInChildren<DrawColliderBounds>().DrawCollider(addedComponent.GetInstanceID());
+                }               
             }
-
         }
 
         public static readonly List<Type> AvailableComponents = new List<Type>()

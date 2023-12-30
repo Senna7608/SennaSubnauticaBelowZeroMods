@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using BZCommon.ConfigurationParser;
-using BZCommon;
-using BZCommon.Helpers;
+using BZHelper.ConfigurationParser;
+using BZHelper;
+using SlotExtenderZero.API;
 
 namespace SlotExtenderZero.Configuration
 {
@@ -18,7 +18,8 @@ namespace SlotExtenderZero.Configuration
         private static readonly string modFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private static readonly string FILENAME = $"{modFolder}/config.txt";
 
-        public static Dictionary<string, string> Hotkeys_Config;
+        public static Dictionary<string, string> Section_Hotkeys;
+        public static Dictionary<string, string> Section_Settings;
         public static Dictionary<SlotConfigID, string> SLOTKEYBINDINGS = new Dictionary<SlotConfigID, string>();
         public static Dictionary<string, KeyCode> KEYBINDINGS;
 
@@ -28,11 +29,11 @@ namespace SlotExtenderZero.Configuration
         public static int EXTRASLOTS;
         public static Color TEXTCOLOR;
         public static int STORAGE_SLOTS_OFFSET = 4;
-        public static SlotLayout SLOT_LAYOUT = SlotLayout.Grid;
+        public static SlotLayout SLOT_LAYOUT = SlotLayout.Circle;
         public static bool isSeatruckArmsExists = false;
         public static bool isSeatruckScannerModuleExists = false;
 
-        private static readonly string[] SECTION_HOTKEYS =
+        private static readonly string[] SECTIONKEYS_HOTKEYS =
         {
             "Upgrade",
             "Storage",
@@ -47,7 +48,7 @@ namespace SlotExtenderZero.Configuration
             SlotConfigID.SeaTruckArmRight.ToString()
         };
 
-        private static readonly string[] SECTION_SETTINGS =
+        private static readonly string[] SECTIONKEYS_SETTINGS =
         {
             "MaxSlots",
             "TextColor",
@@ -56,25 +57,25 @@ namespace SlotExtenderZero.Configuration
 
         private static readonly List<ConfigData> DEFAULT_CONFIG = new List<ConfigData>
         {
-            new ConfigData("Settings", SECTION_SETTINGS[0], 12.ToString()),
-            new ConfigData("Settings", SECTION_SETTINGS[1], COLORS.Green.ToString()),
-            new ConfigData("Settings", SECTION_SETTINGS[2], SlotLayout.Circle.ToString()),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[0], InputHelper.KeyCodeToString(KeyCode.T)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[1], InputHelper.KeyCodeToString(KeyCode.R)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[2], InputHelper.KeyCodeToString(KeyCode.Alpha6)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[3], InputHelper.KeyCodeToString(KeyCode.Alpha7)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[4], InputHelper.KeyCodeToString(KeyCode.Alpha8)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[5], InputHelper.KeyCodeToString(KeyCode.Alpha9)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[6], InputHelper.KeyCodeToString(KeyCode.Alpha0)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[7], InputHelper.KeyCodeToString(KeyCode.Slash)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[8], InputHelper.KeyCodeToString(KeyCode.Equals)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[9], InputHelper.KeyCodeToString(KeyCode.O)),
-            new ConfigData("Hotkeys", SECTION_HOTKEYS[10],InputHelper.KeyCodeToString(KeyCode.P))
+            new ConfigData("Settings", SECTIONKEYS_SETTINGS[0], 12.ToString()),
+            new ConfigData("Settings", SECTIONKEYS_SETTINGS[1], COLORS.Green.ToString()),
+            new ConfigData("Settings", SECTIONKEYS_SETTINGS[2], SlotLayout.Circle.ToString()),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[0], InputHelper.GetKeyCodeAsInputName(KeyCode.T)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[1], InputHelper.GetKeyCodeAsInputName(KeyCode.R)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[2], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha6)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[3], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha7)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[4], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha8)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[5], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha9)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[6], InputHelper.GetKeyCodeAsInputName(KeyCode.Alpha0)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[7], InputHelper.GetKeyCodeAsInputName(KeyCode.Slash)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[8], InputHelper.GetKeyCodeAsInputName(KeyCode.Equals)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[9], InputHelper.GetKeyCodeAsInputName(KeyCode.O)),
+            new ConfigData("Hotkeys", SECTIONKEYS_HOTKEYS[10],InputHelper.GetKeyCodeAsInputName(KeyCode.P))
         };
 
         internal static void SLOTKEYBINDINGS_Update()
         {
-            BZLogger.Debug("Method call: SEzConfig.SLOTKEYBINDINGS_Update()");
+            BZLogger.Trace("SEzConfig.SLOTKEYBINDINGS_Update()");
 
             SLOTKEYBINDINGS.Clear();
             SLOTKEYSLIST.Clear();
@@ -84,15 +85,15 @@ namespace SlotExtenderZero.Configuration
             SLOTKEYBINDINGS.Add(SlotConfigID.Slot_3, GameInput.GetBindingName(GameInput.Button.Slot3, GameInput.BindingSet.Primary));
             SLOTKEYBINDINGS.Add(SlotConfigID.Slot_4, GameInput.GetBindingName(GameInput.Button.Slot4, GameInput.BindingSet.Primary));
             SLOTKEYBINDINGS.Add(SlotConfigID.Slot_5, GameInput.GetBindingName(GameInput.Button.Slot5, GameInput.BindingSet.Primary));
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_6, Hotkeys_Config[SlotConfigID.Slot_6.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_7, Hotkeys_Config[SlotConfigID.Slot_7.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_8, Hotkeys_Config[SlotConfigID.Slot_8.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_9, Hotkeys_Config[SlotConfigID.Slot_9.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_10, Hotkeys_Config[SlotConfigID.Slot_10.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_11, Hotkeys_Config[SlotConfigID.Slot_11.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_12, Hotkeys_Config[SlotConfigID.Slot_12.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.SeaTruckArmLeft, Hotkeys_Config[SlotConfigID.SeaTruckArmLeft.ToString()]);
-            SLOTKEYBINDINGS.Add(SlotConfigID.SeaTruckArmRight, Hotkeys_Config[SlotConfigID.SeaTruckArmRight.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_6, Section_Hotkeys[SlotConfigID.Slot_6.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_7, Section_Hotkeys[SlotConfigID.Slot_7.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_8, Section_Hotkeys[SlotConfigID.Slot_8.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_9, Section_Hotkeys[SlotConfigID.Slot_9.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_10, Section_Hotkeys[SlotConfigID.Slot_10.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_11, Section_Hotkeys[SlotConfigID.Slot_11.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.Slot_12, Section_Hotkeys[SlotConfigID.Slot_12.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.SeaTruckArmLeft, Section_Hotkeys[SlotConfigID.SeaTruckArmLeft.ToString()]);
+            SLOTKEYBINDINGS.Add(SlotConfigID.SeaTruckArmRight, Section_Hotkeys[SlotConfigID.SeaTruckArmRight.ToString()]);
 
             foreach (KeyValuePair<SlotConfigID, string> kvp in SLOTKEYBINDINGS)
             {
@@ -101,33 +102,29 @@ namespace SlotExtenderZero.Configuration
 
         }
 
-        internal static void Config_Load()
+        internal static void Load()
         {
-            BZLogger.Debug("Method call: SEzConfig.Config_Load()");
+            BZLogger.Trace("SEzConfig.Load()");
 
             PROGRAM_VERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
 
-            if (!Config_Check())
+            if (!Check())
             {
-                Config_CreateDefault();
+                CreateDefault();
             }
 
             try
             {
-                Hotkeys_Config = ParserHelper.GetAllKeyValuesFromSection(FILENAME, "Hotkeys", SECTION_HOTKEYS);
+                Section_Settings = ParserHelper.GetAllKeyValuesFromSection(FILENAME, "Settings", SECTIONKEYS_SETTINGS);
+                Section_Hotkeys = ParserHelper.GetAllKeyValuesFromSection(FILENAME, "Hotkeys", SECTIONKEYS_HOTKEYS);
 
-                int.TryParse(ParserHelper.GetKeyValue(FILENAME, "Settings", SECTION_SETTINGS[0]), out int result);
-                MAXSLOTS = result < 5 || result > 12 ? 12 : result;
+                int.TryParse(Section_Settings["MaxSlots"], out int maxslots);
+                MAXSLOTS = maxslots < 5 || maxslots > 12 ? 12 : maxslots;
+                EXTRASLOTS = SEzConfig.MAXSLOTS - 4;
 
-                EXTRASLOTS = MAXSLOTS - 4;
+                TEXTCOLOR = ColorHelper.GetColor(Section_Settings["TextColor"]);
 
-                TEXTCOLOR = ColorHelper.GetColor(ParserHelper.GetKeyValue(FILENAME, "Settings", SECTION_SETTINGS[1]));
-
-                SLOT_LAYOUT = ParserHelper.GetKeyValue(FILENAME, "Settings", SECTION_SETTINGS[2]) == "Circle" ? SlotLayout.Circle : SlotLayout.Grid;
-
-                isSeatruckArmsExists = BZCommon.ReflectionHelper.IsNamespaceExists("SeaTruckArms");
-
-                isSeatruckScannerModuleExists = BZCommon.ReflectionHelper.IsNamespaceExists("SeaTruckScannerModule");
+                SLOT_LAYOUT = Section_Settings["SlotLayout"] == "Circle" ? SlotLayout.Circle : SlotLayout.Grid;
 
                 BZLogger.Log("Configuration loaded.");
             }
@@ -137,9 +134,9 @@ namespace SlotExtenderZero.Configuration
             }
         }
 
-        internal static void Config_CreateDefault()
+        internal static void CreateDefault()
         {
-            BZLogger.Debug("Method call: SEzConfig.Config_CreateDefault()");
+            BZLogger.Trace("SEzConfig.CreateDefault()");
 
             BZLogger.Warn("Configuration file is missing or wrong version. Trying to create a new one.");
 
@@ -159,46 +156,43 @@ namespace SlotExtenderZero.Configuration
             }
         }
 
-        internal static void Config_Init()
+        internal static void Init()
         {
-            BZLogger.Debug("Method call: SEzConfig.Config_Init()");
+            BZLogger.Trace("SEzConfig.Init()");
 
             SLOTKEYBINDINGS_Update();
 
-            KEYBINDINGS_Set();
+            SetKeyBindings();
 
-            SLOTKEYBINDINGS_SyncToAll();
+            SyncKeyBindings();
 
             BZLogger.Log("Configuration initialized.");
         }
 
-        internal static void Config_Write()
+        internal static void Save()
         {
-            BZLogger.Debug("Method call: SEzConfig.WriteConfig()");
-
-            ParserHelper.SetAllKeyValuesInSection(FILENAME, "Hotkeys", Hotkeys_Config);
-            ParserHelper.SetKeyValue(FILENAME, "Settings", SECTION_SETTINGS[0], MAXSLOTS.ToString());
-            ParserHelper.SetKeyValue(FILENAME, "Settings", SECTION_SETTINGS[1], ColorHelper.GetColorName(TEXTCOLOR));
-            ParserHelper.SetKeyValue(FILENAME, "Settings", SECTION_SETTINGS[2], SLOT_LAYOUT.ToString());
-
+            BZLogger.Trace("SEzConfig.Save()");
+            ParserHelper.SetAllKeyValuesInSection(FILENAME, "Hotkeys", Section_Hotkeys);
+            ParserHelper.SetAllKeyValuesInSection(FILENAME, "Settings", Section_Settings);
+            
             BZLogger.Log("Configuration saved.");
         }
 
-        internal static void KEYBINDINGS_ToConfig()
+        internal static void SetKeyBindingsToConfig()
         {
-            BZLogger.Debug("Method call: SEConfig.KEYBINDINGS_ToConfig()");
+            BZLogger.Trace("SEConfig.SetKeyBindingsToConfig()");
 
-            foreach (string key in SECTION_HOTKEYS)
+            foreach (string key in SECTIONKEYS_HOTKEYS)
             {
-                Hotkeys_Config[key] = InputHelper.KeyCodeToString(KEYBINDINGS[key]);
+                Section_Hotkeys[key] = InputHelper.GetKeyCodeAsInputName(KEYBINDINGS[key]);
             }
 
-            Config_Write();
+            Save();
         }
 
-        internal static void SLOTKEYBINDINGS_SyncToAll()
+        internal static void SyncKeyBindings()
         {
-            BZLogger.Debug("Method call: SEConfig.SLOTKEYBINDINGS_SyncToAll()");
+            BZLogger.Trace("SEConfig.SyncKeyBindings()");
 
             foreach (KeyValuePair<SlotConfigID, string> kvp in SLOTKEYBINDINGS)
             {
@@ -206,29 +200,29 @@ namespace SlotExtenderZero.Configuration
 
                 string key = kvp.Key.ToString();
 
-                if (Hotkeys_Config.ContainsKey(key))
-                    Hotkeys_Config[key] = kvp.Value;
+                if (Section_Hotkeys.ContainsKey(key))
+                    Section_Hotkeys[key] = kvp.Value;
 
-                KEYBINDINGS[key] = InputHelper.StringToKeyCode(kvp.Value);
+                KEYBINDINGS[key] = InputHelper.GetInputNameAsKeyCode(kvp.Value);
             }
 
-            Config_Write();
+            Save();
         }
 
 
-        internal static void KEYBINDINGS_Set()
+        internal static void SetKeyBindings()
         {
-            BZLogger.Debug("Method call: SEConfig.KEYBINDINGS_Set()");
+            BZLogger.Trace("SEConfig.SetKeyBindings()");
 
             KEYBINDINGS = new Dictionary<string, KeyCode>();
 
             bool sync = false;
 
-            foreach (KeyValuePair<string, string> kvp in Hotkeys_Config)
+            foreach (KeyValuePair<string, string> kvp in Section_Hotkeys)
             {
                 try
                 {
-                    KEYBINDINGS.Add(kvp.Key, InputHelper.StringToKeyCode(kvp.Value));
+                    KEYBINDINGS.Add(kvp.Key, InputHelper.GetInputNameAsKeyCode(kvp.Value));
                 }
                 catch (ArgumentException)
                 {
@@ -238,7 +232,7 @@ namespace SlotExtenderZero.Configuration
                     {
                         if (DEFAULT_CONFIG[i].Key.Equals(kvp.Key))
                         {
-                            KEYBINDINGS.Add(kvp.Key, InputHelper.StringToKeyCode(DEFAULT_CONFIG[i].Value));
+                            KEYBINDINGS.Add(kvp.Key, InputHelper.GetInputNameAsKeyCode(DEFAULT_CONFIG[i].Value));
                             sync = true;
                         }
                     }
@@ -247,13 +241,13 @@ namespace SlotExtenderZero.Configuration
 
             if (sync)
             {
-                KEYBINDINGS_ToConfig();
+                SetKeyBindingsToConfig();
             }
         }
 
-        private static bool Config_Check()
+        private static bool Check()
         {
-            BZLogger.Debug("Method call: SEzConfig.Config_Check()");
+            BZLogger.Trace("SEzConfig.Check()");
 
             if (!File.Exists(FILENAME))
             {
@@ -269,13 +263,13 @@ namespace SlotExtenderZero.Configuration
                 return false;
             }
 
-            if (!ParserHelper.IsSectionKeysExists(FILENAME, "Hotkeys", SECTION_HOTKEYS))
+            if (!ParserHelper.CheckSectionKeys(FILENAME, "Hotkeys", SECTIONKEYS_HOTKEYS))
             {
                 BZLogger.Error("Configuration file [Hotkeys] section error!");
                 return false;
             }
 
-            if (!ParserHelper.IsSectionKeysExists(FILENAME, "Settings", SECTION_SETTINGS))
+            if (!ParserHelper.CheckSectionKeys(FILENAME, "Settings", SECTIONKEYS_SETTINGS))
             {
                 BZLogger.Error("Configuration file [Settings] section error!");
                 return false;

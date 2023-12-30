@@ -1,7 +1,7 @@
-﻿using BZCommon;
+﻿using BZHelper;
 using UnityEngine;
 
-namespace FreezeCannon
+namespace FreezeCannonTool
 {
     [RequireComponent(typeof(EnergyMixin))]
     public class FreezeCannonWeapon : PlayerTool, IEquippable
@@ -10,8 +10,7 @@ namespace FreezeCannon
         {
             get
             {
-                //return "propulsioncannon";
-                return "lasercutter";
+                return "propulsioncannon";               
             }
         }        
 
@@ -23,20 +22,9 @@ namespace FreezeCannon
 
         private string cachedCustomUseText = string.Empty;
 
-        
-        /*
-        private void Start()
-        {            
-            rightHandIKTarget = transform;
-            leftHandIKTarget = transform.Find("leftHandTarget");
-
-            SetHandIKTargetsEnabled(true);
-        }
-        */
-
         public override string GetCustomUseText()
         {
-            bool flag = freezeCannon.IsTargetingObject();
+            bool flag = freezeCannon.IsLockedObject();
             bool flag2 = freezeCannon.HasChargeForShot();
 
             if (usingPlayer == null || usingPlayer.IsInSub() || (!flag && !flag2))
@@ -57,12 +45,12 @@ namespace FreezeCannon
                 if (freezeCannon.CanFreeze)
                 {                                        
                     text = $"{Language.main.Get("FreezeCannon_Lock")} ({uGUI.FormatButton(GameInput.Button.RightHand, false, " / ", false)})";
-                    text2 = string.Empty;
+                    text2 = freezeCannon.TargetTech;
                 }
                 else
                 {
                     text = Language.main.Get("FreezeCannon_Targeting");
-                    text2 = string.Empty;
+                    text2 = freezeCannon.TargetTech;
                 }
             }            
 
@@ -84,7 +72,7 @@ namespace FreezeCannon
         public override void OnHolster()
         {
             base.OnHolster();
-            freezeCannon.ReleaseTargetObject();
+            freezeCannon.ReleaseLockedObject();
         }
 
         public override void OnToolBleederHitAnim(GUIHand guiHand)
@@ -96,7 +84,7 @@ namespace FreezeCannon
                 if (bleeder != null)
                 {
                     bleeder.attachAndSuck.SetDetached();
-                    freezeCannon.ReleaseTargetObject();                    
+                    freezeCannon.ReleaseLockedObject();                    
                 }
             }
         }
@@ -110,7 +98,7 @@ namespace FreezeCannon
         {
             if (usingPlayer != null && !usingPlayer.IsInSub())
             {
-                freezeCannon.ReleaseTargetObject();
+                freezeCannon.ReleaseLockedObject();
                 return true;
             }
 
@@ -124,9 +112,9 @@ namespace FreezeCannon
                 return false;
             }
 
-            if (freezeCannon.IsTargetingObject())
+            if (freezeCannon.IsLockedObject())
             {
-                freezeCannon.ReleaseTargetObject();
+                freezeCannon.ReleaseLockedObject();
             }
 
             return true;
@@ -147,7 +135,7 @@ namespace FreezeCannon
             base.OnToolReloadBeginAnim(guiHand);            
         }
 
-        protected override void OnFirstUseAnimationStop()
+        public override void OnFirstUseAnimationStop()
         {
             
         }
@@ -170,7 +158,7 @@ namespace FreezeCannon
 
                 freezeCannon.UpdateActive();
 
-                SafeAnimator.SetBool(Player.main.armsController.GetComponent<Animator>(), "cangrab_propulsioncannon", freezeCannon.CanFreeze || freezeCannon.TargetObject != null);
+                SafeAnimator.SetBool(Player.main.armsController.GetComponent<Animator>(), "cangrab_propulsioncannon", freezeCannon.CanFreeze || freezeCannon.LockedCreature != null);
             }
         }                
     }

@@ -1,34 +1,31 @@
-﻿using System.Collections.Generic;
-using SMLHelper.V2.Crafting;
-using BZCommon.Helpers.SMLHelpers;
-using SeaTruckArms.API;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using SeaTruckArms.ArmHandlerRequesters;
+using ModdedArmsHelperBZ.API;
+using Nautilus.Crafting;
+using BZHelper.NautilusHelpers;
 
 namespace SeaTruckArms.ArmPrefabs
 {
-    internal class SeaTruckPropulsionArm_Prefab : CraftableSeaTruckArm
+    internal class SeatruckPropulsionArm_Prefab : CraftableModdedArm
     {
-        public static TechType TechTypeID { get; private set; }
-
-        internal SeaTruckPropulsionArm_Prefab(SeaTruckArmFragment fragment)
+        internal SeatruckPropulsionArm_Prefab(SpawnableArmFragment fragment)
             : base(
-                  techTypeName: "SeaTruckPropulsionArmModule",
+                  techTypeName: "SeaTruckPropulsionArm",
                   friendlyName: "SeaTruck propulsion arm",
-                  description: "Allows SeaTruck to use propulsion arm.",                  
+                  description: "Allows SeaTruck to use propulsion arm.",
+                  armType: ArmType.SeatruckArm,
                   armTemplate: ArmTemplate.PropulsionArm,
-                  requiredForUnlock: TechType.None,
+                  requiredForUnlock: TechType.ExosuitPropulsionArmModule,
                   fragment: fragment
                   )
         {
         }
 
-        protected override void PrePatch()
+        protected override RegisterArmRequest RegisterArm()
         {
-            TechTypeID = TechType;
-        }
-
-        protected override void PostPatch()
-        {
+            return new RegisterArmRequest(this, new PropulsionArmModdingRequest());
         }
 
         protected override RecipeData GetRecipe()
@@ -51,8 +48,14 @@ namespace SeaTruckArms.ArmPrefabs
             return null;
         }
 
-        protected override void PostModify()
+        protected override void SetCustomLanguageText()
         {
+        }
+
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
+        {
+            success.Set(true);
+            yield break;
         }
 
         protected override Sprite GetItemSprite()

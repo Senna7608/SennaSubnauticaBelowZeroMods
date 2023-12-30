@@ -2,8 +2,8 @@
 using System.Reflection;
 using UnityEngine;
 using HarmonyLib;
-using BZCommon;
 using QuickSlotExtenderZero.Configuration;
+using BZHelper;
 
 namespace QuickSlotExtenderZero.Patches
 {
@@ -65,7 +65,7 @@ namespace QuickSlotExtenderZero.Patches
         internal static void Prefix(DevConsole __instance, bool value)
         {          
             if (Main.Instance != null)
-            {                
+            {
                 Main.Instance.onConsoleInputFieldActive.Update(value);                
             }           
         }

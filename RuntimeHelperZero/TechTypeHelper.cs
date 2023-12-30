@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using BZCommon;
 using BZCommon.Helpers;
 
 namespace RuntimeHelperZero
@@ -149,10 +147,7 @@ namespace RuntimeHelperZero
             TechType.ReefbackTissue,           
             TechType.ReinforcedDiveSuitBlueprint,
             TechType.ReinforceHullBlueprint,            
-            TechType.RocketBaseLadder,
-            TechType.RocketStage1,
-            TechType.RocketStage2,
-            TechType.RocketStage3,
+            TechType.RocketBaseLadder,           
             TechType.Rockgrub,
             TechType.RockPuncher,            
             TechType.ScannerRoomBlueprint,            

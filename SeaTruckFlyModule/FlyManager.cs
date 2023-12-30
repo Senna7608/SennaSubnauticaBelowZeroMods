@@ -1,40 +1,16 @@
 ﻿extern alias SEZero;
-
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UWE;
-using BZCommon;
 using BZCommon.Helpers;
-using System;
 using SEZero::SlotExtenderZero.API;
 
 namespace SeaTruckFlyModule
 {
     public partial class FlyManager : MonoBehaviour
     {
-        enum TruckState
-        {
-            None,
-            Diving,
-            TakeOff,
-            Flying,
-            AutoFly,
-            Landing,
-            Landed            
-        };
-
-        enum TruckPosition
-        {
-            None,
-            BelowWater,
-            AboveWater,
-            AboveSurface,
-            NearSurface,
-            OnSurface
-        };
-        
         public SeaTruckHelper helper = null;
+        public SeaTruckTelemetry telemetry = null;
 
         private ObjectHelper objectHelper = new ObjectHelper();
 
@@ -42,9 +18,7 @@ namespace SeaTruckFlyModule
 
         public bool isEnabled = false;
 
-        private bool isFirstCheckComplete = false;
-        
-        private bool isGraphicsComplete = false;
+        private bool isFirstCheckComplete = false;        
 
         public Utils.MonitoredValue<bool> isFlying = new Utils.MonitoredValue<bool>();        
 
@@ -52,54 +26,16 @@ namespace SeaTruckFlyModule
 
         private FMODAsset engine;
 
-        private FMODAsset engineDefault;              
+        private FMODAsset engineDefault;
 
-        public float distanceFromSurface, FLeftDist, FRightDist;
-
-        public float altitude;
-
-        public static readonly Vector3 LeftDown = new Vector3(-1f, -1f, 0f);
-        public static readonly Vector3 RightDown = new Vector3(1f, -1f, 0f);
-
-        private TruckState _seatruckState = TruckState.None;
-        private TruckState SeatruckState
+        private void OnSeatruckStateChanged(TruckState newState)
         {
-            get
+            if (!isEnabled)
             {
-                return _seatruckState;
-            }
-            set
-            {
-                if (_seatruckState != value)
-                {
-                    _seatruckState = value;
+                return;
 
-                    OnSeatruckStateChanged();
-                }
             }
-        }
-
-        private TruckPosition _seatruckPosition = TruckPosition.None;
-        private TruckPosition SeatruckPosition
-        {
-            get
-            {
-                return _seatruckPosition;
-            }
-            set
-            {
-                if (_seatruckPosition != value)
-                {
-                    _seatruckPosition = value;
-
-                    OnSeatruckPositionChanged();                    
-                }               
-            }
-        }
-
-        private void OnSeatruckStateChanged()
-        {
-            switch (SeatruckState)
+            switch (newState)
             {
                 case TruckState.Flying:
                     helper.TruckWorldForces.aboveWaterGravity = 0f;
@@ -113,9 +49,14 @@ namespace SeaTruckFlyModule
 #endif
         }
 
-        private void OnSeatruckPositionChanged()
+        private void OnSeatruckPositionChanged(TruckPosition newPosition)
         {
-            switch (SeatruckPosition)
+            if (!isEnabled)
+            {
+                return;
+            }
+
+            switch (newPosition)
             {
                 case TruckPosition.AboveWater:
                 case TruckPosition.AboveSurface:
@@ -136,6 +77,7 @@ namespace SeaTruckFlyModule
             UpdateSeatruckPosition();
 #endif
         }        
+        
 
         private GameObject mainCab;
 
@@ -151,9 +93,9 @@ namespace SeaTruckFlyModule
         Vector3 jumpDown = new Vector3(0, -10, 0);
 
         public void Awake()
-        {
-            //helper = new SeaTruckHelper(gameObject, false, false, false);
+        {            
             helper = SeatruckServices.Main.GetSeaTruckHelper(gameObject);
+            telemetry = SeatruckServices.Main.GetSeaTruckTelemetry(gameObject);
 
             mainCab = helper.MainCab;
             motor = helper.TruckMotor;
@@ -178,6 +120,9 @@ namespace SeaTruckFlyModule
 
             //helper.onPilotingBegin += OnPilotingBegin;
 
+            telemetry.onSeatruckStateChanged += OnSeatruckStateChanged;
+            telemetry.onSeatruckPositionChanged += OnSeatruckPositionChanged;
+
 #if DEBUG
             CoroutineHost.StartCoroutine(InitDebugHUD());
 #endif
@@ -193,13 +138,15 @@ namespace SeaTruckFlyModule
                 rigidbody.isKinematic = true;
             }
         }
-        
+        */
 
         private void OnDestroy()
         {
-            helper.onPilotingBegin -= OnPilotingBegin;
+            //helper.onPilotingBegin -= OnPilotingBegin;
+            telemetry.onSeatruckStateChanged -= OnSeatruckStateChanged;
+            telemetry.onSeatruckPositionChanged -= OnSeatruckPositionChanged;
         }
-        */
+       
 
         private void OnFlyModeChanged(Utils.MonitoredValue<bool> newValue)
         {            
@@ -220,7 +167,7 @@ namespace SeaTruckFlyModule
                 engineSound.Stop();
                 engineSound.asset = engineDefault;
                                 
-                if (SeatruckPosition == TruckPosition.BelowWater)
+                if (telemetry.SeatruckPosition == TruckPosition.BelowWater)
                 {
                     SetLandingFoots(false);
                     SetHandTargets(true);
@@ -248,7 +195,7 @@ namespace SeaTruckFlyModule
 
         private void SetExitPosition()
         {
-            if (SeatruckState == TruckState.Landed && SeatruckPosition == TruckPosition.OnSurface)
+            if (telemetry.SeatruckState == TruckState.Landed && telemetry.SeatruckPosition == TruckPosition.OnSurface)
             {
                 if (!helper.IsSeatruckChained())
                 {
@@ -265,7 +212,10 @@ namespace SeaTruckFlyModule
             }
         }
 
-        
+        public void WakeUp()
+        {
+            CheckSlotsForFlyModule();
+        }
         
         
 
@@ -294,10 +244,12 @@ namespace SeaTruckFlyModule
                     {
                         if (rigidbody.velocity == Vector3.zero)
                         {
-                            if (SeatruckState != TruckState.Landed)
+                            if (telemetry.SeatruckState != TruckState.Landed)
                             {
-                                SeatruckState = TruckState.Landed;
-                                SeatruckPosition = TruckPosition.OnSurface;
+                                telemetry.ForceStateChange(TruckState.Landed);
+                                telemetry.ForcePositionChange(TruckPosition.OnSurface);
+                                //telemetry.SeatruckState = TruckState.Landed;
+                                //telemetry.SeatruckPosition = TruckPosition.OnSurface;
                                 rigidbody.isKinematic = true;
 
                                 SetLandingFoots(true);
@@ -314,6 +266,7 @@ namespace SeaTruckFlyModule
                 else
                 {                                        
                     isEnabled = false;
+                    rigidbody.isKinematic = false;
                     helper.TruckWorldForces.aboveWaterGravity = 9.81f;
                 }
             }
@@ -338,7 +291,7 @@ namespace SeaTruckFlyModule
             if (helper == null || motor == null/* || !helper.IsPiloted()*/)
                 return;
             
-            if (!helper.IsPiloted() && SeatruckPosition == TruckPosition.OnSurface && SeatruckState == TruckState.Landed && !rigidbody.isKinematic)
+            if (!helper.IsPiloted() && telemetry.SeatruckPosition == TruckPosition.OnSurface && telemetry.SeatruckState == TruckState.Landed && !rigidbody.isKinematic)
             {
                 rigidbody.isKinematic = true;                
             }
@@ -348,94 +301,15 @@ namespace SeaTruckFlyModule
                 StartCoroutine(SeatruckCallBack());
             }
             
-            if (!helper.IsPiloted() && SeatruckState == TruckState.Landed)
-                return;            
+            if (!helper.IsPiloted() && telemetry.SeatruckState == TruckState.Landed)
+                return;
 
-            altitude = helper.MainCab.transform.position.y;
-                        
-            altitudeMeter.transform.localRotation = Quaternion.AngleAxis(360 - mainCab.transform.eulerAngles.x, Vector3.right);
-
-            if (Physics.Raycast(altitudeMeter.transform.position, altitudeMeter.transform.TransformDirection(Vector3.down), out RaycastHit raycastDown, 100f, -1, QueryTriggerInteraction.Ignore))
+            if (telemetry.altitude > 0)
             {
-                GameObject gameObject = raycastDown.collider.gameObject;
-
-                if (gameObject != null && gameObject.GetComponent<LiveMixin>() == null)
-                {
-                    distanceFromSurface = (altitude - raycastDown.point.y) - 3;                    
-                }
-                else
-                {
-                    distanceFromSurface = altitude;
-                }                
-            }
-            else
-            {
-                distanceFromSurface = altitude;
+                hudTextAltitude.text = $"{(int)telemetry.altitude}";                
             }
 
-            if (Physics.Raycast(altitudeMeter.transform.position, altitudeMeter.transform.TransformDirection(LeftDown), out RaycastHit raycastLeft, 100f, -1, QueryTriggerInteraction.Ignore))
-            {
-                GameObject gameObject = raycastLeft.collider.gameObject;
-
-                if (gameObject != null && gameObject.GetComponent<LiveMixin>() == null)
-                {
-                    FLeftDist = (altitude - raycastLeft.point.y) - 3;
-                }
-                
-            }
-            else
-            {
-                FLeftDist = altitude;
-            }
-
-            if (Physics.Raycast(altitudeMeter.transform.position, altitudeMeter.transform.TransformDirection(RightDown), out RaycastHit raycastRight, 100f, -1, QueryTriggerInteraction.Ignore))
-            {
-                GameObject gameObject = raycastRight.collider.gameObject;
-
-                if (gameObject != null && gameObject.GetComponent<LiveMixin>() == null)
-                {
-                    FRightDist = (altitude - raycastRight.point.y) - 3;
-                }
-
-            }
-            else
-            {
-                FRightDist = altitude;
-            }
-            //prevseatruckPosition = SeatruckPosition;
-            //prevflyState = SeatruckState;
-
-
-            if (SeatruckState != TruckState.Landing || SeatruckState != TruckState.TakeOff)
-            {
-                if (altitude < 0)
-                {
-                    SeatruckPosition = TruckPosition.BelowWater;
-                    SeatruckState = TruckState.Diving;
-                }
-                else if (altitude > 0 && altitude <= distanceFromSurface)
-                {
-                    SeatruckPosition = TruckPosition.AboveWater;
-                    SeatruckState = TruckState.Flying;
-                }
-                else if (altitude > distanceFromSurface && distanceFromSurface > 20.0f)
-                {
-                    SeatruckPosition = TruckPosition.AboveSurface;
-                    SeatruckState = TruckState.Flying;
-                }
-                else if (altitude > 0 && distanceFromSurface > 1.0f && distanceFromSurface < 15.0f )
-                {
-                    SeatruckPosition = TruckPosition.NearSurface;
-                    SeatruckState = TruckState.Flying;
-                }                
-            }
-
-            if (altitude > 0)
-            {
-                hudTextAltitude.text = $"{(int)altitude}";                
-            }
-
-            if (Input.GetKeyDown(KeyCode.L) && SeatruckPosition == TruckPosition.NearSurface)
+            if (Input.GetKeyDown(KeyCode.L) && telemetry.SeatruckPosition == TruckPosition.NearSurface)
             {
                 if (!CheckLandingSurface())
                 {
@@ -456,7 +330,7 @@ namespace SeaTruckFlyModule
                 timer = 0.0f;
                 */
 
-                StartCoroutine(OnLanding(new Vector3(0, -distanceFromSurface, 0)));
+                StartCoroutine(OnLanding(new Vector3(0, -telemetry.distanceFromSurface, 0)));
                
                 //ErrorMessage.AddDebug("Seatruck cannot land on this position");                
             }
@@ -539,7 +413,7 @@ namespace SeaTruckFlyModule
 
         private bool CheckLandingSurface()
         {
-            return ((distanceFromSurface + FLeftDist + FRightDist) / 3) <= distanceFromSurface * 1.2f;
+            return ((telemetry.distanceFromSurface + telemetry.FLeftDist + telemetry.FRightDist) / 3) <= telemetry.distanceFromSurface * 1.2f;
         }
 
         

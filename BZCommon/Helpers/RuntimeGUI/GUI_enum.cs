@@ -5,6 +5,7 @@
         TITLEBOX,        
         TITLETEXT,
         TITLEBUTTON,
+        TEXTONLYBUTTON,
         NORMALBUTTON,
         TOGGLEBUTTON,
         TAB,
@@ -14,7 +15,8 @@
         TEXTAREA,
         BOX,
         DROPDOWN,
-        HORIZONTALSLIDER
+        HORIZONTALSLIDER,
+        SCROLLTEXT
     }
 
     public enum GUI_Group_type

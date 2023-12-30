@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UWE;
-using BZCommon;
-using CheatManagerZero.Configuration;
+using BZHelper;
 
 namespace CheatManagerZero
 {
@@ -25,7 +23,7 @@ namespace CheatManagerZero
 
         internal void PrintForces(Hoverbike hoverbike)
         {
-            BZLogger.Log($"[{CmZConfig.PROGRAM_NAME}] DebugHoverBike:\n" +
+            BZLogger.Log($"DebugHoverBike:\n" +
                 $"forwardAccel: {hoverbike.forwardAccel}\n" +
                 $"forwardBoostForce: {hoverbike.forwardBoostForce}\n" +
                 $"fovMaxVelocity: {hoverbike.fovMaxVelocity}\n" +

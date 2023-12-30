@@ -1,5 +1,5 @@
-﻿using static BZCommon.Helpers.GraphicsHelper;
-using UnityEngine;
+﻿using UnityEngine;
+using static BZHelper.GraphicsHelper;
 
 namespace BZCommon.Helpers.RuntimeGUI
 {
@@ -172,6 +172,7 @@ namespace BZCommon.Helpers.RuntimeGUI
             gUIStyle.border = GUI.skin.box.border;            
             gUIStyle.margin = GUI.skin.box.margin;
 
+            /*
             Debug.Log($"button margin: {GUI.skin.button.margin}");
             Debug.Log($"button border: {GUI.skin.button.border}");
             Debug.Log($"button padding: {GUI.skin.button.padding}");
@@ -187,6 +188,7 @@ namespace BZCommon.Helpers.RuntimeGUI
             Debug.Log($"hSliderThumb margin: {GUI.skin.horizontalSliderThumb.margin}");
             Debug.Log($"hSliderThumb border: {GUI.skin.horizontalSliderThumb.border}");            
             Debug.Log($"hSliderThumb padding: {GUI.skin.horizontalSliderThumb.padding}");
+            */
         }
                
         public static GUIStyle GetGuiStyle

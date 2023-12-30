@@ -22,9 +22,9 @@ namespace SeaTruckScannerModule
 
         public void GetSeaTruckScannerModulesInRange(Vector3 position, float range, ICollection<SeaTruckScannerModuleManager> outlist)
         {
-            for (int i = 0; i < Main.scannerModules.Count; i++)
+            for (int i = 0; i < SeaTruckScannerModule_Main.scannerModules.Count; i++)
             {
-                SeaTruckScannerModuleManager manager = Main.scannerModules[i];
+                SeaTruckScannerModuleManager manager = SeaTruckScannerModule_Main.scannerModules[i];
 
                 if ((manager.transform.position - position).sqrMagnitude <= range * range)
                 {

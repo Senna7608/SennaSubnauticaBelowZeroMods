@@ -1,4 +1,6 @@
-﻿#if DEBUG
+﻿extern alias SEZero;
+#if DEBUG
+using SEZero::SlotExtenderZero.API;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,11 +22,15 @@ namespace SeaTruckFlyModule
         TextMeshProUGUI surfaceText;
         TextMeshProUGUI surfaceLeftText;
         TextMeshProUGUI surfaceRightText;
+        TextMeshProUGUI speedText;
 
-        Material lineMaterial;        
+        Material lineMaterial;
+
+        private bool isDebugGraphicsReady = false;
 
         private static readonly Dictionary<TruckState, string> flyStateStringCache = new Dictionary<TruckState, string>()
         {
+            { TruckState.None, "---" },
             { TruckState.Diving, "Diving" },
             { TruckState.TakeOff, "Take Off" },
             { TruckState.Flying, "Flying" },
@@ -35,6 +41,7 @@ namespace SeaTruckFlyModule
 
         private static readonly Dictionary<TruckPosition, string> positionStringCache = new Dictionary<TruckPosition, string>()
         {
+            { TruckPosition.None, "---" },
             { TruckPosition.AboveSurface, "Above Surface" },
             { TruckPosition.AboveWater, "Above Water" },
             { TruckPosition.BelowWater, "Below Water" },
@@ -108,7 +115,7 @@ namespace SeaTruckFlyModule
             surfaceTitle.name = "surfaceTitle";
             surfaceTitle.transform.localPosition = new Vector3(-100f, 135.0f, 0f);
             TextMeshProUGUI surfaceTitleText = surfaceTitle.GetComponent<TextMeshProUGUI>();
-            surfaceTitleText.text = "Surface:";
+            surfaceTitleText.text = "Surface Down:";
 
             GameObject surface = Instantiate(truckPosition, DebugHUD.transform);
             surface.name = "surface";
@@ -120,7 +127,7 @@ namespace SeaTruckFlyModule
             surfaceLeftTitle.name = "surfaceLeftTitle";
             surfaceLeftTitle.transform.localPosition = new Vector3(-100f, 110.0f, 0f);
             TextMeshProUGUI surfaceLeftTitleText = surfaceLeftTitle.GetComponent<TextMeshProUGUI>();
-            surfaceLeftTitleText.text = "Surface LD:";
+            surfaceLeftTitleText.text = "Surface LeftDown:";
 
             GameObject surfaceLeft = Instantiate(truckPosition, DebugHUD.transform);
             surfaceLeft.name = "surfaceLeft";
@@ -132,7 +139,7 @@ namespace SeaTruckFlyModule
             surfaceRightTitle.name = "surfaceRightTitle";
             surfaceRightTitle.transform.localPosition = new Vector3(-100f, 85.0f, 0f);
             TextMeshProUGUI surfaceRightTitleText = surfaceRightTitle.GetComponent<TextMeshProUGUI>();
-            surfaceRightTitleText.text = "Surface RD:";
+            surfaceRightTitleText.text = "Surface RightDown:";
 
             GameObject surfaceRight = Instantiate(truckPosition, DebugHUD.transform);
             surfaceRight.name = "surfaceRight";
@@ -140,7 +147,22 @@ namespace SeaTruckFlyModule
             surfaceRightText = surfaceRight.GetComponent<TextMeshProUGUI>();
             surfaceRightText.text = string.Empty;
 
+            GameObject speedTitle = Instantiate(truckPositionTitle, DebugHUD.transform);
+            speedTitle.name = "speedTitle";
+            speedTitle.transform.localPosition = new Vector3(-100f, 60.0f, 0f);
+            TextMeshProUGUI speedTitleText = speedTitle.GetComponent<TextMeshProUGUI>();
+            speedTitleText.text = "Speed:";
+
+            GameObject speed = Instantiate(truckPosition, DebugHUD.transform);
+            speed.name = "speed";
+            speed.transform.localPosition = new Vector3(0f, 60.0f, 0f);
+            speedText = speed.GetComponent<TextMeshProUGUI>();
+            speedText.text = string.Empty;
+
+
             InitDebugRays();
+
+            isDebugGraphicsReady = true;
 
             yield break;
         }
@@ -158,17 +180,17 @@ namespace SeaTruckFlyModule
             lineMaterial.SetInt(ShaderPropertyID._DstBlend, 10);
 
             FrontCenterRay = new GameObject("FrontCenterRay");
-            FrontCenterRay.transform.SetParent(altitudeMeter.transform);
+            FrontCenterRay.transform.SetParent(telemetry.altitudeMeter.transform);
             Utils.ZeroTransform(FrontCenterRay.transform);
             FCenterRay = AddLineRenderer(FrontCenterRay, Color.green);
 
             FrontLeftRay = new GameObject("FrontLeftRay");
-            FrontLeftRay.transform.SetParent(altitudeMeter.transform);
+            FrontLeftRay.transform.SetParent(telemetry.altitudeMeter.transform);
             Utils.ZeroTransform(FrontLeftRay.transform);            
             FLeftRay = AddLineRenderer(FrontLeftRay, Color.yellow);
 
             FrontRightRay = new GameObject("FrontRightRay");
-            FrontRightRay.transform.SetParent(altitudeMeter.transform);
+            FrontRightRay.transform.SetParent(telemetry.altitudeMeter.transform);
             Utils.ZeroTransform(FrontRightRay.transform);
             FRightRay = AddLineRenderer(FrontRightRay, Color.red);
         }
@@ -194,13 +216,17 @@ namespace SeaTruckFlyModule
 
         private void UpdateDebugHUD()
         {
-            //UpdateSeatruckPosition();
+            if (!isDebugGraphicsReady)
+                return;
 
-            //UpdateSeatruckState();
+            UpdateSeatruckPosition();
 
-            surfaceText.text = $"{IntStringCache.GetStringForInt((int)distanceFromSurface)} m";
-            surfaceLeftText.text = $"{IntStringCache.GetStringForInt((int)FLeftDist)} m";
-            surfaceRightText.text = $"{IntStringCache.GetStringForInt((int)FRightDist)} m";
+            UpdateSeatruckState();
+
+            surfaceText.text = $"{IntStringCache.GetStringForInt((int)telemetry.distanceFromSurface)} m";
+            surfaceLeftText.text = $"{IntStringCache.GetStringForInt((int)telemetry.FLeftDist)} m";
+            surfaceRightText.text = $"{IntStringCache.GetStringForInt((int)telemetry.FRightDist)} m";
+            speedText.text = $"{IntStringCache.GetStringForInt((int)telemetry.speed)} km/h";
 
             isFlyingText.text = isFlying.value.ToString();            
 
@@ -208,20 +234,24 @@ namespace SeaTruckFlyModule
             FCenterRay.SetPosition(1, Vector3.down * 5f);
 
             FLeftRay.SetPosition(0, Vector3.zero);            
-            FLeftRay.SetPosition(1, LeftDown * 5);
+            FLeftRay.SetPosition(1, telemetry.LeftDown * 5);
 
             FRightRay.SetPosition(0, Vector3.zero);
-            FRightRay.SetPosition(1, RightDown * 5);
+            FRightRay.SetPosition(1, telemetry.RightDown * 5);
         }
 
         private void UpdateSeatruckPosition()
         {
-            truckPositionText.text = positionStringCache[SeatruckPosition];            
+            if (!isDebugGraphicsReady)
+                return;
+            truckPositionText.text = positionStringCache[telemetry.SeatruckPosition];            
         }
 
         private void UpdateSeatruckState()
         {
-            truckStateText.text = flyStateStringCache[SeatruckState];
+            if (!isDebugGraphicsReady)
+                return;
+            truckStateText.text = flyStateStringCache[telemetry.SeatruckState];
         }
 
 

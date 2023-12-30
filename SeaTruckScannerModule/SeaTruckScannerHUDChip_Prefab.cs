@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Utility;
-using BZCommon.Helpers.SMLHelpers;
+using System.Collections;
+using BZHelper.NautilusHelpers;
+using Nautilus.Crafting;
+using Nautilus.Utility;
 
 namespace SeaTruckScannerModule
 {
@@ -16,6 +17,7 @@ namespace SeaTruckScannerModule
                   friendlyName: "Seatruck scanner module HUD chip",
                   description: "Displays discovered resources on HUD.",
                   template: TechType.MapRoomHUDChip,
+                  gamerResourceFileName: null,
                   requiredAnalysis: SeaTruckScannerModule_Prefab.TechTypeID,
                   groupForPDA: TechGroup.Personal,
                   categoryForPDA: TechCategory.Equipment,
@@ -30,11 +32,11 @@ namespace SeaTruckScannerModule
 
         protected override void PrePatch()
         {
-            TechTypeID = TechType;
         }
 
         protected override void PostPatch()
         {
+            TechTypeID = Info.TechType;
         }
 
         protected override RecipeData GetRecipe()
@@ -50,8 +52,10 @@ namespace SeaTruckScannerModule
             };
         }
 
-        protected override void ModifyGameObject()
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
         {
+            success.Set(true);
+            yield break;
         }
 
         protected override EncyData GetEncyclopediaData()
@@ -77,7 +81,7 @@ namespace SeaTruckScannerModule
 
         protected override Sprite GetItemSprite()
         {            
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/Seatruck_Scanner_HUDchip_icon.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/Seatruck_Scanner_HUDchip_icon.png");
         }
     }
 }

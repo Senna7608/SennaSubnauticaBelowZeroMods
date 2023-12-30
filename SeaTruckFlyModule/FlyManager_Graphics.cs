@@ -13,8 +13,7 @@ namespace SeaTruckFlyModule
         GameObject HUD;
         //uGUI.main -> ScreenCanvas -> HUD -> Content -> DepthCompass -> SubmersibleDepth -> DepthTextArea -> DepthValue.TextMeshProUGUI.text
         //uGUI.main -> ScreenCanvas -> HUD -> Content -> Seatruck -> Indicators
-        
-        private GameObject altitudeMeter;
+                
         private GameObject landingFoots;
         private GameObject rearFoots;
         private GameObject landingFootCollisions;
@@ -26,7 +25,11 @@ namespace SeaTruckFlyModule
         private GameObject detachLever;
         private List<Collider> footCollisions = new List<Collider>();
        
-        TextMeshProUGUI hudTextAltitude;       
+        TextMeshProUGUI hudTextAltitude;
+
+#if DEBUG
+        private bool isGraphicsComplete = false;
+#endif
 
         private IEnumerator Init_Graphics()
         {
@@ -43,10 +46,6 @@ namespace SeaTruckFlyModule
             GameObject DepthValue = DepthTextArea.FindChild("DepthValue");
             
             hudTextAltitude = DepthValue.GetComponent<TextMeshProUGUI>();
-            
-            altitudeMeter = objectHelper.CreateGameObject("altitudeMeter", transform);
-            Utils.ZeroTransform(altitudeMeter.transform);
-            altitudeMeter.transform.localPosition = new Vector3(0f, -3f, 0.94f);            
 
             landingFoots = objectHelper.CreateGameObject("landingFoots", transform);
 
@@ -148,9 +147,9 @@ namespace SeaTruckFlyModule
             landingFoots.SetActive(false);
 
             Destroy(biodome_robot_arm);
-
+#if DEBUG
             isGraphicsComplete = true;
-
+#endif
             BZLogger.Debug("Init_Graphics() completed.");
 
             yield break;

@@ -10,11 +10,13 @@ namespace ZHelper.VisualHelpers
     }
 
     public enum ContainerType
-    {  
+    {
         Rectangle,
         Box,
+        Triangle,
         Sphere,
         Capsule,
+        Mesh,
         ContinuousLine
     }
 
@@ -23,17 +25,17 @@ namespace ZHelper.VisualHelpers
         public static void EnableContainer(this GameObject lineContainer)
         {
             lineContainer.SetActive(true);
-        }       
+        }
 
         public static void DisableContainer(this GameObject lineContainer)
         {
             lineContainer.SetActive(false);
-        }        
+        }
 
         public static void SetContainerState(this GameObject lineContainer, bool state)
         {
             lineContainer.SetActive(state);
-        }        
+        }
 
         public static void DestroyContainer(this GameObject lineContainer)
         {
@@ -48,13 +50,13 @@ namespace ZHelper.VisualHelpers
             }
 
             lineContainers.Clear();
-        }        
-        
-        private static void SetContainerTransform(this GameObject lineContainer,  GameObject containerBase)
+        }
+
+        public static void SetContainerTransform(this GameObject lineContainer, GameObject containerBase)
         {
             lineContainer.transform.SetParent(containerBase.transform, false);
             lineContainer.transform.localPosition = Vector3.zero;
-            lineContainer.transform.localRotation = Quaternion.identity;            
+            lineContainer.transform.localRotation = Quaternion.identity;
         }
 
         public static void CreateLineContainers(this GameObject containerBase, ref List<GameObject> lineContainers, ContainerType containerType, float lineWidth, Color lineColor, bool useWorldSpace)
@@ -68,8 +70,14 @@ namespace ZHelper.VisualHelpers
 
             switch (containerType)
             {
+                case ContainerType.Triangle:
+                    lineContainers.Add(new GameObject { name = $"RHZ_TRIANGLE" });
+                    lineContainers[0].SetContainerTransform(containerBase);
+                    lineContainers[0].AddLineRendererToContainer(lineWidth, lineColor, useWorldSpace);
+                    break;
+
                 case ContainerType.Rectangle:
-                    lineContainers.Add(new GameObject { name = $"RH_RECTANGLE_line_0" });
+                    lineContainers.Add(new GameObject { name = $"RHZ_RECTANGLE" });
                     lineContainers[0].SetContainerTransform(containerBase);
                     lineContainers[0].AddLineRendererToContainer(lineWidth, lineColor, useWorldSpace);
                     break;
@@ -77,7 +85,7 @@ namespace ZHelper.VisualHelpers
                 case ContainerType.Box:
                     for (int i = 0; i < 12; i++)
                     {
-                        lineContainers.Add(new GameObject { name = $"RH_BOX_line_{i}" });
+                        lineContainers.Add(new GameObject { name = $"RHZ_BOX_{i}" });
                         lineContainers[i].SetContainerTransform(containerBase);
                         lineContainers[i].AddLineRendererToContainer(lineWidth, lineColor, useWorldSpace);
                     }
@@ -86,21 +94,21 @@ namespace ZHelper.VisualHelpers
                 case ContainerType.Sphere:
                     for (int i = 0; i < 3; i++)
                     {
-                        lineContainers.Add(new GameObject { name = $"RH_SPHERE_circle_{i}" });
+                        lineContainers.Add(new GameObject { name = $"RHZ_SPHERE_{i}" });
                         lineContainers[i].SetContainerTransform(containerBase);
                         lineContainers[i].AddLineRendererToContainer(lineWidth, lineColor, useWorldSpace);
-                    }                    
+                    }
                     break;
 
                 case ContainerType.Capsule:
                     for (int i = 0; i < 6; i++)
                     {
-                        lineContainers.Add(new GameObject { name = $"RH_CAPSULE_circle_{i}" });                        
+                        lineContainers.Add(new GameObject { name = $"RHZ_CAPSULE_circle_{i}" });
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        lineContainers.Add(new GameObject { name = $"RH_CAPSULE_line_{i}" });
-                        
+                        lineContainers.Add(new GameObject { name = $"RHZ_CAPSULE_line_{i}" });
+
                     }
                     foreach (GameObject lineContainer in lineContainers)
                     {
@@ -110,13 +118,13 @@ namespace ZHelper.VisualHelpers
                     break;
 
                 case ContainerType.ContinuousLine:
-                    lineContainers.Add(new GameObject { name = $"RH_Continuous_line" });
+                    lineContainers.Add(new GameObject { name = $"RHZ_ContinuousLine" });
                     lineContainers[0].SetContainerTransform(containerBase);
                     lineContainers[0].AddLineRendererToContainer(lineWidth, lineColor, useWorldSpace);
                     break;
-            }            
+            }
         }
-        
+
         public static GameObject GetOrAddVisualBase(this GameObject gameObject, BaseType baseType)
         {
             GameObject containerBase = null;
@@ -124,7 +132,7 @@ namespace ZHelper.VisualHelpers
             switch (baseType)
             {
                 case BaseType.Object:
-                    containerBase = gameObject.FindChild("RH_OBJECT_VISUAL_BASE");
+                    containerBase = gameObject.FindChild("OBJECT_VISUAL_BASE");
 
                     if (containerBase)
                     {
@@ -132,12 +140,12 @@ namespace ZHelper.VisualHelpers
                     }
                     else
                     {
-                        containerBase = new GameObject("RH_OBJECT_VISUAL_BASE");
+                        containerBase = new GameObject("OBJECT_VISUAL_BASE");
                     }
                     break;
 
                 case BaseType.Collider:
-                    containerBase = gameObject.FindChild("RH_COLLIDER_VISUAL_BASE");
+                    containerBase = gameObject.FindChild("COLLIDER_VISUAL_BASE");
 
                     if (containerBase)
                     {
@@ -145,7 +153,7 @@ namespace ZHelper.VisualHelpers
                     }
                     else
                     {
-                        containerBase = new GameObject("RH_COLLIDER_VISUAL_BASE");
+                        containerBase = new GameObject("COLLIDER_VISUAL_BASE");
                     }
                     break;
             }
@@ -164,14 +172,14 @@ namespace ZHelper.VisualHelpers
             switch (baseType)
             {
                 case BaseType.Object:
-                    containerBase = gameObject.FindChild("RH_OBJECT_VISUAL_BASE");                                  
+                    containerBase = gameObject.FindChild("OBJECT_VISUAL_BASE");
                     break;
 
                 case BaseType.Collider:
-                    containerBase = gameObject.FindChild("RH_COLLIDER_VISUAL_BASE");                                     
+                    containerBase = gameObject.FindChild("COLLIDER_VISUAL_BASE");
                     break;
             }
-            
+
             return containerBase;
         }
     }

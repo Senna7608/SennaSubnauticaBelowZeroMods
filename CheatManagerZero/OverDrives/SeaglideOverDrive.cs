@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using BZHelper;
+using UnityEngine;
 using UWE;
 
 namespace CheatManagerZero
@@ -28,29 +29,25 @@ namespace CheatManagerZero
             Destroy(this);
         }
 
-        private void IsSeaglideFast(Utils.MonitoredValue<bool> SeaglideFastSpeedEnable)
+        private void OnPlayerMotorModeChanged(Player.MotorMode newMotorMode)
         {
-            SetSeaglideSpeed(Player.main.motorMode);
-        }
+            UnderwaterMotor underwaterMotor = Player.main.GetComponent<UnderwaterMotor>();
 
-        private void OnPlayerMotorModeChanged(Player.MotorMode playerMotorMode)
-        {            
-            SetSeaglideSpeed(playerMotorMode);            
-        }
-        
-
-        private void SetSeaglideSpeed(Player.MotorMode activeMotorMode)
-        {         
-            if (Main.Instance.isSeaglideFast.value && activeMotorMode == Player.MotorMode.Seaglide && Player.main.IsUnderwater())
+            if (Main.Instance.isSeaglideFast.value && newMotorMode == Player.MotorMode.Seaglide)
             {
-                Player.main.playerController.underWaterController.waterAcceleration = 60f;
-                Player.main.playerController.underWaterController.verticalMaxSpeed = 75f;
+                underwaterMotor.playerSpeedModifier.SetValue(3f);
+                BZLogger.UnityLog($"playerSpeedModifier: motormode: {newMotorMode} value: {underwaterMotor.playerSpeedModifier.Value}");                
             }
             else
             {
-                Player.main.playerController.underWaterController.waterAcceleration = 20;
-                Player.main.playerController.underWaterController.verticalMaxSpeed = 5f;
+                underwaterMotor.playerSpeedModifier.SetValue(1f);
+                BZLogger.UnityLog($"playerSpeedModifier: motormode: {newMotorMode} value: {underwaterMotor.playerSpeedModifier.Value}");                
             }
-        }        
+        }
+
+        private void IsSeaglideFast(Utils.MonitoredValue<bool> SeaglideFastSpeedEnable)
+        {
+            OnPlayerMotorModeChanged(Player.main.motorMode);
+        }
     }
 }

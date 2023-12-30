@@ -2,7 +2,7 @@
 using UnityEngine;
 using TMPro;
 using SlotExtenderZero.Configuration;
-using BZCommon;
+using BZHelper;
 
 namespace SlotExtenderZero
 {
@@ -20,13 +20,13 @@ namespace SlotExtenderZero
 
             uGUI_Equipment uGUIequipment = gameObject.GetComponent<uGUI_Equipment>();
 
-            Dictionary<string, uGUI_EquipmentSlot> ALLSLOTS = (Dictionary<string, uGUI_EquipmentSlot>)uGUIequipment.GetPrivateField("allSlots");
+            //Dictionary<string, uGUI_EquipmentSlot> ALLSLOTS = (Dictionary<string, uGUI_EquipmentSlot>)uGUIequipment.GetPrivateField("allSlots");
 
-            BZLogger.Debug("uGUI_SlotTextHandler processing ALLSLOTS...");
+            BZLogger.Trace("uGUI_SlotTextHandler tracing uGUIequipment.allSlots...");
 
-            foreach (KeyValuePair<string, uGUI_EquipmentSlot> item in ALLSLOTS)
+            foreach (KeyValuePair<string, uGUI_EquipmentSlot> item in uGUIequipment.allSlots)
             {
-                BZLogger.Debug($"slot name: {item.Key}");
+                BZLogger.Trace($"slot name: {item.Key}");
 
                 if (SlotHelper.ALLSLOTS.TryGetValue(item.Key, out SlotData slotData))
                 {
@@ -35,6 +35,8 @@ namespace SlotExtenderZero
                     ALLSLOTS_Text.Add(slotData.SlotID, TMProText);
                 }
             }
+
+            BZLogger.Trace("Trace completed.");
 
             BZLogger.Log("uGUI_SlotTextHandler added.");
         }

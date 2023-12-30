@@ -1,18 +1,21 @@
-﻿using BZCommon;
+﻿using BZHelper;
 using HarmonyLib;
 
 namespace SeaTruckSpeedUpgrades
 {
     [HarmonyPatch(typeof(SeaTruckUpgrades))]
-    [HarmonyPatch("Start")]
-    public class SeaTruckUpgrades_Start_Patch
+    [HarmonyPatch("Awake")]
+    public class SeaTruckUpgrades_Awake_Patch
     {
         [HarmonyPostfix]
         public static void Postfix(SeaTruckUpgrades __instance)
         {
-            __instance.gameObject.EnsureComponent<SeaTruckSpeedManager>();
+            if (__instance.gameObject != null)
+            {
+                __instance.gameObject?.EnsureComponent<SeaTruckSpeedManager>();
 
-            BZLogger.Debug($"Seatruck Speed Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
+                BZLogger.Debug($"HarmonyPatch: SeaTruckUpgrades, Method: Awake, Mode: Postfix, Priority: Normal, Component: SeaTruckSpeedManager, ID: {__instance.gameObject.GetInstanceID()}");
+            }            
         }
     }
 }

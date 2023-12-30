@@ -6,6 +6,8 @@ using UWE;
 using TMPro;
 using BZCommon;
 using QuickSlotExtenderZero.Configuration;
+using BZCommon.Helpers;
+using BZHelper;
 
 namespace QuickSlotExtenderZero
 {
@@ -38,7 +40,7 @@ namespace QuickSlotExtenderZero
             SLOTEXTENDERZERO_SLOTKEYSLIST.Clear();
 
             try
-            {
+            {                
                 slotextenderzero_SLOTKEYSLIST = Main.GetAssemblyClassPublicField("SlotExtenderZero.Configuration.SEzConfig", "SLOTKEYSLIST", BindingFlags.Static);                
 
                 foreach (string item in (List<string>)slotextenderzero_SLOTKEYSLIST)

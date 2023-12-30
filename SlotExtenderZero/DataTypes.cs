@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Utility;
-using BZCommon;
+using BZHelper;
 
 namespace SlotExtenderZero
 {
@@ -108,7 +107,7 @@ namespace SlotExtenderZero
 
         public string KeyCodeName { get; set; }
         public string SlotConfigIDName => SlotConfigID.ToString();
-        public KeyCode KeyCode => InputHelper.StringToKeyCode(KeyCodeName);
+        public KeyCode KeyCode => InputHelper.GetInputNameAsKeyCode(KeyCodeName);
 
         public SlotData(string slotID, SlotConfigID internalSlotID, Vector2 slotPOS, SlotType slotType)
         {

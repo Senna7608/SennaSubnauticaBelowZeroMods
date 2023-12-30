@@ -1,9 +1,10 @@
-﻿using HarmonyLib;
+﻿using BZHelper;
+using HarmonyLib;
 using UnityEngine;
 
 namespace SlotExtenderZero.Patches
 {
-    [HarmonyPatch(typeof(uGUI_QuickSlots), "SetBackground")]
+    [HarmonyPatch(typeof(uGUI_QuickSlots), nameof(uGUI_QuickSlots.SetBackground))]
     internal class uGUI_QuickSlots_SetBackground_Patch
     {
         public static Sprite spriteExosuitArm = null;
@@ -11,8 +12,10 @@ namespace SlotExtenderZero.Patches
         [HarmonyPrefix]
         internal static bool Prefix(uGUI_QuickSlots __instance, ref uGUI_ItemIcon icon, TechType techType, bool highlighted)
         {
-            if (TechData.GetEquipmentType(techType) == (EquipmentType)ModdedEquipmentType.SeatruckArm)
+            if (techType != TechType.None && TechData.GetEquipmentType(techType) == (EquipmentType)ModdedEquipmentType.SeatruckArm)
             {
+                BZLogger.Trace($"uGUI_QuickSlots_SetBackground_Patch: techType: [{techType}]");
+
                 if (icon == null)
                 {
                     return false;

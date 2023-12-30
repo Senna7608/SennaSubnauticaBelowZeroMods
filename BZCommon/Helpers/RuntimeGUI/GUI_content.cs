@@ -6,7 +6,7 @@ namespace BZCommon.Helpers.RuntimeGUI
     {
         public readonly int ID;
         public readonly GUI_Item_Type ContentType;
-        public readonly string Text;
+        public string Text { get;  set; }
         public readonly string ToolTip;
         public readonly GUI_textColor TextColor;
         public readonly FontStyle FontStyle;
@@ -39,6 +39,11 @@ namespace BZCommon.Helpers.RuntimeGUI
             InitialState = GUI_Item_State.NORMAL;
             FixedWidth = fixedWidth;
             FixedHeight = fixedHeight;
-        }        
+        }  
+        
+        public void SetText(string text)
+        {
+            Text = text;
+        }
     }
 }

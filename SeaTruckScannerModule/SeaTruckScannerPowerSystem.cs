@@ -4,8 +4,8 @@ using UnityEngine.UI;
 using TMPro;
 using UWE;
 using System.IO;
-using BZCommon.ConfigurationParser;
-using BZCommon;
+using BZHelper;
+using BZHelper.ConfigurationParser;
 
 namespace SeaTruckScannerModule
 {
@@ -38,8 +38,8 @@ namespace SeaTruckScannerModule
         public List<SlotDefinition> slotDefinitions;
         
         public GameObject ui;
-        public PowerRelay powerRelay;
-        
+        public PowerRelay powerRelay;        
+
         public Color colorEmpty = new Color(1f, 0f, 0f, 1f);
         public Color colorHalf = new Color(1f, 1f, 0f, 1f);
         public Color colorFull = new Color(0f, 1f, 0f, 1f);
@@ -64,8 +64,12 @@ namespace SeaTruckScannerModule
 
         private string labelInteract = string.Empty;
         private string labelStorage = string.Empty;
-        private IList<UniqueIdentifier> childUIDs = new List<UniqueIdentifier>();
-        
+        private float normalchargePower = 0.02f;
+        private float superchargePower = 0.08f;
+
+        private FMODAsset chargeSoundAsset;
+        public FMOD_StudioEventEmitter soundCharge;
+        private bool charging = false;
 
         private void PreInit()
         {
@@ -112,8 +116,16 @@ namespace SeaTruckScannerModule
             genericHandTarget.onHandHover.RemoveAllListeners();
             genericHandTarget.onHandHover.AddListener((data) => OnHandHover(data));
             genericHandTarget.onHandClick.RemoveAllListeners();
-            genericHandTarget.onHandClick.AddListener((data) => OnHandClick(data));            
+            genericHandTarget.onHandClick.AddListener((data) => OnHandClick(data));
 
+            chargeSoundAsset = ScriptableObject.CreateInstance<FMODAsset>();
+            chargeSoundAsset.name = "battery_charge";
+            chargeSoundAsset.path = "event:/tools/gravsphere/loop";
+            
+            soundCharge = gameObject.AddComponent<FMOD_StudioEventEmitter>();
+            soundCharge.startEventOnAwake = false;
+            soundCharge.asset = chargeSoundAsset;
+            
             Initialize();
         }
 
@@ -192,7 +204,7 @@ namespace SeaTruckScannerModule
 
         public void Update()
         {
-            if (GameModeUtils.RequiresPower())
+            if (GameModeManager.GetOption<bool>(GameOption.TechnologyRequiresPower))
             {
                 bool flag = CheckMainPowerLevel();
 
@@ -222,7 +234,7 @@ namespace SeaTruckScannerModule
             {
                 isCabinPowered = false;
                 ui.SetActive(false);
-            }
+            }           
 
             onPowerLevelChanged?.Invoke(isCabinPowered, isMainPowered);
         }
@@ -259,7 +271,7 @@ namespace SeaTruckScannerModule
 
         public void ConsumePower(float amount)
         {
-            if (GameModeUtils.RequiresPower())
+            if (GameModeManager.GetOption<bool>(GameOption.TechnologyRequiresPower))
             {
                 float totalPower = TotalCanProvide(out int sourceCount);
 
@@ -284,8 +296,111 @@ namespace SeaTruckScannerModule
                     }                    
                 }                
             }            
-        } 
-        
+        }
+
+        public void ChargePower()
+        {
+            BZLogger.Debug("ChargePower called!");
+
+            if (GameModeManager.GetOption<bool>(GameOption.TechnologyRequiresPower))
+            {                
+                int num = 0;
+                float num2 = 0f;
+                                
+                foreach (KeyValuePair<string, IBattery> kvp in batteries)
+                {
+                    IBattery value = kvp.Value;
+
+                    if (value != null)
+                    {
+                        float charge = value.charge;
+                        float capacity = value.capacity;
+                        if (charge < capacity)
+                        {
+                            num++;
+                            float num3 = DayNightCycle.main.deltaTime * (powerRelay.GetMaxPower() > 100f ? superchargePower : normalchargePower) * capacity;
+
+                            if (charge + num3 > capacity)
+                            {
+                                num3 = capacity - charge;
+                            }
+
+                            num2 += num3;
+                        }
+                    }
+
+                    float num4 = 0f;
+
+                    if (num2 > 0f && powerRelay.GetPower() >= num2)
+                    {                            
+                        powerRelay.ConsumeEnergy(num2, out num4);
+                        charging = true;
+                    }
+                    else
+                    {
+                        charging = false;                                                
+                    }
+
+                    if (num4 > 0f)
+                    { 
+                        float num5 = num4 / (float)num;
+
+                        foreach (KeyValuePair<string, IBattery> keyValuePair2 in batteries)
+                        {
+                            string key = keyValuePair2.Key;
+
+                            IBattery value2 = keyValuePair2.Value;
+                            
+                            if (value2 != null)
+                            {
+                                if (value2.charge < value2.capacity)
+                                {
+                                    float num6 = num5;
+                                    float num7 = value2.capacity - value2.charge;
+
+                                    if (num6 > num7)
+                                    {
+                                        num6 = num7;
+                                    }
+
+                                    value2.charge += num6;
+
+                                    if (slots.TryGetValue(key, out SlotDefinition definition))
+                                    {
+                                        InventoryItem itemInSlot = equipment.GetItemInSlot(key);
+                                        UpdateVisuals(definition, value2.charge / value2.capacity, itemInSlot.item.GetTechType());
+                                    }
+                                }
+                            }
+                        }
+                    }                    
+                }
+
+                ToggleChargeSound(charging);                
+            }
+        }
+
+        protected void ToggleChargeSound(bool charging)
+        {
+            if (soundCharge != null)
+            {
+                bool isStartingOrPlaying = soundCharge.GetIsStartingOrPlaying();
+
+                if (charging)
+                {
+                    if (!isStartingOrPlaying)
+                    {
+                        soundCharge.StartEvent();
+                        return;
+                    }
+                }
+                else if (isStartingOrPlaying)
+                {
+                    soundCharge.Stop(true);
+                }
+            }
+        }
+
         private void UnlockDefaultEquipmentSlots()
         {
             equipment.AddSlots(slots.Keys);
@@ -423,7 +538,7 @@ namespace SeaTruckScannerModule
             Initialize();
             serializedSlots = equipment.SaveEquipment();
 
-            string FILENAME = $"{Main.modFolder}/SaveGame/{EquipmentRoot.Id}.sav";
+            string FILENAME = $"{SeaTruckScannerModule_Main.modFolder}/SaveGame/{EquipmentRoot.Id}.sav";
 
             List<SaveData> saveDatas = new List<SaveData>();
 
@@ -432,12 +547,12 @@ namespace SeaTruckScannerModule
                 saveDatas.Add(new SaveData("BATTERIES", kvp.Key, kvp.Value));
             }            
                         
-            ParserHelper.CreateSaveGameFile(FILENAME, "SeatruckScannerModule", Main.VERSION, saveDatas);            
+            ParserHelper.CreateSaveGameFile(FILENAME, "SeatruckScannerModule", SeaTruckScannerModule_Main.FILEVERSION, saveDatas);            
         }
         
         public void OnProtoDeserializeObjectTree(ProtobufSerializer serializer)
         {
-            string FILENAME = $"{Main.modFolder}/SaveGame/{EquipmentRoot.Id}.sav";
+            string FILENAME = $"{SeaTruckScannerModule_Main.modFolder}/SaveGame/{EquipmentRoot.Id}.sav";
 
             if (File.Exists(FILENAME))
             {
@@ -471,7 +586,7 @@ namespace SeaTruckScannerModule
         {
             foreach(Battery battery in EquipmentRoot.GetComponentsInChildren<Battery>(true))
             {
-                BZLogger.Warn($"Removing unassigned Battery: {battery.GetComponent<PrefabIdentifier>().Id}");
+                BZLogger.Warn($"Removing unassigned stray Battery: [{battery.GetComponent<PrefabIdentifier>().Id}]");
                 DestroyImmediate(battery.gameObject);
             }
         }        

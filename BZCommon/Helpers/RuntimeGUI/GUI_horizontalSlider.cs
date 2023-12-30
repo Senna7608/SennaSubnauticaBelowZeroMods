@@ -41,7 +41,7 @@ namespace BZCommon.Helpers.RuntimeGUI
             maxValueText = new GUIContent(string.Format(decimals, _sliderContent.RightValue));            
         }
 
-        public override float DrawItem()
+        public override float DrawItem(GUI_group group, GUI_item nextItem)
         {
             GUI.Box(DrawingRect, string.Empty);
 
@@ -65,9 +65,7 @@ namespace BZCommon.Helpers.RuntimeGUI
                 _valueRect.x = _labelRect.x +_labelRect.width + 5;
                 _valueRect.y = DrawingRect.y;
                 _valueRect.width = valueSize.x;
-                _valueRect.height = DrawingRect.height;
-
-                Debug.Log($"_valueRect: {_valueRect}");
+                _valueRect.height = DrawingRect.height;                
 
                 _sliderRect.x = _valueRect.x + _valueRect.width + 5;
                 _sliderRect.y = DrawingRect.y + (_labelRect.height - 19) / 2;

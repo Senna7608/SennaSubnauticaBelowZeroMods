@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using SMLHelper.V2.Crafting;
 using UnityEngine;
-using BZCommon.Helpers.SMLHelpers;
-using SMLHelper.V2.Utility;
+using System.Collections;
+using BZHelper.NautilusHelpers;
+using Nautilus.Crafting;
+using Nautilus.Utility;
 
 namespace SeaTruckSpeedUpgrades
 {
@@ -16,6 +17,7 @@ namespace SeaTruckSpeedUpgrades
                   friendlyName: "Seatruck Speed Upgrade MK3",
                   description: "Increases Seatruck speed by 150%.\n Does not stack.",
                   template: TechType.SeaTruckUpgradeAfterburner,
+                  gamerResourceFileName: null,
                   requiredAnalysis: TechType.SeaTruckUpgradeHorsePower,
                   groupForPDA: TechGroup.VehicleUpgrades,
                   categoryForPDA: TechCategory.VehicleUpgrades,
@@ -24,17 +26,17 @@ namespace SeaTruckSpeedUpgrades
                   backgroundType: CraftData.BackgroundType.Normal,
                   itemSize: new Vector2int(1, 1),                  
                   fragment: null
-                  )
+                  ) 
         {
         }
 
         protected override void PrePatch()
         {
-            TechTypeID = TechType;
         }
 
         protected override void PostPatch()
         {
+            TechTypeID = Info.TechType;
         }
 
         protected override RecipeData GetRecipe()
@@ -46,13 +48,15 @@ namespace SeaTruckSpeedUpgrades
                 {
                     new Ingredient(SeaTruckSpeedMK2_Prefab.TechTypeID, 1),
                     new Ingredient(TechType.SeaTruckUpgradeHorsePower, 1),
-                    new Ingredient(TechType.PrecursorIonPowerCell, 2)                    
+                    new Ingredient(TechType.PrecursorIonPowerCell, 1)                    
                 })
             };
         }
 
-        protected override void ModifyGameObject()
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
         {
+            success.Set(true);
+            yield break;
         }
 
         protected override EncyData GetEncyclopediaData()
@@ -64,24 +68,21 @@ namespace SeaTruckSpeedUpgrades
         {
             return new CrafTreeTypesData()
             {
-                TreeTypes = new List<CraftTreeType>(new CraftTreeType[4]
-                {
-                    new CraftTreeType(CraftTree.Type.Fabricator, new string[] { "Upgrades", "SeatruckUpgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeaTruckFabricator, new string[] { "Upgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeamothUpgrades, new string[] { "SeaTruckUpgrade" } ),
-                    new CraftTreeType(CraftTree.Type.Workbench, new string[] { "SeaTruckWBUpgrades" } )
-                })
+                TreeTypes = new List<CraftTreeType>()
+                {                    
+                    new CraftTreeType(CraftTree.Type.Workbench, new string[] { "ModdedWorkbench" } )
+                }
             };
         }
 
         protected override TabNode GetTabNodeData()
         {
-            return new TabNode(CraftTree.Type.Workbench, "SeaTruckWBUpgrades", "Seatruck Upgrades", SpriteManager.Get(TechType.SeaTruck));
+            return null;
         }
 
         protected override Sprite GetItemSprite()
         {
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/SeaTruckSpeed_MK3.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckSpeedUpgrades_Main.modFolder}/Assets/SeaTruckSpeed_MK3.png");
         }
     }
 }

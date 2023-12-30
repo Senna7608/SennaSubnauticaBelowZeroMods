@@ -2,9 +2,9 @@
 using RuntimeHelperZero.VisualHelpers;
 using RuntimeHelperZero.Components;
 using static RuntimeHelperZero.SceneHelper.SceneHelper;
-using BZCommon;
 using RuntimeHelperZero.Objects;
 using BZCommon.Helpers.GUIHelper;
+using BZHelper;
 
 namespace RuntimeHelperZero
 {
@@ -174,8 +174,7 @@ namespace RuntimeHelperZero
             }
 
             isColliderSelected = false;
-            showCollider = false;
-
+            
             SetObjectDrawing(false);            
         }
 
@@ -203,8 +202,8 @@ namespace RuntimeHelperZero
             isRootList = true;
 
             SetDirty(false);
-        }
-        
+        }        
+
         private void RefreshTransformIndex()
         {
             current_transform_index = TRANSFORMS.FindIndex(item => item.Equals(selectedObject.transform));
@@ -227,26 +226,16 @@ namespace RuntimeHelperZero
 
         private void SetObjectDrawing(bool value)
         {
-            try
+            if (RHZ_VISUAL_BASE == null)
             {
-                GameObject containerBase = selectedObject.GetOrAddVisualBase(BaseType.Object);
-                DrawObjectBounds dob = containerBase.EnsureComponent<DrawObjectBounds>();
-                dob.IsDraw(value);
+                RHZ_VISUAL_BASE = new GameObject("RHZ_VISUAL_BASE");                
+                RHZ_VISUAL_BASE.GetOrAddVisualBase(BaseType.Object).EnsureComponent<DrawObjectBounds>();
+                RHZ_VISUAL_BASE.GetOrAddVisualBase(BaseType.Collider).EnsureComponent<DrawColliderBounds>();
             }
-            catch
-            {
-                string component = typeof(DrawObjectBounds).ToString().Split('.').GetLast();
-                OutputWindow_Log(ERROR_TEXT[ERRORS.GET_OR_ADD_COMPONENT_ERROR], LogType.Exception, component, selectedObject.name);
-            }
-        }
 
-        private void ShowAllCollider(bool value)
-        {
-            foreach (DrawColliderControl dcc in selectedObject.GetComponentsInChildren<DrawColliderControl>(true))
-            {
-                dcc.DrawAllCollider(value);
-            }
-        }
-
+            RHZ_VISUAL_BASE.transform.SetParent(selectedObject.transform);
+            Utils.ZeroTransform(RHZ_VISUAL_BASE.transform);
+            RHZ_VISUAL_BASE.GetComponentInChildren<DrawObjectBounds>().IsDraw(value);                      
+        }       
     }
 }

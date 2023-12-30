@@ -30,7 +30,7 @@ namespace Zhelper.Objects
 
             public override string ToString()
             {
-                return $"{Name} = {GetValue()}";
+                return $"{Name}: {GetValue()}";
             }
 
             private readonly BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -137,6 +137,11 @@ namespace Zhelper.Objects
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return ((IEnumerable<ObjectField>)fObjects).GetEnumerator();
+            }
+
+            public int GetFieldCount()
+            {
+                return fObjects.Count;
             }
 
             public object GetFieldValue(string name)

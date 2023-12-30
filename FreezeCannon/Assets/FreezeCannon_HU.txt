@@ -1,9 +1,0 @@
-﻿FreezeCannonFragment:Fagyasztó Ágyú töredék
-FreezeCannon:Fagyasztó Ágyú
-Tooltip_FreezeCannon:Fagyassza a lényeket egy ideig.
-Ency_FreezeCannon:Fagyasztó Ágyú
-EncyDesc_FreezeCannon:Ez az ágyú lefagyasztja az élőlény körüli vizet vagy párát, így a lény mozgásképtelenné válik egy kis időre.\n\n'Alterra Fagyasztó Ágyú - Figyelem! Sivatagban nem működik!'
-FreezeCannon_Targeting:Célkeresés...
-FreezeCannon_Lock:Célpont befogása
-FreezeCannon_Release:Célpont elengedése
-FreezeCannon_Freeze:Célpont fagyasztása

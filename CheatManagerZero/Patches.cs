@@ -1,23 +1,10 @@
 ﻿using HarmonyLib;
-using BZCommon;
+using BZHelper;
 
 namespace CheatManagerZero
 {
     internal class Patches
     {
-        /*
-        [HarmonyPatch(typeof(SeaMoth))]
-        [HarmonyPatch("Awake")]
-        internal class SeaMoth_Awake_Patch
-        {
-            [HarmonyPostfix]
-            internal static void Postfix(SeaMoth __instance)
-            {
-                __instance.gameObject.EnsureComponent<SeamothOverDrive>();               
-            }
-        }
-        */
-
         [HarmonyPatch(typeof(Exosuit))]
         [HarmonyPatch("Awake")]
         internal class Exosuit_Awake_Patch
@@ -100,29 +87,24 @@ namespace CheatManagerZero
                 __instance.gameObject.EnsureComponent<SeaglideOverDrive>();
             }
         }
-
+        
         /*
-        [HarmonyPatch(typeof(SeaTruckMotor))]
-        [HarmonyPatch("Start")]
-        internal class SeaTruckMotor_Start_Patch
+        [HarmonyPatch(typeof(ResourceTracker))]
+        [HarmonyPatch("Register")]
+        public class ResourceTracker_Register_Patch
         {
             [HarmonyPostfix]
-            internal static void Postfix(SeaTruckMotor __instance)
+            public static void Postfix(ResourceTracker __instance)
             {
-                __instance.gameObject.AddIfNeedComponent<SeaTruckOverDrive>();
-            }
-        }
-        */
-        /*
-        [HarmonyPatch(typeof(SeaTruckMotor))]
-        [HarmonyPatch("CanTurn")]
-        internal class SeaTruckMotor_CanTurn_Patch
-        {
-            [HarmonyPrefix]
-            internal static bool Prefix(SeaTruckMotor __instance, ref bool __result)
-            {                
-                __result = true;
-                return false;
+                if (__instance.overrideTechType == TechType.Fragment)
+                {
+                    if (__instance.rb != null)
+                    {
+                        FragmentTracker fragTracker = __instance.rb.gameObject.AddComponent<FragmentTracker>();
+                        Main.trackerDb.Add(fragTracker);
+                        BZLogger.Log($"Fragment gameobject added to database: [{__instance.rb.gameObject.name}]");
+                    }                    
+                }
             }
         }
         */

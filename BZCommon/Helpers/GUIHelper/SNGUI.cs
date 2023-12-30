@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UWE;
-using static BZCommon.InputHelper;
 
 namespace BZCommon.Helpers.GUIHelper
 {

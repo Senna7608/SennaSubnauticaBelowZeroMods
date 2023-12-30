@@ -30,7 +30,7 @@ namespace Zhelper.Objects
 
             public override string ToString()
             {
-                return $"{Name} = {GetValue()}";
+                return $"{Name}: {GetValue()}";
             }
 
             private readonly BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;

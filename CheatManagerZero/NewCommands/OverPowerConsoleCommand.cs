@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using BZCommon;
 using CheatManagerZero.Configuration;
+using BZHelper;
 
 namespace CheatManagerZero.NewCommands
 {
@@ -26,8 +26,8 @@ namespace CheatManagerZero.NewCommands
 
             if (OverPowerCheat)
             {
-                overPowerMultiplier = CmZConfig.overPowerMultiplier;
-                hungerAndThristInterval = CmZConfig.hungerAndThirstInterval;
+                overPowerMultiplier = CMZ_Config.overPowerMultiplier;
+                hungerAndThristInterval = CMZ_Config.hungerAndThirstInterval;
             }
             else
             {

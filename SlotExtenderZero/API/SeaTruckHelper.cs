@@ -1,10 +1,10 @@
-﻿using SMLHelper.V2.Handlers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using UnityEngine;
-using BZCommon;
 using System.Linq;
+using BZHelper;
+using BZHelper.NautilusHelpers;
 
 namespace SlotExtenderZero.API
 {
@@ -21,7 +21,8 @@ namespace SlotExtenderZero.API
         //PlanterModule
     }
 
-    public class SeaTruckHelper : MonoBehaviour
+    [DisallowMultipleComponent]
+    public class SeatruckHelper : MonoBehaviour
     {
         public GameObject MainCab { get; private set; }
         
@@ -53,6 +54,8 @@ namespace SlotExtenderZero.API
 
         public uGUI_SeaTruckHUD TruckHUD { get; private set; }
 
+        public bool TruckSegmentIsDirty { get; private set; }
+
         private GameObject _inputStackDummy = null;
 
         public GameObject TruckInputStackDummy
@@ -70,15 +73,23 @@ namespace SlotExtenderZero.API
 
         public Int2 TruckLeverDirection { get; set; }
         public float TruckAnimAccel { get; set; }
-        public float[] TruckQuickSlotTimeUsed { get; set; }
-        public float[] TruckQuickSlotCooldown { get; set; }
-        public float[] TruckQuickSlotCharge { get; set; }
+        //public float[] TruckQuickSlotTimeUsed { get; set; }
+        //public float[] TruckQuickSlotCooldown { get; set; }
+        //public float[] TruckQuickSlotCharge { get; set; }
 
         public string[] TruckSlotIDs { get; private set; }
         public Dictionary<string, int> TruckSlotIndexes { get; private set; }
         public Dictionary<TechType, float> TruckCrushDepths { get; private set; }        
         
         internal bool isReady = false;
+        public bool IsReady
+        {
+            get
+            {
+                return isReady;
+            }
+        }
+
 
         private List<IItemsContainer> containers = new List<IItemsContainer>();
         private List<GameObject> handTargets = new List<GameObject>();
@@ -101,7 +112,7 @@ namespace SlotExtenderZero.API
         public delegate void OnActiveSlotChanged(int slotID);
         public event OnActiveSlotChanged onActiveSlotChanged;
 
-        public delegate void OnDockedChanged(bool isDocked);
+        public delegate void OnDockedChanged(bool isDocked, bool isInTransition);
         public event OnDockedChanged onDockedChanged;
 
         public delegate void OnDamageReceived(float damage);
@@ -152,7 +163,8 @@ namespace SlotExtenderZero.API
                 if (_isDocked != value)
                 {
                     _isDocked = value;
-                    onDockedChanged?.Invoke(_isDocked);                    
+                    BZLogger.Trace("API/Helper: OnDockedChanged Event triggered!");
+                    onDockedChanged?.Invoke(_isDocked, TruckDockable.isInTransition);                    
                 }
             }
         }
@@ -161,8 +173,8 @@ namespace SlotExtenderZero.API
 
         public float Damage
         {
-            get => _damage;
-
+            get => TruckLiveMixin.damageInfo.damage;
+             
             private set
             {
                 if (_damage != value)
@@ -170,7 +182,7 @@ namespace SlotExtenderZero.API
                     _damage = value;
                     onDamageReceived?.Invoke(_damage);                    
                 }
-            }
+            }            
         }
 
         public string TruckName => TruckPingInstance?.GetLabel();
@@ -188,7 +200,7 @@ namespace SlotExtenderZero.API
         {
             MainCab = gameObject;
 
-            BZLogger.Debug($"SeaTruckHelper/DEBUG: Awake started, ID: [{MainCab.GetInstanceID()}]");            
+            BZLogger.Trace($"API/Helper: Awake started, ID: [{MainCab.GetInstanceID()}]");            
             
             TruckUpgrades = MainCab.GetComponent<SeaTruckUpgrades>();            
             TruckConnection = MainCab.GetComponent<SeaTruckConnection>();
@@ -223,21 +235,40 @@ namespace SlotExtenderZero.API
             TruckDockable = MainCab.GetComponent<Dockable>();
             TruckColorNameControl = MainCab.GetComponent<ColorNameControl>();
             TruckLiveMixin = TruckSegment.liveMixin;
-            damageInfo = TruckLiveMixin.GetPrivateField("damageInfo") as DamageInfo;            
+
+            //damageInfo = TruckLiveMixin.GetPrivateField("damageInfo") as DamageInfo;
+            damageInfo = TruckLiveMixin.damageInfo;
+
             TruckDealDamageOnImpact = MainCab.GetComponent<DealDamageOnImpact>();
 
+            //TruckSegmentIsDirty = (bool)TruckSegment.GetPrivateField("isDirty");
+            TruckSegmentIsDirty = TruckSegment.isDirty;
+
             TruckWorldForces = MainCab.GetComponent<WorldForces>();
-            
-            TruckLeverDirection = (Int2)TruckMotor.GetPrivateProperty("leverDirection", BindingFlags.SetProperty);
-            TruckAnimAccel = (float)TruckMotor.GetPrivateField("animAccel", BindingFlags.SetField);
 
-            TruckSlotIDs = TruckUpgrades.GetPrivateField("slotIDs", BindingFlags.Static) as string[];
-            TruckSlotIndexes = TruckUpgrades.GetPrivateField("slotIndexes") as Dictionary<string, int>;
-            TruckCrushDepths = TruckUpgrades.GetPrivateField("crushDepths", BindingFlags.Static) as Dictionary<TechType, float>;
+            //TruckLeverDirection = (Int2)TruckMotor.GetPrivateProperty("leverDirection", BindingFlags.SetProperty);
+            TruckLeverDirection = TruckMotor.leverDirection;
 
-            TruckQuickSlotTimeUsed = TruckUpgrades.GetPrivateField("quickSlotTimeUsed", BindingFlags.SetField) as float[];
-            TruckQuickSlotCooldown = TruckUpgrades.GetPrivateField("quickSlotCooldown", BindingFlags.SetField) as float[];
-            TruckQuickSlotCharge = TruckUpgrades.GetPrivateField("quickSlotCharge", BindingFlags.SetField) as float[];
+            //TruckAnimAccel = (float)TruckMotor.GetPrivateField("animAccel", BindingFlags.SetField);
+            TruckAnimAccel = TruckMotor.animAccel;
+
+            //TruckSlotIDs = TruckUpgrades.GetPrivateField("slotIDs", BindingFlags.Static | BindingFlags.Public) as string[];            
+            TruckSlotIDs = SeaTruckUpgrades.slotIDs;
+
+            //TruckSlotIndexes = TruckUpgrades.GetPrivateField("slotIndexes",  BindingFlags.Public) as Dictionary<string, int>;
+            TruckSlotIndexes = TruckUpgrades.slotIndexes;
+
+            //TruckCrushDepths = TruckUpgrades.GetPrivateField("crushDepths", BindingFlags.Static | BindingFlags.Public) as Dictionary<TechType, float>;
+            TruckCrushDepths = SeaTruckUpgrades.crushDepths;
+
+            //TruckQuickSlotTimeUsed = TruckUpgrades.GetPrivateField("quickSlotTimeUsed", BindingFlags.SetField) as float[];
+            //TruckQuickSlotTimeUsed = TruckUpgrades.quickSlotTimeUsed;
+
+            //TruckQuickSlotCooldown = TruckUpgrades.GetPrivateField("quickSlotCooldown", BindingFlags.SetField) as float[];
+            //TruckQuickSlotCooldown = TruckUpgrades.quickSlotCooldown;
+
+            //TruckQuickSlotCharge = TruckUpgrades.GetPrivateField("quickSlotCharge", BindingFlags.SetField) as float[];
+            //TruckQuickSlotCharge = TruckUpgrades.quickSlotCharge;
 
             TruckQuickSlots = MainCab.GetComponent<IQuickSlots>();
 
@@ -252,9 +283,15 @@ namespace SlotExtenderZero.API
 
             isReady = true;
 
-            DebugSlots();
+            TraceSlots();
 
-            BZLogger.Debug($"SeaTruckHelper/DEBUG: Awake finished, ID: [{MainCab.GetInstanceID()}]");
+            TraceQuickSlots();
+
+            TraceCrushDepths();
+
+            BZLogger.Trace($"API/Helper: Awake finished, ID: [{MainCab.GetInstanceID()}]");
+
+            BZLogger.Log($"API/Helper: SeaTruckHelper is ready for this SeaTruck, ID: [{MainCab.GetInstanceID()}]");
         }
 
         private void OnEquip(string slot, InventoryItem item)
@@ -269,7 +306,7 @@ namespace SlotExtenderZero.API
 
         private void Update()
         {
-            if (!isReady /*|| !IsPiloted()*/)
+            if (!isReady)
             {
                 return;
             }
@@ -278,7 +315,7 @@ namespace SlotExtenderZero.API
 
             IsDocked = TruckDockable.isDocked;
 
-            Damage = damageInfo.damage;
+            Damage = damageInfo.damage;            
         }
 
         private void OnPilotBegin()
@@ -375,6 +412,8 @@ namespace SlotExtenderZero.API
 
         public ItemsContainer GetSeamothStorageInSlot(int slotID, TechType techType)
         {
+            BZLogger.Trace($"helper.GetSeamothStorageInSlot: slotID: {slotID} techType: {techType}");
+
             InventoryItem slotItem = GetSlotItem(slotID);
 
             if (slotItem == null)
@@ -391,7 +430,7 @@ namespace SlotExtenderZero.API
 
             if (item.TryGetComponent(out SeamothStorageContainer component))
             {
-                DebugStorageContainer(slotID, component);
+                TraceStorageContainer(slotID, component);
 
                 return component.container;
             }
@@ -410,7 +449,7 @@ namespace SlotExtenderZero.API
             
             if (slotItem.item.TryGetComponent(out SeamothStorageContainer component))
             {
-                DebugStorageContainer(slotID, component);
+                TraceStorageContainer(slotID, component);
 
                 return component.container;
             }
@@ -437,7 +476,9 @@ namespace SlotExtenderZero.API
         {
             containers.Clear();
 
-            if (!TechTypeHandler.TryGetModdedTechType("SeaTruckStorage", out TechType techType))
+            //if (!TechTypeHandler.TryGetModdedTechType("SeaTruckStorage", out TechType techType))
+            //return;
+            if (!ModdedTechTypeHelper.Main.IsModdedTechTypeExists("SeaTruckStorage", out TechType techType))
                 return;
 
             foreach (string slot in TruckSlotIDs)
@@ -636,7 +677,7 @@ namespace SlotExtenderZero.API
                 }                    
             }            
 
-            DebugTriggers();
+            TraceTriggers();
 
             return handTargets;
         }
@@ -685,41 +726,74 @@ namespace SlotExtenderZero.API
             truckSkyApplier.renderers = renderers.ToArray();
         }
 
-        [Conditional("DEBUG")]
-        void DebugSlots()
+        [Conditional("TRACE")]
+        void TraceSlots()
         {
-            BZLogger.Debug($"SeaTruckHelper/DEBUG: Upgrade slots check started on this Seatruck. ID: [{MainCab.GetInstanceID()}]");
+            BZLogger.Trace($"API/Helper: Tracing Upgrade slots (Seatruck), ID: [{MainCab.GetInstanceID()}]");
 
             foreach (string slot in TruckSlotIDs)
             {
-                BZLogger.Debug($"SeaTruckHelper/DEBUG: Found slot: [{slot}]");
+                BZLogger.Trace($"API/Helper: value(string): [{slot}]");
             }
 
-            BZLogger.Debug($"SeaTruckHelper/DEBUG: Upgrade slots check finished on this Seatruck. ID: [{MainCab.GetInstanceID()}]");
+            BZLogger.Trace("Trace completed (Upgrade slots).");
         }
 
-        [Conditional("DEBUG")]
-        void DebugStorageContainer(int slotID, SeamothStorageContainer container)
+        [Conditional("TRACE")]
+        void TraceStorageContainer(int slotID, SeamothStorageContainer container)
         {
-            BZLogger.Debug($"SeaTruckHelper/DEBUG: Seamoth storage container found on slot [{slotID}], name [{container.name}]");
+            BZLogger.Trace("API/Helper: Tracing Seamoth storage container(s):");
+
+            BZLogger.Trace($"API/Helper: Seamoth storage container found on slot [{slotID}], name [{container.name}]");
+
+            BZLogger.Trace($"Tracing container [{container.name}] allowedTech.");
 
             foreach (TechType techtype in container.allowedTech)
             {
-                BZLogger.Debug($"SeaTruckHelper/DEBUG: allowedTech: {techtype}");
+                BZLogger.Trace($"API/Helper: value(TechType): {techtype}");
             }
+
+            BZLogger.Trace("Trace completed (storage container -> allowedTech).");
+
+            BZLogger.Trace("Trace completed (storage container).");
         }
 
 
-        [Conditional("DEBUG")]
-        void DebugTriggers()
+        [Conditional("TRACE")]
+        void TraceTriggers()
         {
-            BZLogger.Debug("SeaTruckHelper/DEBUG Debug handTargets:");
+            BZLogger.Trace("API/Helper: Tracing handTargets:");
 
             foreach (GameObject trigger in handTargets)
             {
-                BZLogger.Log($"SeaTruckHelper/DEBUG: handtarget name: {trigger.name}");
+                BZLogger.Trace($"API/Helper: value(GameObject) name: {trigger.name}");
             }
+
+            BZLogger.Trace("Trace completed.");
         }
 
+        [Conditional("TRACE")]
+        void TraceQuickSlots()
+        {            
+            BZLogger.Trace("API/Helper: Tracing QuickSlots:");
+            BZLogger.Trace($"TruckQuickSlots count(int): {TruckQuickSlots.GetSlotCount()}");
+            BZLogger.Trace($"TruckQuickSlotTimeUsed length(int): {TruckUpgrades.quickSlotTimeUsed.Length}");
+            BZLogger.Trace($"TruckQuickSlotCooldown length(int): {TruckUpgrades.quickSlotCooldown.Length}");
+            BZLogger.Trace($"TruckQuickSlotCharge length(int): {TruckUpgrades.quickSlotCharge.Length}");
+            BZLogger.Trace("Trace completed.");
+        }
+
+        [Conditional("TRACE")]
+        void TraceCrushDepths()
+        {
+            BZLogger.Trace($"API/Helper: Tracing [{TruckName}] crushdepths...");
+
+            foreach (KeyValuePair<TechType, float> kvp in TruckCrushDepths)
+            {
+                BZLogger.Trace($"API/Helper: key(TechType): {kvp.Key} value(float): [{kvp.Value}]");
+            }
+
+            BZLogger.Trace("Trace completed.");
+        }
     }
 }

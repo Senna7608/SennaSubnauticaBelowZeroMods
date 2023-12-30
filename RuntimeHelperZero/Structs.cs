@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using RuntimeHelperZero.VisualHelpers;
-using System;
 using System.Reflection;
 using RuntimeHelperZero.Components;
 
@@ -34,6 +33,7 @@ namespace RuntimeHelperZero
 
         public TransformInfo(Transform transform, Vector3 position, Quaternion rotation, Vector3 localPosition, Quaternion localRotation, Vector3 scale) : this()
         {
+            Transform = transform;
             Parent = transform.parent ?? null;
             Position = position;
             Rotation = rotation;
@@ -42,6 +42,7 @@ namespace RuntimeHelperZero
             Scale = scale;
         }
 
+        public Transform Transform { get; private set; }
         public Transform Parent { get; set; }
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
@@ -109,6 +110,22 @@ namespace RuntimeHelperZero
                     Radius = sc.radius;
                     Center = sc.center;
                     break;
+
+                case ColliderType.MeshCollider:
+                    MeshCollider mc = (MeshCollider)collider;
+                    ColliderType = ColliderType.MeshCollider;
+                    if (mc.sharedMesh.isReadable)
+                    {
+                        Vertices = mc.sharedMesh.vertices.Length;
+                        Triangles = mc.sharedMesh.triangles.Length;
+                    }
+                    else
+                    {
+                        Vertices = 0;
+                        Triangles = 0;
+                    }
+                    MeshIsReadable = mc.sharedMesh.isReadable;
+                    break;
             }
         }
 
@@ -119,6 +136,10 @@ namespace RuntimeHelperZero
         public float Radius { get; set; }
         public float Height { get; set; }
         public int Direction { get; set; }
+
+        public int Vertices { get; set; }
+        public int Triangles { get; set; }
+        public bool MeshIsReadable { get; set; }
     }
 
     public struct MaterialInfo
@@ -188,12 +209,4 @@ namespace RuntimeHelperZero
 
         public List<FieldInfo> _FieldInfo { get; private set; }
     }
-
-
-
-
-
-
-
-
 }

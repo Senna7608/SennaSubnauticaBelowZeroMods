@@ -1,0 +1,133 @@
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
+
+namespace BZHelper.ConfigurationParser
+{
+#pragma warning disable CS1591 // Missing XML documentation
+
+    public class Parser
+    {
+        private FileReader _reader;
+        private Dictionary<string, Section> _sections;
+
+        public Parser(string filePath)
+        {
+            _reader = new FileReader(filePath);
+            _sections = new SectionParser(_reader).Sections;
+        }
+
+        public string GetKeyValueFromSection(string section, string key)
+        {
+            if (!IsExistsKey(section, key))
+                return "Error";
+            try
+            {
+                return _sections[section].GetKeyValue(key);
+            }
+            catch
+            {
+                Console.WriteLine($"Parser Error! Section [{section}] or Key [{key}] is missing from file: '{_reader.FilePath}'");
+                return key;
+            }
+        }
+
+        public void SetKeyValueInSection(string section, string key, string value)
+        {
+            SetAndWrite(section, key, value);
+        }
+
+        public bool IsExistsSection(string section)
+        {
+            try
+            {
+                return _sections.ContainsKey(section);
+            }
+            catch
+            {
+                Console.WriteLine($"Parser Error! Section [{section}] is missing from file: '{_reader.FilePath}'");
+                return false;
+            }            
+        }
+
+        public bool IsExistsKey(string section, string key)
+        {
+            if (!IsExistsSection(section))
+                return false;
+            try
+            {
+                return _sections[section].ContainsKey(key);
+            }
+            catch
+            {
+                Console.WriteLine($"Parser Error! Section [{section}] or Key [{key}] is missing from file: '{_reader.FilePath}'");
+                return false;
+            }            
+        }
+
+        public bool IsExistsKeyValue(string section, string key)
+        {
+            if (!IsExistsSection(section))
+                return false;
+            try
+            {
+                return _sections[section].GetKeyValue(key) != string.Empty;
+            }
+            catch
+            {
+                Console.WriteLine($"Parser Error! Section [{section}] or Key [{key}] is missing from file: '{_reader.FilePath}'");
+                return false;
+            }
+        }
+
+        public Section GetSection(string section)
+        {
+            if (IsExistsSection(section))
+            {
+                return _sections[section];
+            }
+
+            return null;
+        }
+
+        public void ClearAndWrite(string section)
+        {
+            _sections[section].Clear();
+            var sb = new StringBuilder();
+            
+            _sections.All(kvp => { sb.AppendFormat("{0}\r\n", kvp.Value.ToString()); return true; });
+            File.WriteAllText(_reader.FilePath, sb.ToString());
+        }
+
+        public bool AddNewSection(string section)
+        {
+            try
+            {
+                _sections.Add(section, new Section(section));               
+
+                return true;
+            }
+            catch
+            {
+                Console.WriteLine($"Parser Error! Section [{section}] creation error!");
+                return false;
+            }
+        }
+
+        private void SetAndWrite(string section, string key, string value)
+        {
+            var s = _sections[section];
+
+            if (s.ContainsKey(key) && s.GetKeyValue(key) == value)
+                return;
+
+            s.SetKeyValue(key, value);
+            var sb = new StringBuilder();
+            _sections.All(kvp => { sb.AppendFormat("{0}\r\n", kvp.Value.ToString()); return true; });
+            File.WriteAllText(_reader.FilePath, sb.ToString());
+        }        
+    }
+}
+

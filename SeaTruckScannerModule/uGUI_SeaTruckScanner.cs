@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-using SMLHelper.V2.Utility;
+using Nautilus.Utility;
 
 namespace SeaTruckScannerModule
 {
@@ -80,8 +80,6 @@ namespace SeaTruckScannerModule
                 resourceList.Add(seatruckNode);
             }
 
-            
-
             resourceListRoot = scanner_cullable.Find("list").gameObject;
             scanningRoot = scanner_cullable.Find("scanning").gameObject;
             nextPageButton = scanner_cullable.Find("list/nav/scroll_down").gameObject;
@@ -117,8 +115,8 @@ namespace SeaTruckScannerModule
 
             segmentListener.onPlayerExited += OnPlayerExit;
 
-            Sprite scanning_background = ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/scanning_background_02.png");
-            Sprite scanning_foreground = ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/scanning_foreground_02.png");
+            Sprite scanning_background = ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/scanning_background_02.png");
+            Sprite scanning_foreground = ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/scanning_foreground_02.png");
             
             GameObject animation = scanningRoot.transform.Find("animation").gameObject;
 
@@ -134,8 +132,7 @@ namespace SeaTruckScannerModule
             animationImage.sprite = scanning_foreground;
 
             uGUI_RotateImage rotateImage = animation.GetComponent<uGUI_RotateImage>();
-            rotateImage.rotationTime = -4;
-           
+            rotateImage.rotationTime = -4;           
         }
                
         public void Start()

@@ -1,9 +1,8 @@
-﻿using System.Collections;
+﻿using BZCommon.Helpers.GUIHelper;
+using BZHelper;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BZCommon;
-using BZCommon.Helpers.GUIHelper;
-using BZCommon.Helpers;
 
 namespace QuickSlotExtenderZero.Configuration
 {
@@ -135,7 +134,7 @@ namespace QuickSlotExtenderZero.Configuration
 
             if (keyEvent.isKey && waitingForKey)
             {
-                newKey = InputHelper.KeyCodeToString(keyEvent.keyCode);
+                newKey = InputHelper.GetKeyCodeAsInputName(keyEvent.keyCode);
                 waitingForKey = false;
             }
         }        

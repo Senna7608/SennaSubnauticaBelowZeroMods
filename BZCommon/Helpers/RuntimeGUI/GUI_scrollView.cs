@@ -14,6 +14,7 @@ namespace BZCommon.Helpers.RuntimeGUI
         {             
             _maxShowItems = group.maxShowItems;
             _verticalSpace = 2;
+            _baseItemCount = _guiItems.Count;
 
             CalculateClientRect();
 
@@ -25,7 +26,10 @@ namespace BZCommon.Helpers.RuntimeGUI
         private int _maxShowItems;
         private Vector2 scrollPos;
         private Rect _clientRect;        
-        private Rect _drawRect;        
+        private Rect _drawRect;
+        private bool _autoScroll = false;
+        private int _baseItemCount;
+        //private Rect _borderRect;
 
         private void CalculateClientRect()
         {
@@ -45,17 +49,19 @@ namespace BZCommon.Helpers.RuntimeGUI
 
             int totalRows = _group.GetTotalRows();
 
-            if (_maxShowItems < totalRows)
-            {
+            //if (_maxShowItems < totalRows)
+            //{
                 _drawRect.height = _maxShowItems * (_group.itemHeight + _verticalSpace);
                 _drawRect.width -= _group.horizontalSpace;
-                _clientRect = new Rect(0, 0, _drawRect.width - 20, totalRows * (_group.itemHeight + _verticalSpace));                
-            }
-            else
-            {
-                _drawRect.height = totalRows * (_group.itemHeight + _verticalSpace);
-                _clientRect = new Rect(0, 0, _drawRect.width, totalRows * (_group.itemHeight + _verticalSpace));
-            }
+                _clientRect = new Rect(0, 0, _drawRect.width - 20, totalRows * (_group.itemHeight + _verticalSpace));
+            //}
+            //else
+            //{
+            //_drawRect.height = _maxShowItems * (_group.itemHeight + _verticalSpace);
+            //_clientRect = new Rect(0, 0, _drawRect.width, totalRows * (_group.itemHeight + _verticalSpace));
+            //}
+
+            //_borderRect = new Rect(_drawRect.x, _drawRect.y - 2, _drawRect.width - (_group.horizontalSpace * 4), _drawRect.height + 4);
 
             float nextYpos = _drawRect.y + _drawRect.height;
 
@@ -69,9 +75,17 @@ namespace BZCommon.Helpers.RuntimeGUI
                 GUI.Label(_groupLabelRect, _groupLabel, GUI_style.GetGuiStyle(GUI_Item_Type.LABEL, align: TextAnchor.MiddleLeft, colorNormal: GUI_Color.White));
             }
 
+            //GUI.Box(_borderRect, "");
+
             scrollPos = GUI.BeginScrollView(_drawRect, scrollPos, _clientRect);
 
             base.DrawGroup();
+
+            if (_autoScroll && _baseItemCount != _guiItems.Count)
+            {
+                scrollPos.y += Mathf.Infinity;
+                _baseItemCount = _guiItems.Count;
+            }
 
             GUI.EndScrollView();
         }
@@ -87,6 +101,16 @@ namespace BZCommon.Helpers.RuntimeGUI
             CreateGroup();
 
             isRefresh = false;
-        }        
+        }
+
+        public override void SetAutoScroll(bool value)
+        {
+            _autoScroll = value;
+        }
+
+        public override void IncrementClientHeight(float value)
+        {
+            _clientRect.Set(_clientRect.x, _clientRect.y, _clientRect.width, _clientRect.height + value);
+        }
     }
 }

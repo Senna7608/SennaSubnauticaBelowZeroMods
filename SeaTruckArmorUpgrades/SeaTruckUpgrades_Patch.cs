@@ -1,18 +1,21 @@
-﻿using HarmonyLib;
-using BZCommon;
+﻿using BZHelper;
+using HarmonyLib;
 
 namespace SeaTruckArmorUpgrades
 {
     [HarmonyPatch(typeof(SeaTruckUpgrades))]
-    [HarmonyPatch("Start")]
-    public class SeaTruckUpgrades_Start_Patch
+    [HarmonyPatch("Awake")]
+    public class SeaTruckUpgrades_Awake_Patch
     {
-        [HarmonyPostfix]
+        [HarmonyPostfix]        
         public static void Postfix(SeaTruckUpgrades __instance)
         {
-            __instance.gameObject.EnsureComponent<SeaTruckArmorManager>();
+            if (__instance.gameObject != null)
+            {
+                __instance.gameObject?.EnsureComponent<SeaTruckArmorManager>();
 
-            BZLogger.Log($"Seatruck Armor Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
+                BZLogger.Debug($"HarmonyPatch: SeaTruckUpgrades, Method: Awake, Mode: Postfix, Priority: Normal, Component: SeaTruckArmorManager, ID: {__instance.gameObject.GetInstanceID()}");
+            }           
         }
     }    
 }

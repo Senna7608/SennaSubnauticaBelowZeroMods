@@ -108,6 +108,22 @@ namespace ZHelper.Helpers
                     Radius = sc.radius;
                     Center = sc.center;
                     break;
+
+                case ColliderType.MeshCollider:
+                    MeshCollider mc = (MeshCollider)collider;
+                    ColliderType = ColliderType.MeshCollider;
+                    if (mc.sharedMesh.isReadable)
+                    {
+                        Vertices = mc.sharedMesh.vertices.Length;
+                        Triangles = mc.sharedMesh.triangles.Length;
+                    }
+                    else
+                    {
+                        Vertices = 0;
+                        Triangles = 0;
+                    }
+                    MeshIsReadable = mc.sharedMesh.isReadable;
+                    break;
             }
         }
 
@@ -118,6 +134,10 @@ namespace ZHelper.Helpers
         public float Radius { get; set; }
         public float Height { get; set; }
         public int Direction { get; set; }
+
+        public int Vertices { get; set; }
+        public int Triangles { get; set; }
+        public bool MeshIsReadable { get; set; }
     }
 
     public struct MaterialInfo
@@ -154,7 +174,7 @@ namespace ZHelper.Helpers
         public string KeywordValue { get; set; }
     };
 
-
+    
     public struct ColliderDraw
     {
         public ColliderDraw(ColliderInfo colliderBase, GameObject container, DrawColliderBounds dcb) : this()
@@ -168,6 +188,7 @@ namespace ZHelper.Helpers
         public GameObject Container { get; set; }
         public DrawColliderBounds DCB { get; set; }
     }
+    
 
     public struct ComponentInfo
     {
@@ -187,12 +208,4 @@ namespace ZHelper.Helpers
 
         public List<FieldInfo> _FieldInfo { get; private set; }
     }
-
-
-
-
-
-
-
-
 }

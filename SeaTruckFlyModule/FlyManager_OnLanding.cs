@@ -1,14 +1,16 @@
-﻿using BZCommon;
+﻿extern alias SEZero;
+using BZCommon;
+using SEZero::SlotExtenderZero.API;
 using System.Collections;
 using UnityEngine;
 
 namespace SeaTruckFlyModule
 {
-    public partial class FlyManager
+    public partial class FlyManager //OnLanding
     {
         private readonly Vector3 landingVelocity = new Vector3(0, -1f, 0);
-
-        IEnumerator OnLanding(Vector3 velocity)
+           
+        IEnumerator OnLanding(Vector3 surface)
         {
             while (!IsSafePitch())
             {
@@ -26,12 +28,22 @@ namespace SeaTruckFlyModule
             ErrorMessage.AddDebug("Landing sequence started");
             engineSound.Stop();
 
-            //helper.thisWorldForces.aboveWaterGravity = 9.81f;
+            //helper.TruckWorldForces.aboveWaterGravity = 9.81f;
             timer = 0.0f;
 
             while (!IsFootsContactWithTerrain())
             {
-                SeatruckState = TruckState.Landing;
+                if (telemetry.SeatruckState != TruckState.Landing)
+                {
+                    telemetry.ForceStateChange(TruckState.Landing);
+                }
+                
+                rigidbody.velocity = Vector3.down * Mathf.Clamp(telemetry.distanceFromSurface, 0.1f, 10f);
+
+                BZLogger.Debug($"[OnLanding] rigidbody velocity: {rigidbody.velocity}");
+
+                /*
+                telemetry.ForceStateChange(TruckState.Landing);
 
                 timer += 0.01f;//Mathf.Max(Mathf.Abs(rigidbody.velocity.y) * 0.009f, 0.008f);
 
@@ -45,10 +57,12 @@ namespace SeaTruckFlyModule
                 }
                 else
                 {
-                    rigidbody.velocity = Vector3.Lerp(velocity, landingVelocity, timer);
+                    rigidbody.velocity = Vector3.Lerp(surface, landingVelocity, timer);
 
                     BZLogger.Debug($"[OnLanding] timer: {timer}, velocity: {rigidbody.velocity}");
                 }
+                */
+
 
                 yield return null;
             }
@@ -75,8 +89,8 @@ namespace SeaTruckFlyModule
 
             rigidbody.isKinematic = true;
 
-            SeatruckPosition = TruckPosition.OnSurface;
-            SeatruckState = TruckState.Landed;
+            telemetry.ForcePositionChange(TruckPosition.OnSurface);
+            telemetry.ForceStateChange(TruckState.Landed);
 
             ErrorMessage.AddDebug("Seatruck has landed");
 
@@ -92,8 +106,8 @@ namespace SeaTruckFlyModule
 
         public void OnLandingFailed()
         {
-            BZLogger.Debug("[OnLanding] Landiing failed!");
-            if (SeatruckState == TruckState.Landing)
+            BZLogger.Debug("[OnLanding] Landing failed!");
+            if (telemetry.SeatruckState == TruckState.Landing)
             StartCoroutine(OnTakeOff());
             /*
             rigidbody.AddForce(jump, ForceMode.Impulse);

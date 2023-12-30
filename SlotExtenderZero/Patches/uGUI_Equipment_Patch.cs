@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using HarmonyLib;
-using BZCommon;
 using SlotExtenderZero.Configuration;
+using BZHelper;
 
 namespace SlotExtenderZero.Patches
 {
-    [HarmonyPatch(typeof(uGUI_Equipment), "Awake")]
-    internal class uGUI_Equipment_Awake_Patch
+    [HarmonyPatch(typeof(uGUI_Equipment), nameof(SeaTruckUpgrades.Awake))]
+    public class uGUI_Equipment_Awake_Patch
     {
         [HarmonyPrefix]
-        internal static void Prefix(uGUI_Equipment __instance)
+        [HarmonyPriority(Priority.First)]
+        public static bool Prefix(ref uGUI_Equipment __instance)
         {
             if (Main.uGUI_PrefixComplete)
-                return;
+                return true;
 
             Transform transform = __instance.gameObject.transform;
 
@@ -112,18 +113,20 @@ namespace SlotExtenderZero.Patches
             Main.uGUI_PrefixComplete = true;
 
             BZLogger.Log("uGUI_Equipment Slots Patched.");
+
+            return true;
         }
 
 
         [HarmonyPostfix]
-        internal static void Postfix(ref uGUI_Equipment __instance)
+        public static void Postfix(ref uGUI_Equipment __instance)
         {
             if (Main.uGUI_PostfixComplete)
-                return;
+                return;            
 
-            __instance.gameObject.EnsureComponent<uGUI_SlotTextHandler>();
+            __instance.gameObject?.EnsureComponent<uGUI_SlotTextHandler>();
 
             Main.uGUI_PostfixComplete = true;
-        }
+        }       
     }
 }

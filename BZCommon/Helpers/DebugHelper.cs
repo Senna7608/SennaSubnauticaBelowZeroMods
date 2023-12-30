@@ -39,7 +39,7 @@ namespace BZCommon.Helpers
 
             foreach (string key in keywords)
             {
-                BZLogger.Log($"{key}");
+                Console.Write($"{key}");
             }
         }
     }

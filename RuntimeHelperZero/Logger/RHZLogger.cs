@@ -1,82 +1,109 @@
 ﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace RuntimeHelperZero.Logger
 {
+    public enum RHZLogType
+    {
+        Log = 0,        
+        Warning = 2,
+        Error = 3,
+        Debug = 4
+    }
+
     public static class RHZLogger
     {
-        public const string prefixLOG = "[RhZero [log] ";
+        public const string prefixLOG = "[RhZero [Log] ";
         public const string prefixWARNING = "[RhZero [Warning] ";
         public const string prefixERROR = "[RhZero [Error] ";
+        public const string prefixDEBUG = "[RhZero [Debug] ";
 
-        public static void RHZ_Log(string message)
+        public static void Log(string message)
         {
+            //UnityEngine.Debug.Log(prefixLOG + message);
             Console.WriteLine(prefixLOG + message);
         }
 
-        public static void RHZ_Log(string message, LogType type)
+        public static void Log(string message, RHZLogType type)
         {
             switch (type)
             {
-                case LogType.Assert:
-                case LogType.Error:
-                case LogType.Exception:
-                    RHZ_Error(message);
+                case RHZLogType.Warning:
+                    Warning(message);
                     break;
 
-                case LogType.Warning:
-                    RHZ_Warning(message);
+                case RHZLogType.Error:                
+                    Error(message);
+                    break;
+
+                case RHZLogType.Debug:
+                    Debug(message);
                     break;
 
                 default:
-                    RHZ_Log(message);
+                    Log(message);
                     break;
             }
         }
 
-        public static void RHZ_Log(string message, LogType type, params object[] args)
+        public static void Log(string message, RHZLogType type, params object[] args)
         {
             switch (type)
             {
-                case LogType.Assert:
-                case LogType.Error:
-                case LogType.Exception:
-                    RHZ_Error(message, args);
+                case RHZLogType.Warning:
+                    Warning(message, args);
                     break;
 
-                case LogType.Warning:
-                    RHZ_Warning(message, args);
+                case RHZLogType.Error:
+                    Error(message, args);
+                    break;                
+
+                case RHZLogType.Debug:
+                    Debug(message, args);
                     break;
 
                 default:
-                    RHZ_Log(message, args);
+                    Log(message, args);
                     break;
             }
         }
 
-        public static void RHZ_Log(string format, params object[] args)
+        public static void Log(string format, params object[] args)
         {
-            Console.WriteLine(prefixLOG + string.Format(format, args));
+            UnityEngine.Debug.Log(prefixLOG + string.Format(format, args));
+            //Console.WriteLine(prefixLOG + string.Format(format, args));
         }
 
-        public static void RHZ_Warning(string message)
+        public static void Warning(string message)
         {
-            Console.WriteLine(prefixWARNING + message);
+            UnityEngine.Debug.Log(prefixWARNING + message);
+            //Console.WriteLine(prefixWARNING + message);
         }
 
-        public static void RHZ_Warning(string format, params object[] args)
+        public static void Warning(string format, params object[] args)
         {
-            Console.WriteLine(prefixWARNING + string.Format(format, args));
+            UnityEngine.Debug.Log(prefixWARNING + string.Format(format, args));
+            //Console.WriteLine(prefixWARNING + string.Format(format, args));
         }
 
-        public static void RHZ_Error(string message)
+        public static void Error(string message)
         {
-            Console.WriteLine(prefixERROR + message);
+            UnityEngine.Debug.Log(prefixERROR + message);
+            //Console.WriteLine(prefixERROR + message);
         }
 
-        public static void RHZ_Error(string format, params object[] args)
+        public static void Error(string format, params object[] args)
         {
-            Console.WriteLine(prefixERROR + string.Format(format, args));
+            UnityEngine.Debug.Log(prefixERROR + string.Format(format, args));
+            //Console.WriteLine(prefixERROR + string.Format(format, args));
+        }
+
+        [Conditional("DEBUG")]
+        public static void Debug(string format, params object[] args)
+        {
+            UnityEngine.Debug.Log(prefixDEBUG + string.Format(format, args));
+            //Console.WriteLine(prefixDEBUG + string.Format(format, args));
         }
     }
 }

@@ -33,7 +33,7 @@ namespace RuntimeHelperZero
 
         private bool enabledValue;
 
-        private bool isColliderSelected = false;
+        public bool isColliderSelected = false;
 
         private bool isRectTransform = false;
 
@@ -45,32 +45,25 @@ namespace RuntimeHelperZero
             components.Clear();
             componentNames.Clear();
             objects.Clear();
+            
+            selectedObject.GetComponents(components);
 
-            try
-            {
-                selectedObject.GetComponents(components);
-
-                objects.Add(selectedObject);
+            objects.Add(selectedObject);
                 
-                foreach (Component component in components)
-                {
-                    objects.Add(component);
-                }
-
-                objects.Sort(delegate (UnityEngine.Object a, UnityEngine.Object b)
-                {
-                    return GetComponentShortType(a).CompareTo(GetComponentShortType(b));
-                });
-
-                foreach (UnityEngine.Object _object in objects)
-                {
-                    componentNames.Add(GetComponentShortType(_object));
-                }
-            }
-            catch
+            foreach (Component component in components)
             {
-
+                objects.Add(component);
             }
+
+            objects.Sort(delegate (UnityEngine.Object a, UnityEngine.Object b)
+            {
+                return GetComponentShortType(a).CompareTo(GetComponentShortType(b));
+            });
+
+            foreach (UnityEngine.Object _object in objects)
+            {
+                componentNames.Add(GetComponentShortType(_object));
+            }           
 
             guiItems_Components.SetScrollViewItems(componentNames, 378f);
 
@@ -115,7 +108,6 @@ namespace RuntimeHelperZero
                 showObjectInfoWindow = false;
                 showAddComponentWindow = true;
             }
-
         }
 
         private void ComponentWindow_Update()
@@ -130,12 +122,13 @@ namespace RuntimeHelperZero
 
                 if (IsSupportedCollider(objects[selected_component]))
                 {
-                    isColliderSelected = true;
+                    selectedObject.GetComponentInChildren<DrawColliderBounds>().DrawCollider(objects[selected_component].GetInstanceID());
+                    
                     GetColliderInfo();
-                    DrawColliderControl dcc = selectedObject.GetComponentInChildren<DrawColliderControl>();
-                    int componentID = objects[selected_component].GetInstanceID();
-                    dcc.DrawSelectedCollider(componentID, true);
+
                     RefreshEditModeList();
+
+                    isColliderSelected = true;                    
                 }
                 else
                 {
@@ -210,6 +203,10 @@ namespace RuntimeHelperZero
             {
                 return true;
             }
+            else if (componentType == typeof(MeshCollider))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -243,10 +240,7 @@ namespace RuntimeHelperZero
             }
 
             if (IsSupportedCollider(component))
-            {
-                int colliderID = component.GetInstanceID();
-                DrawColliderControl dcc = selectedObject.GetComponentInChildren<DrawColliderControl>();
-                dcc.RemoveColliderDrawing(colliderID);
+            {                
                 isColliderSelected = false;
             }
 
@@ -290,6 +284,22 @@ namespace RuntimeHelperZero
                     colliderModify.ColliderType = ColliderType.SphereCollider;
                     colliderModify.Center = sc.center;
                     colliderModify.Radius = sc.radius;
+                    return;
+
+                case ColliderType.MeshCollider:
+                    MeshCollider mc = (MeshCollider)collider;
+                    colliderModify.ColliderType = ColliderType.MeshCollider;
+                    if (mc.sharedMesh.isReadable)
+                    {
+                        colliderModify.Vertices = mc.sharedMesh.vertices.Length;
+                        colliderModify.Triangles = mc.sharedMesh.triangles.Length;
+                    }
+                    else
+                    {
+                        colliderModify.Vertices = 0;
+                        colliderModify.Triangles = 0;
+                    }
+                    colliderModify.MeshIsReadable = mc.sharedMesh.isReadable;
                     return;
             }
         }

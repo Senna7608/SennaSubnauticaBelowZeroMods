@@ -28,7 +28,7 @@ namespace RuntimeHelperZero.Renderers
             }
             else  if (renderer == null)
             {
-                RHZLogger.RHZ_Error($"Object: {gameObject.name} has no renderers!");
+                RHZLogger.Error($"Object: {gameObject.name} has no renderers!");
             }
 
             List<string> keywords = new List<string>();

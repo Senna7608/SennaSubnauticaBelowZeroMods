@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using BZCommon.Helpers;
-using BZCommon.Helpers.SMLHelpers;
+using BZHelper;
+using BZHelper.NautilusHelpers;
 
 namespace CheatManagerZero
 {
@@ -27,7 +28,6 @@ namespace CheatManagerZero
         LandSpawn,
         Blueprints,
         Warp,
-        ALLTECH,
         BaseModule,
     };      
 
@@ -48,32 +48,29 @@ namespace CheatManagerZero
             }
         }
 
-
-        public void InitFullTechMatrixList(ref List<TechTypeData> TechMatrix)
+        public int GetTotalCount(ref List<TechTypeData>[] technologyMatrix)
         {
-            int[] techTypeArray = (int[])Enum.GetValues(typeof(TechType));
+            int count = 0;
 
-            for (int i = 0; i < techTypeArray.Length; i++)
+            foreach (List<TechTypeData> entry in technologyMatrix)
             {
-                TechType techType = (TechType)techTypeArray[i];
-
-                string name = Language.main.Get(TechTypeExtensions.AsString((TechType)techTypeArray[i], false));
-
-                TechMatrix.Add(new TechTypeData(techType, name));
+                count += entry.Count;
             }
-        }        
-        
+
+            return count;
+        }
+
         public void InitTechMatrixList(ref List<TechTypeData>[] TechnologyMatrix)
         {
             int i = 0;
 
-            foreach (KeyValuePair<TechCategory, TechType[]> kvp in baseTechMatrix)
+            foreach (KeyValuePair<TechCategory, List<TechType>> kvp in baseTechMatrix)
             {
                 if (Enum.IsDefined(typeof(Categories), (int)kvp.Key))
                 {                    
                     TechnologyMatrix[i] = new List<TechTypeData>();
 
-                    for (int j = 0; j < kvp.Value.Length; j++)
+                    for (int j = 0; j < kvp.Value.Count; j++)
                     {
                         string name;
                         TechType techType = kvp.Value[j];
@@ -85,7 +82,35 @@ namespace CheatManagerZero
 
                     i++;
                 }                
-            }            
+            }
+
+            BZLogger.Debug("Base Tech matrix created.");
+        }
+
+        public void InitializeBlueprints()
+        {
+            HashSet<TechType> unlockables = KnownTech.GetAllUnlockables();
+
+            int moddedCount = 0;
+
+            foreach (TechType techType in unlockables)
+            {
+                baseTechMatrix[TechCategory.Blueprints].Add(techType);
+
+                if (ModdedTechTypeHelper.Main.IsModdedTechTypeExists(techType))
+                {
+                    BZLogger.Debug($"Modded blueprint found for techtype: [{techType}]");
+
+                    moddedCount++;
+                }
+            }
+
+            if (moddedCount > 0)
+            {
+                BZLogger.Log($"Found [{moddedCount}] modded blueprint(s).");
+                BZLogger.Log($"Dynamic blueprint list created and expanded with modded blueprint(s). Number of entries: [{unlockables.Count}]");
+            }
+
         }
 
         public void SortTechLists(ref List<TechTypeData>[] TechnologyMatrix)
@@ -98,11 +123,9 @@ namespace CheatManagerZero
 
         public void GetModdedTechTypes(ref List<TechTypeData>[] TechnologyMatrix)
         {
-            ModdedTechTypeHelper mHelper = new ModdedTechTypeHelper();
-
-            foreach (KeyValuePair<string, TechType> kvp in mHelper.FoundModdedTechTypes)
+            foreach (KeyValuePair<string, TechType> kvp in ModdedTechTypeHelper.Main.ModdedTechTypes)
             {
-                EquipmentType equipmentType = mHelper.TypeDefCache[kvp.Value];
+                EquipmentType equipmentType = ModdedTechTypeHelper.Main.TypeDefCache[kvp.Value];
 
                 switch (equipmentType)
                 {                    
@@ -140,15 +163,20 @@ namespace CheatManagerZero
                 }
             }
 
+            if (ModdedTechTypeHelper.Main.ModdedTechTypes.Count > 0)
+            {
+                BZLogger.Log($"Found [{ModdedTechTypeHelper.Main.ModdedTechTypes.Count}] modded TechType(s).");
+                BZLogger.Log($"Dynamic techmatrix created. Modded TechType(s) added to appropriate categories. Number of entries: [{GetTotalCount(ref TechnologyMatrix)}]");
+            }
         }
         
-        public static readonly Dictionary<TechCategory, TechType[]> baseTechMatrix = new Dictionary<TechCategory, TechType[]>()
+        public readonly Dictionary<TechCategory, List<TechType>> baseTechMatrix = new Dictionary<TechCategory, List<TechType>>()
         {
             #region Vehicles
             {
                 TechCategory.Vehicles,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.Exosuit,
                     TechType.SeaTruck,
@@ -168,7 +196,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Tools,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.Thumper,                    
                     TechType.SpyPenguin,
@@ -203,7 +231,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Equipment,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.ReinforcedDiveSuit,
                     TechType.ReinforcedGloves,                    
@@ -233,7 +261,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Materials,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.Aerogel,
                     TechType.AluminumOxide,
@@ -275,7 +303,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Electronics,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.AdvancedWiringKit,
                     TechType.Battery,
@@ -297,13 +325,12 @@ namespace CheatManagerZero
             {
                 TechCategory.Upgrades,
 
-                new TechType[]
+                new List<TechType>()
                 {   
                     TechType.SeaTruckUpgradeHull1,
                     TechType.SeaTruckUpgradeHull2,
                     TechType.SeaTruckUpgradeHull3,
-                    TechType.SeaTruckUpgradePerimeterDefense,
-                    TechType.SeaTruckUpgradeThruster,                    
+                    TechType.SeaTruckUpgradePerimeterDefense,                                     
                     TechType.SeaTruckUpgradeEnergyEfficiency,
                     TechType.SeaTruckUpgradeHorsePower,
                     TechType.SeaTruckUpgradeAfterburner,
@@ -329,7 +356,7 @@ namespace CheatManagerZero
             {
                 TechCategory.FoodAndWater,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.SpicyFruitSalad,
                     TechType.NutrientBlock,                    
@@ -367,7 +394,7 @@ namespace CheatManagerZero
             {
                 TechCategory.LootAndDrill,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.LimestoneChunk,                                    
                     TechType.DrillableSalt,
@@ -394,7 +421,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Herbivores,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.TitanHolefish,
                     TechType.SeaMonkey,                    
@@ -416,7 +443,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Carnivores,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.Brinewing, 
                     TechType.Symbiote,                    
@@ -433,7 +460,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Parasites,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.Rockgrub,                    
                     TechType.PrecursorDroid
@@ -445,7 +472,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Leviathan,
 
-                new TechType[]
+                new List<TechType>()
                 {    
                     TechType.ShadowLeviathan,                    
                     TechType.GlowWhale,
@@ -459,7 +486,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Eggs,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.ShockerEgg                    
                 }
@@ -470,7 +497,7 @@ namespace CheatManagerZero
             {
                 TechCategory.SeaSeed,
 
-                new TechType[]
+                new List<TechType>()
                 {                   
                     TechType.PurpleStalkSeed,                    
                     TechType.RedBushSeed,                   
@@ -483,7 +510,7 @@ namespace CheatManagerZero
             {
                 TechCategory.LandSeed,
 
-                new TechType[]
+                new List<TechType>()
                 {                    
                     TechType.PurpleVegetable,
                     TechType.MelonSeed                    
@@ -495,7 +522,7 @@ namespace CheatManagerZero
             {
                 TechCategory.FloraItem,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.GenericRibbon,
                     TechType.JellyPlant,                    
@@ -512,7 +539,7 @@ namespace CheatManagerZero
             {
                 TechCategory.SeaSpawn,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.BlueLostRiverLilly,                    
                     TechType.PurpleTentacle,                    
@@ -559,7 +586,7 @@ namespace CheatManagerZero
             {
                 TechCategory.LandSpawn,
 
-                new TechType[]
+                new List<TechType>()
                 {
                     TechType.PinkFlower,                    
                     TechType.FernPalm,
@@ -575,13 +602,7 @@ namespace CheatManagerZero
             {
                 TechCategory.Blueprints,
 
-                new TechType[]
-                {
-                    TechType.RocketBaseLadder,
-                    TechType.RocketStage1,
-                    TechType.RocketStage2,
-                    TechType.RocketStage3
-                }
+                new List<TechType>()                
             }
             #endregion
         };        

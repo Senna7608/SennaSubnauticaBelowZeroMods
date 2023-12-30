@@ -4,7 +4,6 @@ using RuntimeHelperZero.VisualHelpers;
 using RuntimeHelperZero.Components;
 using RuntimeHelperZero.Configuration;
 using RuntimeHelperZero.Objects;
-using BZCommon;
 using BZCommon.Helpers.GUIHelper;
 
 namespace RuntimeHelperZero
@@ -19,8 +18,10 @@ namespace RuntimeHelperZero
 
         private int addedChildObjectCount = 0;
 
-        private GameObject baseObject, selectedObject, tempObject;          
-        
+        private GameObject baseObject, selectedObject, tempObject;
+
+        private GameObject RHZ_VISUAL_BASE;
+
         private string OBJECTINFO = string.Empty;
         private string COLLIDERINFO = string.Empty;                       
         
@@ -28,8 +29,7 @@ namespace RuntimeHelperZero
         private Vector2 rtPos, rtSize, rtPivot;
         public bool isDirty = false;       
 
-        private string sizeText = string.Empty;
-        private bool showCollider = true;       
+        private string sizeText = string.Empty;             
         
         private bool isRootList = false;
 
@@ -71,7 +71,7 @@ namespace RuntimeHelperZero
 
             AddComponentWindow_Awake();
 
-            MarkWindow_Awake();
+            MarkWindow_Awake();            
 
             FMODWindow_Awake();
         }
@@ -99,15 +99,7 @@ namespace RuntimeHelperZero
 
         private void OnDestroy()
         {
-            foreach (GameObject containerBase in Main.AllVisuals)
-            {
-                if (containerBase)
-                {
-                    DestroyImmediate(containerBase);
-                }
-            }
-
-            Main.AllVisuals.Clear();
+            DestroyImmediate(RHZ_VISUAL_BASE);
 
             Destroy(this);
         }               
@@ -179,9 +171,20 @@ namespace RuntimeHelperZero
 
         private void PrintColliderInfo()
         {
-            COLLIDERINFO = 
-                $"Collider type: {colliderModify.ColliderType}\n\n" +                
-                $"Center x:{colliderModify.Center.x,6:F2}  y:{colliderModify.Center.y,6:F2}  z:{colliderModify.Center.z,6:F2}\n" + sizeText;            
+            if (colliderModify.ColliderType == ColliderType.MeshCollider)
+            {
+                COLLIDERINFO = 
+                $"Collider type: {colliderModify.ColliderType}\n" +
+                $"Mesh isReadable: {colliderModify.MeshIsReadable}\n" +
+                $"Vertices: {colliderModify.Vertices}\n" +
+                $"Triangles: {colliderModify.Triangles}";
+            }
+            else
+            {
+                COLLIDERINFO =
+                $"Collider type: {colliderModify.ColliderType}\n\n" +
+                $"Center x:{colliderModify.Center.x,6:F2}  y:{colliderModify.Center.y,6:F2}  z:{colliderModify.Center.z,6:F2}\n" + sizeText;
+            }
         }
 
         private void OnGUI()
@@ -356,8 +359,12 @@ namespace RuntimeHelperZero
 
             if (GUI.Button(new Rect(windowRect.x + 5, windowRect.y + 617, 140, 22), MainWindow[14], SNStyles.GetGuiItemStyle(GuiItemType.NORMALBUTTON, GuiColor.Gray)))
             {
-                DrawObjectBounds dob = selectedObject.GetOrAddVisualBase(BaseType.Object).GetComponent<DrawObjectBounds>();                
-                selectedObject.transform.SetTransformInfo(ref dob.transformBase);                
+                DrawObjectBounds dob = selectedObject.GetComponentInChildren<DrawObjectBounds>();
+
+                int transformID = selectedObject.transform.GetInstanceID();                
+
+                selectedObject.transform.SetTransformInfo(dob.transformOriginals[transformID]);  
+                
                 OutputWindow_Log(MESSAGE_TEXT[MESSAGES.TRANSFORM_TO_ORIGINAL], selectedObject.name);
             }
 
@@ -365,15 +372,15 @@ namespace RuntimeHelperZero
             {
                 if (GUI.Button(new Rect(windowRect.x + 150, windowRect.y + 617, 140, 22), MainWindow[15], SNStyles.GetGuiItemStyle(GuiItemType.NORMALBUTTON, GuiColor.Gray)))
                 {
-                    DrawColliderControl dcc = selectedObject.GetComponentInChildren<DrawColliderControl>();
+                    DrawColliderBounds dcb = selectedObject.GetComponentInChildren<DrawColliderBounds>();
 
                     int colliderID = objects[selected_component].GetInstanceID();
 
-                    selectedObject.ResetCollider(dcc.ColliderBases[colliderID].ColliderBase, colliderID);
+                    selectedObject.ResetCollider(dcb.colliderOriginals[colliderID], colliderID);
 
                     GetColliderInfo();
 
-                    OutputWindow_Log(MESSAGE_TEXT[MESSAGES.COLLIDER_TO_ORIGINAL], dcc.ColliderBases[colliderID].ColliderBase.ColliderType.ToString());
+                    OutputWindow_Log(MESSAGE_TEXT[MESSAGES.COLLIDER_TO_ORIGINAL], dcb.colliderOriginals[colliderID].ColliderType.ToString());
                 }
             }
 
@@ -438,21 +445,19 @@ namespace RuntimeHelperZero
 
             if (ScrollView_transforms_event.ItemID != -1)
             {
+                current_transform_index = ScrollView_transforms_event.ItemID;
+
                 if (ScrollView_transforms_event.MouseButton == 0)
-                {
-                    try
-                    {
-                        current_transform_index = ScrollView_transforms_event.ItemID;
-                        OnObjectChange(TRANSFORMS[current_transform_index].gameObject);
-                    }
-                    catch
-                    {
-                        current_transform_index = 0;
-                        OnObjectChange(TRANSFORMS[current_transform_index].gameObject);
-                    }
+                {                    
+                    OnObjectChange(TRANSFORMS[current_transform_index].gameObject);
+                    return;
                 }
 
-                return;
+                if (ScrollView_transforms_event.MouseButton == 1)
+                {
+                    OnBaseObjectChange(TRANSFORMS[current_transform_index].gameObject);
+                    return;
+                }                
             }
 
             GetObjectVectors();
@@ -471,16 +476,7 @@ namespace RuntimeHelperZero
                         sizeText = $"Radius:{colliderModify.Radius,6:F2}\n";
                         break;
                 }
-            }
-
-            if (Input.GetKeyDown(RuntimeHelperZero_Config.KEYBINDINGS["ToggleColliderDrawing"]))
-            {
-                //if (isExistsCollider)
-                //{
-                    showCollider = !showCollider;                    
-                    ShowAllCollider(showCollider);
-                //}
-            }
+            }           
 
             if (Input.GetKeyDown(RuntimeHelperZero_Config.KEYBINDINGS["ToggleRaycastMode"]))
             {
@@ -692,7 +688,7 @@ namespace RuntimeHelperZero
 
         public bool IsPlayerInVehicle()
         {
-            return Player.main.inSeamoth || Player.main.inExosuit || Player.main.IsPilotingSeatruck() ? true : false;
+            return Player.main.inExosuit || Player.main.IsPilotingSeatruck() ? true : false;
         }
 
     }

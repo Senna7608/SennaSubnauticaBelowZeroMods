@@ -30,13 +30,13 @@ namespace CheatManagerZero.NewCommands
         {
             if (AlwaysDayCheat)
             {
-                DayNightCycle.main.sunRiseTime = 70F;
-                DayNightCycle.main.sunSetTime = 200F;
+                DayNightCycle.main.sunRiseTime = 70f;
+                DayNightCycle.main.sunSetTime = 200f;
             }
             else
             {
-                DayNightCycle.main.sunRiseTime = 0.125F;
-                DayNightCycle.main.sunSetTime = 0.875F;
+                DayNightCycle.main.sunRiseTime = 0.125f;
+                DayNightCycle.main.sunSetTime = 0.875f;
             }
         }
     }

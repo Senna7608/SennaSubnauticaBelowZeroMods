@@ -8,6 +8,7 @@ SeatruckScanner_FullUnpoweredText:Status: Module et scanner hors tension!
 SeatruckScanner_ScannerReadyText:Status: Prêt
 SeatruckScanner_PilotScannerModule:Piloter le module de scanner
 SeatruckScanner_PowerSwitch:Interrupteur d'alimentation
+SeatruckScanner_PowerSwitchDocked:Ne peut pas être utilisé lorsqu'il est amarré
 SeaTruckScannerHUDChip:Puce HUD pour le module de scanner de l'aquatracteur
 Tooltip_SeaTruckScannerHUDChip:Transmet des données du module de scanner de l'aquatracteur vers le HUD
 SeaTruckScannerHUDChipUpgrade:Puce HUD pour le module de scanner de l'aquatracteur avec amélioration de distance

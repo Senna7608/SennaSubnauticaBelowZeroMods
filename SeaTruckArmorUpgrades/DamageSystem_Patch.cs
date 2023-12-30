@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using HarmonyLib;
-using BZCommon;
+using System;
+using BZHelper;
 
 namespace SeaTruckArmorUpgrades
 {
     [HarmonyPatch(typeof(DamageSystem))]
     [HarmonyPatch("CalculateDamage")]
+    [HarmonyPatch(new Type[] { typeof(float), typeof(DamageType), typeof(GameObject), typeof(GameObject) })]
     public class DamageSystem_CalculateDamage_Patch
     {
         [HarmonyPrefix]
@@ -17,7 +19,7 @@ namespace SeaTruckArmorUpgrades
                 {
                     armorManager.originalDamage = damage;
 
-                    damage = damage * armorManager.DamageReductionMultiplier;
+                    damage *= armorManager.DamageReductionMultiplier;
                 }
                 else
                 {

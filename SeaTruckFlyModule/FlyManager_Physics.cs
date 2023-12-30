@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿extern alias SEZero;
+
+using SEZero::SlotExtenderZero.API;
+using UnityEngine;
 
 namespace SeaTruckFlyModule
 {
@@ -16,7 +19,7 @@ namespace SeaTruckFlyModule
             if (helper == null || motor == null || !helper.IsPiloted())
                 return;            
 
-            if (altitude >= 0 && rigidbody != null && helper.IsPowered() && !IsBusyAnimating())
+            if (telemetry.altitude >= 0 && rigidbody != null && helper.IsPowered() && !IsBusyAnimating())
             {
                 Vector3 vector = (AvatarInputHandler.main.IsEnabled() || helper.TruckInputStackDummy.activeInHierarchy) ? GameInput.GetMoveDirection() : Vector3.zero;
 
@@ -48,7 +51,7 @@ namespace SeaTruckFlyModule
                     direction.y = 0;
                 }
 
-                if (SeatruckPosition == TruckPosition.OnSurface && SeatruckState == TruckState.Landed && vector.y > 0f)
+                if (telemetry.SeatruckPosition == TruckPosition.OnSurface && telemetry.SeatruckState == TruckState.Landed && vector.y > 0f)
                 {                    
                     StartCoroutine(OnTakeOff());
                     //rigidbody.AddForce(new Vector3(0, 1 ,0), ForceMode.VelocityChange);                    
@@ -72,7 +75,7 @@ namespace SeaTruckFlyModule
                     num += 7f;
                 }
                 
-                if (SeatruckState != TruckState.Landing)
+                if (telemetry.SeatruckState != TruckState.Landing)
                 {
                     rigidbody.AddForce(num * a, ForceMode.Acceleration);
                 }                
@@ -157,34 +160,14 @@ namespace SeaTruckFlyModule
             return Mathf.Abs(mainCab.transform.eulerAngles.z - 180f);
         }
 
-
         private bool IsSafePitch()
         {
-            float num = GetTruckPitch();
-
-            float diff = 180f - num;
-
-            if (diff > 12f)
-            {                
-                return false;
-            }
-
-            return true;
+            return 180f - GetTruckPitch() <= 12f;
         }
-
 
         private bool IsSafeRoll()
         {
-            float num = GetTruckRoll();
-
-            float diff = 180f - num;
-
-            if (diff > 12f)
-            {                
-                return false;
-            }
-
-            return true;
+            return 180f - GetTruckRoll() <= 12f;
         }
     }
 }

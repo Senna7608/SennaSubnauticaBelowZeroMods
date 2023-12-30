@@ -1,8 +1,6 @@
-﻿using BZCommon;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UWE;
 
 namespace RuntimeHelperZero.VisualHelpers
 {
@@ -72,8 +70,6 @@ namespace RuntimeHelperZero.VisualHelpers
         {
             LineRenderer lineRenderer = lineContainer.GetComponent<LineRenderer>();
 
-            //RemoveDuplicatedVertices(vertices, out Vector3[] cleanVertices);
-
             lineRenderer.positionCount = vertices.Length;
 
             lineRenderer.loop = true;
@@ -82,27 +78,36 @@ namespace RuntimeHelperZero.VisualHelpers
             {
                 lineRenderer.SetPosition(i, vertices[i]);
             }
-        }        
-
-        public static void RemoveDuplicatedVertices(Vector3[] vertices, out Vector3[] cleanVertices)
-        {
-            List<Vector3> newVerts = new List<Vector3>();
-
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                if (newVerts.Contains(vertices[i]))
-                {
-                    continue;
-                }
-                else
-                {
-                    newVerts.Add(vertices[i]);
-                }
-            }
-
-            cleanVertices = newVerts.ToArray();
         }
 
+        public static void DrawTriangle(this GameObject lineContainer, Vector3 a, Vector3 b, Vector3 c)
+        {
+            LineRenderer lineRenderer = lineContainer.GetComponent<LineRenderer>();
+
+            lineRenderer.positionCount = 3;
+            lineRenderer.loop = true;
+
+            lineRenderer.SetPosition(0, a);
+            lineRenderer.SetPosition(1, b);
+            lineRenderer.SetPosition(2, c);            
+        }              
+
+        public static void DrawCircle(this GameObject lineContainer, float radius, int angle)
+        {
+            LineRenderer lineRenderer = lineContainer.GetComponent<LineRenderer>();
+
+            lineRenderer.positionCount = angle + 1;
+
+            var points = new Vector3[lineRenderer.positionCount];
+
+            for (int i = 0; i < lineRenderer.positionCount; i++)
+            {
+                var rad = Mathf.Deg2Rad * (i * angle / angle);
+                points[i] = new Vector3(Mathf.Sin(rad) * radius, 0, Mathf.Cos(rad) * radius);
+            }
+
+            lineRenderer.SetPositions(points);
+        }
 
         public static void DrawRectangle(this List<GameObject> lineContainers, RectTransform rectTransform)
         {
@@ -113,12 +118,13 @@ namespace RuntimeHelperZero.VisualHelpers
             rectTransform.GetLocalCorners(vertices);
 
             lineRenderer.positionCount = 4;
+
             lineRenderer.loop = true;
 
             for (int i = 0; i < 4; i++)
             {
                 lineRenderer.SetPosition(i, vertices[i]);
-            }            
+            }
         }
 
         public static void DrawBox(this List<GameObject> lineContainers, Vector3 center, Vector3 size)
@@ -142,23 +148,15 @@ namespace RuntimeHelperZero.VisualHelpers
             lineContainers[11].DrawLine(vertices[7], vertices[6]);            
         }
 
-        public static void DrawCircle(this GameObject lineContainer, float radius, int angle)
-        { 
-            LineRenderer lineRenderer = lineContainer.GetComponent<LineRenderer>();            
-
-            lineRenderer.positionCount = angle + 1;
-
-            var points = new Vector3[lineRenderer.positionCount];
-
-            for (int i = 0; i < lineRenderer.positionCount; i++)
+        public static void DrawMesh(this GameObject containerBase, ref List<GameObject> triangleContainers, Mesh mesh)
+        {
+            for (int i = 0, j = 0; i < mesh.triangles.Length; i += 3)
             {
-                var rad = Mathf.Deg2Rad * (i * angle / angle);
-                points[i] = new Vector3(Mathf.Sin(rad) * radius, 0, Mathf.Cos(rad) * radius);
+                triangleContainers[j].DrawTriangle(mesh.vertices[mesh.triangles[i]], mesh.vertices[mesh.triangles[i + 1]], mesh.vertices[mesh.triangles[i + 2]]);
+                j++;
             }
-
-            lineRenderer.SetPositions(points);            
         }
-        
+
         private static Vector3[] GetBoxLocalCorners(Vector3 center, Vector3 size)
         {
             Vector3[] vertices = new Vector3[8];
@@ -183,6 +181,5 @@ namespace RuntimeHelperZero.VisualHelpers
             
             return new Vector3(size.x * diffX, size.y * diffY, size.z * diffZ);
         }
-
     }
 }

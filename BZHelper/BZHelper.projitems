@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>b8e53249-194a-48a0-8f97-09882e5fc993</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>BZHelper</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BZLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ColorHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ColorizationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationParser\FileReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationParser\Parser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationParser\ParserHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationParser\Section.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationParser\SectionParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CustomFrozenMixin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FreezeCannon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphicsHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Indestructible.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InputHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IntVector3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReflectionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NautilusHelpers\Classes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NautilusHelpers\EncyHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NautilusHelpers\ModdedTechTypeHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NautilusHelpers\ModPrefab_Craftable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NautilusHelpers\ModPrefab_Fragment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NautilusHelpers\ModPrefab_Vehicle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SelfDestruct.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TransitDockListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnityHelper.cs" />
+  </ItemGroup>
+</Project>

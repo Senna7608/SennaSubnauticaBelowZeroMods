@@ -4,17 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Utility;
-using BZCommon;
-using BZCommon.Helpers;
-using BZCommon.Helpers.SMLHelpers;
-using UWE;
+using BZHelper;
+using BZHelper.NautilusHelpers;
+using Nautilus.Utility;
+using Nautilus.Handlers;
+using Nautilus.Crafting;
 
 namespace SeaTruckScannerModule
 {
-    internal class SeaTruckScannerModule_Prefab : ModPrefab_Vehicle
+    internal class SeaTruckScannerModule_Prefab : ModPrefab_Craftable
     {
         public static TechType TechTypeID { get; private set; }
 
@@ -27,10 +25,15 @@ namespace SeaTruckScannerModule
                   techTypeName: "SeaTruckScannerModule",
                   friendlyName: "Seatruck Scanner Module",
                   description: "It locates resources and wrecks within a range of 150 m.",
-                  template: TechType.SeaTruckFabricatorModule,
+                  template: TechType.None,
+                  gamerResourceFileName: "WorldEntities/Tools/SeaTruckFabricatorModule.prefab",
                   requiredAnalysis: TechType.None,
                   groupForPDA: TechGroup.Constructor,
                   categoryForPDA: TechCategory.Constructor,
+                  equipmentType: EquipmentType.SeaTruckModule,
+                  quickSlotType: QuickSlotType.None,
+                  backgroundType: CraftData.BackgroundType.Normal,
+                  itemSize: new Vector2int(0, 0),
                   fragment: fragment
                   )
         {
@@ -38,23 +41,23 @@ namespace SeaTruckScannerModule
 
         protected override void PrePatch()
         {
-            TechTypeID = TechType;
-
-            scannerUI_background = ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/scannerUI_background.png");
-            powerUI_background = ImageUtils.LoadTextureFromFile($"{Main.modFolder}/Assets/powerUI_background.png");            
+            scannerUI_background = ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/scannerUI_background.png");
+            powerUI_background = ImageUtils.LoadTextureFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/powerUI_background.png");            
         
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_PowerSystemLabel", "Scanner main power system");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_PowerSystemInteract", "Access to the power supply system");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_CabinUnpoweredText", "Status: Cabin is unpowered!");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_MainUnpoweredText", "Status: Scanner is unpowered!");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_FullUnpoweredText", "Status: Cabin and Scanner is unpowered!");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_ScannerReadyText", "Status: Standby");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_PilotScannerModule", "Pilot Scanner Module");
-            LanguageHandler.Main.SetLanguageLine("SeatruckScanner_PowerSwitch", "Power Switch");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_PowerSystemLabel", "Scanner main power system");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_PowerSystemInteract", "Access to the power supply system");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_CabinUnpoweredText", "Status: Cabin is unpowered!");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_MainUnpoweredText", "Status: Scanner is unpowered!");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_FullUnpoweredText", "Status: Cabin and Scanner is unpowered!");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_ScannerReadyText", "Status: Standby");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_PilotScannerModule", "Pilot Scanner Module");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_PowerSwitch", "Power Switch");
+            LanguageHandler.SetLanguageLine("SeatruckScanner_PowerSwitchDocked", "Cannot be used when docked");
         }
 
         protected override void PostPatch()
         {
+            TechTypeID = Info.TechType;
         }
 
         protected override RecipeData GetRecipe()
@@ -84,12 +87,12 @@ namespace SeaTruckScannerModule
 
         protected override Sprite GetItemSprite()
         {            
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/Seatruck_ScannerModule_icon.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/Seatruck_ScannerModule_icon.png");
         }
 
         protected override EncyData GetEncyclopediaData()
         {
-            Texture2D image = ImageUtils.LoadTextureFromFile($"{Main.modFolder}/Assets/Seatruck_ScannerModule_ency.png");
+            Texture2D image = ImageUtils.LoadTextureFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/Seatruck_ScannerModule_ency.png");
             
             return new EncyData()
             {
@@ -107,58 +110,29 @@ namespace SeaTruckScannerModule
 
         }
 
-
-        protected override TabNode GetTabNodeData() => null;
-        protected override void ModifyGameObject() { return; }
-
-        /*
-        public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
+        protected override TabNode GetTabNodeData()
         {
-            AsyncOperationHandle<GameObject> seatruckFabricatorModuleRequest = AddressablesUtility.LoadAsync<GameObject>("WorldEntities/Tools/SeaTruckFabricatorModule.prefab");
-            yield return seatruckFabricatorModuleRequest;
-            GameObject seatruckFabricatorModulePrefab = seatruckFabricatorModuleRequest.Result;
-
-            _GameObject = UWE.Utils.InstantiateDeactivated(seatruckFabricatorModulePrefab);
-
-            _GameObject.SetActive(true);
-
-            gameObject.Set(_GameObject);
+            return null;
         }
-        */
 
-        public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
-        {            
-            AsyncOperationHandle<GameObject> loadRequest_01 = AddressablesUtility.LoadAsync<GameObject>("WorldEntities/Tools/SeaTruckFabricatorModule.prefab");
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
+        {           
+            GameObject FabricatorSpawn = GameObjectClone.transform.Find("FabricatorSpawn").gameObject;
+            UnityEngine.Object.DestroyImmediate(FabricatorSpawn);
+
+            GameInfoIcon gameInfoIcon = GameObjectClone.GetComponent<GameInfoIcon>();
+            gameInfoIcon.techType = Info.TechType;
+
+            SeaTruckMotor seaTruckMotor = GameObjectClone.GetComponent<SeaTruckMotor>();
+            seaTruckMotor.mouseOver = Language.main.Get("SeatruckScanner_PilotScannerModule");
             
-            yield return loadRequest_01;
-
-            if (loadRequest_01.Status == AsyncOperationStatus.Failed)
-            {
-                BZLogger.Error("Cannot find GameObject in Resources folder at path 'WorldEntities/Tools/SeaTruckFabricatorModule.prefab'");
-                yield break;
-            }
-
-            GameObject seatruckFabricatorModulePrefab = loadRequest_01.Result;
-           
-            GameObjectClone = UWE.Utils.InstantiateDeactivated(seatruckFabricatorModulePrefab, null, Vector3.zero, Quaternion.identity);
-
-            SetupScannerModule();
-
-            /*
-            IAssetBundleWrapperCreateRequest bundleRequest = AssetBundleManager.LoadBundleAsync("basegeneratorpieces");
-            yield return bundleRequest;
-            IAssetBundleWrapper bundle = bundleRequest.assetBundle;
-            IAssetBundleWrapperRequest loadRequest_02 = bundle.LoadAssetAsync<GameObject>("Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab");
-            yield return loadRequest_02;            
-            GameObject maproom = loadRequest_02.asset as GameObject;
-            */
             AsyncOperationHandle<GameObject> loadRequest_02 = AddressablesUtility.LoadAsync<GameObject>("Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab");
 
             yield return loadRequest_02;
 
             if (loadRequest_02.Status == AsyncOperationStatus.Failed)
             {
-                BZLogger.Error("Cannot find Prefab at path 'Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab'");
+                BZLogger.Error("*** An error has occurred while loading: [Assets/Prefabs/Base/GeneratorPieces/BaseMapRoom.prefab]");
                 yield break;
             }
 
@@ -166,7 +140,7 @@ namespace SeaTruckScannerModule
 
             if (!maproom)
             {
-                BZLogger.Debug("Failed to load MapRoom prefab!");
+                BZLogger.Error("*** Failed to get [MapRoom] gameobject!");
                 yield break;
             }
 
@@ -200,27 +174,13 @@ namespace SeaTruckScannerModule
             SetupScannerUI();
             SetupPowerSystem();
 
-            GameObjectClone.AddComponent<SeaTruckSegmentListener>();            
-            
-            gameObject.Set(GameObjectClone);            
-
+            GameObjectClone.AddComponent<SeaTruckSegmentListener>();
+            GameObjectClone.AddComponent<TransitDockListener>();
+                       
+            success.Set(true);
             yield break;
         }
         
-
-        private void SetupScannerModule()
-        {
-            GameObject FabricatorSpawn = GameObjectClone.transform.Find("FabricatorSpawn").gameObject;
-            UnityEngine.Object.DestroyImmediate(FabricatorSpawn);
-            
-            GameInfoIcon gameInfoIcon = GameObjectClone.GetComponent<GameInfoIcon>();
-            gameInfoIcon.techType = TechType;
-
-            SeaTruckMotor seaTruckMotor = GameObjectClone.GetComponent<SeaTruckMotor>();
-            seaTruckMotor.mouseOver = Language.main.Get("SeatruckScanner_PilotScannerModule");           
-        }
-
-
         private void SetupAntenna()
         {
             antenna.name = "antenna";
@@ -236,10 +196,11 @@ namespace SeaTruckScannerModule
             GameObject scanner_headPivot = scanner_root.transform.Find("scanner_headPivot").gameObject;
             scanner_headPivot.transform.localScale = new Vector3(1.2f, 0.70f, 0.70f);
 
+            /*
             BoxCollider bc = scanner_headPivot.AddComponent<BoxCollider>();
-
             bc.center = new Vector3(0f, 0.36f, -0.05f);
             bc.size = new Vector3(3.73f, 0.33f, 1.68f);            
+            */
 
             GameObject antennaModel = antenna.transform.Find("BaseMapRoomExteriorRadar_geo").gameObject;
             antennaModel.name = "antennaModel";
@@ -368,7 +329,8 @@ namespace SeaTruckScannerModule
             Image imageB = background.GetComponent<Image>();
             imageB.sprite = scannerUI_background;         
             
-            GameObject powerBtn = new GameObject("powerBtn", new Type[] { typeof(RectTransform) });            
+            GameObject powerBtn = new GameObject("powerBtn", new Type[] { typeof(RectTransform) });
+            powerBtn.layer = 13;
 
             RectTransform rt = powerBtn.GetComponent<RectTransform>();
             rt.SetParent(scanner_cullable.transform, false);
@@ -378,7 +340,9 @@ namespace SeaTruckScannerModule
 
             BoxCollider bc = powerBtn.AddComponent<BoxCollider>();            
             bc.size = new Vector3(100f, 100f, 2f);
-            
+            bc.tag = "DenyBuilding";
+            bc.isTrigger = true;
+
             GenericHandTarget handTarget = powerBtn.AddComponent<GenericHandTarget>();
 
             handTarget.onHandHover = new HandTargetEvent();
@@ -391,7 +355,7 @@ namespace SeaTruckScannerModule
             powerButtON.transform.localScale = new Vector3(1f, 1f, 0.1f);
 
             Image imageON = powerButtON.GetComponent<Image>();
-            imageON.sprite = ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/powerButton_on.png");
+            imageON.sprite = ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/powerButton_on.png");
 
             powerButtON.SetActive(false);
             
@@ -401,15 +365,13 @@ namespace SeaTruckScannerModule
             powerButtOFF.transform.localScale = new Vector3(1f, 1f, 0.1f);
 
             Image imageOFF = powerButtOFF.GetComponent<Image>();
-            imageOFF.sprite = ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/powerButton_off.png");
+            imageOFF.sprite = ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/powerButton_off.png");
 
             powerButtOFF.SetActive(true);
 
             BoxCollider collider = scannerUI.GetComponent<BoxCollider>();
             collider.center = new Vector3(-5.0f, -7f, -0.50f);
-            collider.size = new Vector3(154f, 120f, 1.10f);
-            //collider.center = new Vector3(0f, -141f, -1.27f);
-            //collider.size = new Vector3(218f, 26f, 1.40f);            
+            collider.size = new Vector3(154f, 120f, 1.10f);                    
 
             GameObject Unpowered = powerSystem.transform.Find("UI/Unpowered").gameObject;
 
@@ -422,6 +384,6 @@ namespace SeaTruckScannerModule
             scannerUI.AddComponent<uGUI_SeaTruckScanner>();            
             
             scannerUI.SetActive(true);            
-        }
+        }       
     }
 }

@@ -1,21 +1,51 @@
 ﻿using UnityEngine;
-using SeaTruckArms.API;
-using SeaTruckArms.API.ArmHandlers;
-using SeaTruckArms.API.Interfaces;
 using System.Collections;
+using ModdedArmsHelperBZ.API;
+using ModdedArmsHelperBZ.API.Interfaces;
+using ModdedArmsHelperBZ.API.ArmHandlers;
 
 namespace SeaTruckArms.InternalArmHandlers
 {
-    internal class InternalClawArmHandler : ClawArmHandler, ISeaTruckArmHandler
+    internal class InternalClawArmHandler : ClawArmHandler, ISeatruckArm
     {
-        GameObject ISeaTruckArmHandler.GetGameObject()
+        public override void Start()
+        {            
+        }
+
+        GameObject ISeatruckArm.GetGameObject()
         {
             return gameObject;
         }
 
-        void ISeaTruckArmHandler.SetSide(SeaTruckArm arm)
+        GameObject ISeatruckArm.GetInteractableRoot(GameObject target)
         {
-            if (arm == SeaTruckArm.Right)
+            Pickupable pickupable = target.GetComponentInParent<Pickupable>();
+
+            if (pickupable != null && pickupable.isPickupable)
+            {
+                return pickupable.gameObject;
+            }
+
+            PickPrefab pickPrefab = target.GetComponentProfiled<PickPrefab>();
+
+            if (pickPrefab != null)
+            {
+                return pickPrefab.gameObject;
+            }
+
+            BreakableResource breakableResource = target.GetComponentInParent<BreakableResource>();
+
+            if (breakableResource != null)
+            {
+                return breakableResource.gameObject;
+            }
+
+            return null;
+        }
+
+        void ISeatruckArm.SetSide(SeatruckArm arm)
+        {
+            if (arm == SeatruckArm.Right)
             {
                 transform.localScale = new Vector3(-0.8f, 0.8f, 0.8f);
             }
@@ -25,32 +55,32 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        bool ISeaTruckArmHandler.OnUseDown(out float cooldownDuration)
+        bool ISeatruckArm.OnUseDown(out float cooldownDuration)
         {
             return TryUse(out cooldownDuration);
         }
 
-        bool ISeaTruckArmHandler.OnUseHeld(out float cooldownDuration)
+        bool ISeatruckArm.OnUseHeld(out float cooldownDuration)
         {
             return TryUse(out cooldownDuration);
         }
 
-        bool ISeaTruckArmHandler.OnUseUp(out float cooldownDuration)
+        bool ISeatruckArm.OnUseUp(out float cooldownDuration)
         {
             cooldownDuration = 0f;
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnAltDown()
+        bool ISeatruckArm.OnAltDown()
         {
             return false;
         }
 
-        void ISeaTruckArmHandler.Update(ref Quaternion aimDirection)
+        void ISeatruckArm.Update(ref Quaternion aimDirection)
         {
         }
 
-        void ISeaTruckArmHandler.Reset()
+        void ISeatruckArm.ResetArm()
         {
         }
 
@@ -61,7 +91,7 @@ namespace SeaTruckArms.InternalArmHandlers
                 Pickupable pickupable = null;
                 PickPrefab x = null;
 
-                GameObject activeTarget = ArmServices.main.GetActiveTarget(TruckHelper.MainCab);
+                GameObject activeTarget = ArmServices.main.GetActiveTarget(seatruck);
 
                 if (activeTarget)
                 {
@@ -71,7 +101,7 @@ namespace SeaTruckArms.InternalArmHandlers
 
                 if (pickupable != null && pickupable.isPickupable)
                 {
-                    if (TruckHelper.HasRoomForItem(pickupable))
+                    if (seatruck.seatruckHelper.HasRoomForItem(pickupable))
                     {
                         animator.SetTrigger("use_tool");
                         cooldownTime = (cooldownDuration = cooldownPickup);
@@ -107,12 +137,12 @@ namespace SeaTruckArms.InternalArmHandlers
 
         public void OnHit()
         {
-            if (TruckHelper.IsPiloted())
+            if (seatruck.seatruckHelper.IsPiloted())
             {
                 Vector3 position = default(Vector3);
                 GameObject targetObject = null;
 
-                UWE.Utils.TraceFPSTargetPosition(TruckHelper.MainCab, 6.5f, ref targetObject, ref position, out Vector3 normal, true);
+                UWE.Utils.TraceFPSTargetPosition(seatruck.mainCab, 6.5f, ref targetObject, ref position, out Vector3 normal, true);
 
                 if (targetObject == null)
                 {
@@ -142,7 +172,7 @@ namespace SeaTruckArms.InternalArmHandlers
 
                     Vector3 euler = MainCameraControl.main.transform.eulerAngles + new Vector3(300f, 90f, 0f);
 
-                    VFXSurfaceTypeManager.main.Play(component2, vfxEventType, position, Quaternion.Euler(euler), TruckHelper.MainCab.transform);
+                    VFXSurfaceTypeManager.main.Play(component2, vfxEventType, position, Quaternion.Euler(euler), seatruck.mainCab.transform);
 
                     targetObject.SendMessage("BashHit", this, SendMessageOptions.DontRequireReceiver);
                 }
@@ -151,7 +181,7 @@ namespace SeaTruckArms.InternalArmHandlers
 
         public void OnPickup()
         {
-            GameObject activeTarget = ArmServices.main.GetActiveTarget(TruckHelper.MainCab);
+            GameObject activeTarget = ArmServices.main.GetActiveTarget(seatruck);
 
             if (activeTarget)
             {
@@ -164,7 +194,7 @@ namespace SeaTruckArms.InternalArmHandlers
 
         private IEnumerator OnPickupAsync(Pickupable pickupable, PickPrefab pickPrefab)
         {
-            ItemsContainer container = TruckHelper.GetRoomForItem(pickupable);
+            ItemsContainer container = seatruck.seatruckHelper.GetRoomForItem(pickupable);
 
             if (pickupable != null && pickupable.isPickupable && container != null)
             {
@@ -186,30 +216,35 @@ namespace SeaTruckArms.InternalArmHandlers
             yield break;
         }        
 
-        bool ISeaTruckArmHandler.HasClaw()
+        bool ISeatruckArm.HasClaw()
         {
             return true;
         }
 
-        bool ISeaTruckArmHandler.HasDrill()
+        bool ISeatruckArm.HasDrill()
         {
             return false;
         }
 
-        float ISeaTruckArmHandler.GetEnergyCost()
+        bool ISeatruckArm.HasPropCannon()
+        {
+            return false;
+        }
+
+        float ISeatruckArm.GetEnergyCost()
         {
             return energyCost;
         }
 
-        void ISeaTruckArmHandler.SetRotation(SeaTruckArm arm, bool isDocked)
+        void ISeatruckArm.SetRotation(SeatruckArm arm, bool isDocked)
         {
-            if (isDocked)
+            if (isDocked && !seatruck.seatruckHelper.TruckDockable.isInTransition)
             {
-                BaseRoot baseRoot = TruckHelper.MainCab.GetComponentInParent<BaseRoot>();
+                BaseRoot baseRoot = seatruck.mainCab.GetComponentInParent<BaseRoot>();
 
                 if (baseRoot.isBase)
                 {
-                    if (arm == SeaTruckArm.Right)
+                    if (arm == SeatruckArm.Right)
                     {
                         transform.localRotation = Quaternion.Euler(20, 6, 0);
                     }
@@ -221,7 +256,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
             else
             {
-                if (arm == SeaTruckArm.Right)
+                if (arm == SeatruckArm.Right)
                 {
                     transform.localRotation = Quaternion.Euler(0, 0, 0);
                 }
@@ -231,6 +266,11 @@ namespace SeaTruckArms.InternalArmHandlers
                 }
             }
         }
-    }
 
+        bool ISeatruckArm.GetCustomUseText(out string customText)
+        {
+            customText = string.Empty;
+            return false;
+        }
+    }
 }

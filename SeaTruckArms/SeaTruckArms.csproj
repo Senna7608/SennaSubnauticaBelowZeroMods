@@ -18,42 +18,58 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SeaTruckArms\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\SeaTruckArms\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\SeaTruckArms\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\SeaTruckArms\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Trace|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\SeaTruckArms\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass_publicized">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="QModInstaller">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SMLHelper">
-      <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
+    <Reference Include="ModdedArmsHelperBZ">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\ModdedArmsHelperBZ\ModdedArmsHelperBZ.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Nautilus">
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -115,55 +131,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API\ArmHandlers\ClawArmHandler.cs" />
-    <Compile Include="API\ArmHandlers\DrillArmHandler.cs" />
-    <Compile Include="API\ArmHandlers\GrapplingArmHandler.cs" />
-    <Compile Include="API\ArmHandlers\PropulsionArmHandler.cs" />
-    <Compile Include="API\ArmHandlers\TorpedoArmHandler.cs" />
-    <Compile Include="API\ArmServices.cs" />
-    <Compile Include="API\CraftableSeatruckArm.cs" />
-    <Compile Include="API\Enums.cs" />
-    <Compile Include="API\Interfaces\ISeaTruckArmHandlerRequest.cs" />
-    <Compile Include="API\SeaTruckArmFragment.cs" />
-    <Compile Include="ArmHandlerRequesters\TorpedoArmHandlerRequest.cs" />
-    <Compile Include="ArmHandlerRequesters\PropulsionArmHandlerRequest.cs" />
-    <Compile Include="ArmHandlerRequesters\GrapplingArmHandlerRequest.cs" />
-    <Compile Include="ArmHandlerRequesters\DrillArmHandlerRequest.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckPropulsionArmFragment_Prefab.cs" />
-    <Compile Include="ArmRegistrationListener.cs" />
-    <Compile Include="AsyncLoaders.cs" />
+    <Compile Include="ArmHandlerRequesters\TorpedoArmModdingRequest.cs" />
+    <Compile Include="ArmHandlerRequesters\PropulsionArmModdingRequest.cs" />
+    <Compile Include="ArmHandlerRequesters\GrapplingArmModdingRequest.cs" />
+    <Compile Include="ArmHandlerRequesters\DrillArmModdingRequest.cs" />
+    <Compile Include="ArmPrefabs\SeatruckPropulsionArm_Fragment.cs" />
     <Compile Include="InternalArmHandlers\InternalClawArmHandler.cs" />
     <Compile Include="InternalArmHandlers\InternalDrillArmHandler.cs" />
     <Compile Include="InternalArmHandlers\InternalGrapplingArmHandler.cs" />
-    <Compile Include="API\SeaTruckGrapplingHook.cs" />
     <Compile Include="InternalArmHandlers\InternalPropulsionArmHandler.cs" />
     <Compile Include="InternalArmHandlers\InternalTorpedoArmHandler.cs" />
-    <Compile Include="ArmHandlerRequesters\ClawArmHandlerRequest.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckTorpedoArmFragment_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckGrapplingArmFragment_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckDrillArmFragment_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckClawArmFragment_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckClawArm_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckDrillArm_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckGrapplingArm_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckPropulsionArm_Prefab.cs" />
-    <Compile Include="ArmPrefabs\SeaTruckTorpedoArm_Prefab.cs" />
-    <Compile Include="Patches\Addressables_Patch.cs" />
-    <Compile Include="SeaTruckArms_Graphics.cs" />
-    <Compile Include="API\Interfaces\ISeaTruckArmHandler.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="Patches\Drillable_Patch.cs" />
-    <Compile Include="Patches\SeaTruckUpgrades_Patch.cs" />
+    <Compile Include="ArmHandlerRequesters\ClawArmModdingRequest.cs" />
+    <Compile Include="ArmPrefabs\SeatruckTorpedoArm_Fragment.cs" />
+    <Compile Include="ArmPrefabs\SeatruckGrapplingArm_Fragment.cs" />
+    <Compile Include="ArmPrefabs\SeatruckDrillArm_Fragment.cs" />
+    <Compile Include="ArmPrefabs\SeatruckClawArm_Fragment.cs" />
+    <Compile Include="ArmPrefabs\SeatruckClawArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeatruckDrillArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeatruckGrapplingArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeatruckPropulsionArm_Prefab.cs" />
+    <Compile Include="ArmPrefabs\SeatruckTorpedoArm_Prefab.cs" />
+    <Compile Include="SeaTruckArms_Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SeaTruckArmManager.cs" />
-    <Compile Include="SeaTruckArm_Public.cs" />
-    <Compile Include="SeaTruckArm_SlotControl.cs" />
-    <Compile Include="API\SeaTruckDrillable.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="mod.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\ArmSocket_Illum_Green.png">
@@ -178,12 +167,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SlotExtenderZero\SlotExtenderZero.csproj">
-      <Project>{0f852683-7a27-4146-866e-388660b6cab3}</Project>
+      <Project>{0F852683-7A27-4146-866E-388660B6CAB3}</Project>
       <Name>SlotExtenderZero</Name>
       <Private>False</Private>
       <Aliases>SEZero</Aliases>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\BZCommon\BZCommon.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

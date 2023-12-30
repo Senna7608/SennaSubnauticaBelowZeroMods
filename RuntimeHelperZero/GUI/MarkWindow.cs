@@ -1,8 +1,8 @@
 ﻿using BZCommon.Helpers.GUIHelper;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UWE;
+using static RuntimeHelperZero.SceneHelper.SceneHelper;
+using BZHelper;
 
 namespace RuntimeHelperZero
 {
@@ -15,6 +15,8 @@ namespace RuntimeHelperZero
         private static Rect MarkWindow_Rect = new Rect(300, 302, 248, 202);
         private Rect MarkWindow_drawRect;
         private List<GameObject> MARKED_OBJECTS = new List<GameObject>();
+
+        private List<Transform> TransformTEMP = new List<Transform>();
 
         private List<string> markList = new List<string>();
 
@@ -48,7 +50,9 @@ namespace RuntimeHelperZero
 
         private void MarkWindow_Awake()
         {
-            RefreshMarkObjectsList();
+            AddBaseObjectsToMarkList();
+
+            RefreshMarkObjectsList();          
 
             MarkWindow_drawRect = SNWindow.InitWindowRect(MarkWindow_Rect, true);            
         }
@@ -94,8 +98,30 @@ namespace RuntimeHelperZero
             }
         }
 
+        private void AddBaseObjectsToMarkList()
+        {
+            TransformTEMP.Clear();
 
-        private void AddToMarkList(GameObject go)
+            GetRootTransforms(ref TransformTEMP);
+
+            foreach (Transform tr in TransformTEMP)
+            {
+                switch (tr.name)
+                {
+                    case "Landscape":
+                        AddToMarkList(tr.gameObject, false);
+                        AddToMarkList(tr.FindDeepChild("SerializerEmptyGameObject"), false);
+                        break;
+                    case "Player":
+                    case "uGUI(Clone)":
+                    case "uGUI_PDAScreen(Clone)":
+                        AddToMarkList(tr.gameObject, false);
+                        break;
+                }
+            }
+        }
+        
+        private void AddToMarkList(GameObject go, bool refrersh = true)
         {
             if(MARKED_OBJECTS.Contains(go))
             {
@@ -108,7 +134,10 @@ namespace RuntimeHelperZero
                 OutputWindow_Log(MESSAGE_TEXT[MESSAGES.OBJECT_MARKED], go.name);
             }
 
-            RefreshMarkObjectsList();
+            if (refrersh)
+            {
+                RefreshMarkObjectsList();
+            }
         }
 
         private void RemoveFromMarkList(GameObject go)

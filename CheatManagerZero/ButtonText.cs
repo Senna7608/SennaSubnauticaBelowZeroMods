@@ -8,18 +8,15 @@
         clearinventory,
         unlockdoors,
         encyall,
-        //warpme,
-        //resetweather,
-        //nextweather,
         BackWarp
     }
 
     internal enum ToggleCommands
     {
-        freedom,
-        creative,
         survival,
+        freedom,
         hardcore,
+        creative,       
         fastbuild,
         fastscan,
         fastgrow,
@@ -29,14 +26,13 @@
         noenergy,
         nosurvival,
         oxygen,
-        //radiation,
         invisible,
         shotgun,
         nodamage,            
         alwaysday,       
         overpower,        
         resistcold,
-        weather,
+        noweather,
         noiceworm
     }
 
@@ -60,9 +56,8 @@
         FloraItem,
         SeaSpawn,
         LandSpawn,
-        //Blueprints,
-        Warp = 19,
-        ALLTECH = 20
+        Blueprints,
+        Warp
     }
 
     internal enum Weather
@@ -83,10 +78,7 @@
             "unlockall",
             "clearinventory",
             "unlockdoors",
-            "ency all",
-            //"warpme",
-            //"resetweather",
-            //"nextweather",
+            "ency all",            
             "BackWarp"
         };
 
@@ -100,13 +92,12 @@
             "2"
         };
 
-
         internal readonly string[] ToggleButtons = new string[21]
         {
-            "freedom",
-            "creative",
             "survival",
+            "freedom",
             "hardcore",
+            "creative",            
             "fastbuild",
             "fastscan",
             "fastgrow",
@@ -115,16 +106,15 @@
             "nocost",
             "noenergy",
             "nosurvival",
-            "oxygen",
-            //"radiation",
+            "nooxygen",
             "invisible",
             "shotgun",
             "nodamage",            
             "alwaysday",            
             "overpower",
             "resistcold",
-            "noWeather",
-            "noIceWorm"
+            "noweather",
+            "noiceWorm"
         };
 
         internal readonly string[] CategoriesTab = new string[20]
@@ -147,21 +137,8 @@
             "Flora: Item",
             "Sea: Spawn",
             "Land: Spawn",
-            //"Blueprints",
-            "Warp",
-            "ALLTECH"
+            "Blueprints",
+            "Warp"
         };
-
-        
-        /*
-        internal readonly string[] WeatherCommands = new string[5]
-        {
-            "noWeather",
-            "noLightning",
-            "noRain",
-            "noWind",
-            "noCold"
-        };
-        */
-   }
+    }
 }

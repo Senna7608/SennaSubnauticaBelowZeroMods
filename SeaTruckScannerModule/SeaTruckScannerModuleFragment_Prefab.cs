@@ -1,5 +1,6 @@
-﻿using BZCommon.Helpers.SMLHelpers;
-using SMLHelper.V2.Utility;
+﻿using BZHelper.NautilusHelpers;
+using Nautilus.Utility;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,11 +37,13 @@ namespace SeaTruckScannerModule
 
         protected override Sprite GetUnlockSprite()
         {
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/Seatruck_ScannerModule_unlock.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckScannerModule_Main.modFolder}/Assets/Seatruck_ScannerModule_unlock.png");
         }
 
-        protected override void ModifyGameObject()
-        {            
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
+        {
+            success.Set(true);
+            yield break;
         }
     }
 }

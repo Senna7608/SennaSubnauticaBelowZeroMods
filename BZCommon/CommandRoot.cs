@@ -1,4 +1,4 @@
-﻿using BZCommon.Helpers;
+﻿using BZHelper;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,7 +27,7 @@ namespace BZCommon
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            bool startScreen = scene.name == "StartScreen" ? true : false;
+            bool startScreen = scene.name == "XMenu" ? true : false;
             bool mainScreen = scene.name == "Main" ? true : false;
 
             foreach (ConsoleCommand command in commands)
@@ -60,7 +60,7 @@ namespace BZCommon
             }
             else
             {
-                throw new Exception("Requested vonsole command cannot add!");
+                throw new Exception("Requested console command cannot add!");
             }
         }
     }

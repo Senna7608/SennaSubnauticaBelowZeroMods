@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using SMLHelper.V2.Crafting;
-using BZCommon.Helpers.SMLHelpers;
-using SMLHelper.V2.Utility;
 using UnityEngine;
+using System.Collections;
+using BZHelper.NautilusHelpers;
+using Nautilus.Crafting;
+using Nautilus.Utility;
 
 namespace SeaTruckStorage
 {
@@ -15,9 +16,8 @@ namespace SeaTruckStorage
                   techTypeName: "SeaTruckStorage",                  
                   friendlyName: "Seatruck Storage",
                   description: "A big storage locker. Seatruck compatible.",
-#pragma warning disable CS0612 // Type or member is obsolete
                   template: TechType.VehicleStorageModule,
-#pragma warning restore CS0612 // Type or member is obsolete
+                  gamerResourceFileName: null,
                   requiredAnalysis: TechType.Workbench,
                   groupForPDA: TechGroup.VehicleUpgrades,
                   categoryForPDA: TechCategory.VehicleUpgrades,
@@ -32,11 +32,11 @@ namespace SeaTruckStorage
 
         protected override void PrePatch()
         {
-            TechTypeID = TechType;
         }
 
         protected override void PostPatch()
-        {           
+        {
+            TechTypeID = Info.TechType;
         }
 
         protected override RecipeData GetRecipe()
@@ -48,19 +48,20 @@ namespace SeaTruckStorage
                 {
                     new Ingredient(TechType.TitaniumIngot, 2),
                     new Ingredient(TechType.Lithium, 2)
-
                 })
             };
         }
-        
-        protected override void ModifyGameObject()
+
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
         {
             SeamothStorageContainer container = GameObjectClone.GetComponent<SeamothStorageContainer>();
-                        
             container.width = 7;
             container.height = 8;
-        }
 
+            success.Set(true);
+            yield break;
+        }
+        
         protected override EncyData GetEncyclopediaData()
         {
             return null;
@@ -70,24 +71,21 @@ namespace SeaTruckStorage
         {
             return new CrafTreeTypesData()
             {
-                TreeTypes = new List<CraftTreeType>(new CraftTreeType[4]
+                TreeTypes = new List<CraftTreeType>()
                 {
-                    new CraftTreeType(CraftTree.Type.Fabricator, new string[] { "Upgrades", "SeatruckUpgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeaTruckFabricator, new string[] { "Upgrades" } ),
-                    new CraftTreeType(CraftTree.Type.SeamothUpgrades, new string[] { "SeaTruckUpgrade" } ),
-                    new CraftTreeType(CraftTree.Type.Workbench, new string[] { "SeaTruckWBUpgrades" } )
-                })
+                    new CraftTreeType(CraftTree.Type.Fabricator, new string[] { "Upgrades", "SeatruckUpgrades" } )
+                }
             };
         }
 
         protected override TabNode GetTabNodeData()
         {
-            return new TabNode(CraftTree.Type.Workbench, "SeaTruckWBUpgrades", "Seatruck Upgrades", SpriteManager.Get(TechType.SeaTruck));
+            return null;
         }
 
         protected override Sprite GetItemSprite()
         {
-            return ImageUtils.LoadSpriteFromFile($"{Main.modFolder}/Assets/SeaTruckStorageIcon.png");
+            return ImageUtils.LoadSpriteFromFile($"{SeaTruckStorage_Main.modFolder}/Assets/SeaTruckStorageIcon.png");
         }
     }
 }

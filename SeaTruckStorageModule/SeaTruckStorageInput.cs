@@ -1,14 +1,15 @@
 ﻿extern alias SEZero;
-using SEZero::SlotExtenderZero.API;
 
-using SMLHelper.V2.Handlers;
+using BZHelper;
+using BZHelper.NautilusHelpers;
+using SEZero::SlotExtenderZero.API;
 using UnityEngine;
 
 namespace SeaTruckStorage
 {
     public class SeaTruckStorageInput : MonoBehaviour, IHandTarget
     {
-        public SeaTruckHelper helper;
+        public SeatruckHelper helper;
 
         public GameObject model;
 
@@ -91,7 +92,7 @@ namespace SeaTruckStorage
 
         private void OpenPDA()
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
+            bool isStorageTypeExists = ModdedTechTypeHelper.Main.IsModdedTechTypeExists(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
                 return;
@@ -148,7 +149,7 @@ namespace SeaTruckStorage
 
         public void OpenFromExternal()
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
+            bool isStorageTypeExists = ModdedTechTypeHelper.Main.IsModdedTechTypeExists(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
                 return;
@@ -165,8 +166,6 @@ namespace SeaTruckStorage
 
         public void OnHandHover(GUIHand hand)
         {
-            
-
             HandReticle main = HandReticle.main;
             main.SetText(HandReticle.TextType.Hand, "OpenStorage", true, GameInput.Button.LeftHand);
             //main.SetText(HandReticle.TextType.HandSubscript, string.Empty, false, GameInput.Button.None);
@@ -176,19 +175,19 @@ namespace SeaTruckStorage
 
         public bool IsEmpty()
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
+            bool isStorageTypeExists = ModdedTechTypeHelper.Main.IsModdedTechTypeExists(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
-                return false;
+                return false;            
 
             ItemsContainer container = helper.GetSeamothStorageInSlot(slotID, techType);
 
-            return container.count <= 0;
+            return container?.count <= 0;
         }
 
         public void OnHandClick(GUIHand hand)
         {
-            bool isStorageTypeExists = TechTypeHandler.TryGetModdedTechType(storageModuleString, out TechType techType);
+            bool isStorageTypeExists = ModdedTechTypeHelper.Main.IsModdedTechTypeExists(storageModuleString, out TechType techType);
 
             if (!isStorageTypeExists)
                 return;

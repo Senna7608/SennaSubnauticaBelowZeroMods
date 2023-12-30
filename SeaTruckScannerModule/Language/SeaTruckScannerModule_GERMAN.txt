@@ -8,6 +8,7 @@ SeatruckScanner_FullUnpoweredText:Status: Kabine und Scanner ohne Energie!
 SeatruckScanner_ScannerReadyText:Status: Standby
 SeatruckScanner_PilotScannerModule:Scannerabteil steuern
 SeatruckScanner_PowerSwitch:Hauptschalter
+SeatruckScanner_PowerSwitchDocked:Kann nicht verwendet werden, wenn es angedockt ist
 SeaTruckScannerHUDChip:Scannerabteil-Sichtfeld-Chip
 Tooltip_SeaTruckScannerHUDChip:Überträgt Scannermoduldaten an die Sichtfeldanzeige.
 SeaTruckScannerHUDChipUpgrade:Scannerabteil-Sichtfeld-Chip mit Entfernung upgrade

@@ -1,14 +1,18 @@
-﻿using System.Collections;
-using UnityEngine;
-using SeaTruckArms.API;
-using SeaTruckArms.API.ArmHandlers;
-using SeaTruckArms.API.Interfaces;
-using SeaTruckArms.ArmPrefabs;
+﻿using UnityEngine;
+using ModdedArmsHelperBZ.API;
+using ModdedArmsHelperBZ.API.Interfaces;
+using ModdedArmsHelperBZ.API.ArmHandlers;
+using System.Collections;
+using BZHelper;
 
 namespace SeaTruckArms.InternalArmHandlers
 {
-    internal class InternalTorpedoArmHandler : TorpedoArmHandler, ISeaTruckArmHandler
+    internal class InternalTorpedoArmHandler : TorpedoArmHandler, ISeatruckArm
     {
+        public override void Start()
+        {
+        }
+
         public override void Awake()
         {
             base.Awake();
@@ -17,25 +21,30 @@ namespace SeaTruckArms.InternalArmHandlers
             handTarget.onHandClick.AddListener(OnOpenTorpedoStorage);
         }
 
-        GameObject ISeaTruckArmHandler.GetGameObject()
+        GameObject ISeatruckArm.GetGameObject()
         {
             return gameObject;
         }
 
+        GameObject ISeatruckArm.GetInteractableRoot(GameObject target)
+        {
+            return null;
+        }
+
         private IEnumerator GetItemsContainer(string slotName)
         {
-            //BZLogger.Log($"[SeamothArms] GetItemsContainer coroutine started for this SeaTruck: {helper.GetInstanceID()}");
+            BZLogger.Debug($"GetItemsContainer coroutine started for this Seatruck: [{seatruck.seatruckHelper.TruckName}] with slotname: [{slotName}]  armTag.techType: [{armTag.techType}]");
 
             while (container == null)
-            {
-                container = TruckHelper.GetSeamothStorageInSlot(TruckHelper.GetSlotIndex(slotName), SeaTruckTorpedoArm_Prefab.TechTypeID);
+            {                
+                container = seatruck.seatruckHelper.GetSeamothStorageInSlot(seatruck.seatruckHelper.GetSlotIndex(slotName), armTag.techType);
 
-                //BZLogger.Log($"[SeamothArms] ItemsContainer is not ready for this SeaTruck: {helper.GetInstanceID()}");
+                BZLogger.Warn($"ItemsContainer is not ready for this Seatruck: [{seatruck.seatruckHelper.TruckName}] slotname: {slotName}  armTag.techType: {armTag.techType}");
                 yield return null;
             }
 
-            //BZLogger.Log($"[SeamothArms] ItemsContainer is ready for this SeaTruck: {helper.GetInstanceID()}");
-            //BZLogger.Log($"[SeamothArms] GetItemsContainer coroutine stopped for this SeaTruck: {helper.GetInstanceID()}");
+            BZLogger.Log($"ItemsContainer is ready for this SeaTruck: {seatruck.seatruckHelper.TruckName} container type: [{container.containerType}]");
+            BZLogger.Log($"GetItemsContainer coroutine stopped for this SeaTruck: [{seatruck.seatruckHelper.TruckName}]");
 
             if (container != null)
             {
@@ -48,7 +57,7 @@ namespace SeaTruckArms.InternalArmHandlers
             yield break;
         }
 
-        void ISeaTruckArmHandler.SetSide(SeaTruckArm arm)
+        void ISeatruckArm.SetSide(SeatruckArm arm)
         {
             if (container != null)
             {
@@ -56,9 +65,9 @@ namespace SeaTruckArms.InternalArmHandlers
                 container.onRemoveItem -= OnRemoveItem;
             }
 
-            if (arm == SeaTruckArm.Right)
+            if (arm == SeatruckArm.Right)
             {
-                transform.localScale = new Vector3(-0.8f, 0.8f, 0.8f);
+                transform.localScale = new Vector3(-0.8f, 0.8f, 0.8f);                
                 StartCoroutine(GetItemsContainer("SeaTruckArmRight"));
 
             }
@@ -69,40 +78,40 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        bool ISeaTruckArmHandler.OnUseDown(out float cooldownDuration)
+        bool ISeatruckArm.OnUseDown(out float cooldownDuration)
         {
             return TryShoot(out cooldownDuration, true);
         }
 
-        bool ISeaTruckArmHandler.OnUseHeld(out float cooldownDuration)
+        bool ISeatruckArm.OnUseHeld(out float cooldownDuration)
         {
             return TryShoot(out cooldownDuration, false);
         }
 
-        bool ISeaTruckArmHandler.OnUseUp(out float cooldownDuration)
+        bool ISeatruckArm.OnUseUp(out float cooldownDuration)
         {
             animator.SetBool("use_tool", false);
             cooldownDuration = 0f;
             return true;
         }
 
-        bool ISeaTruckArmHandler.OnAltDown()
+        bool ISeatruckArm.OnAltDown()
         {
             return false;
         }
 
-        void ISeaTruckArmHandler.Update(ref Quaternion aimDirection)
+        void ISeatruckArm.Update(ref Quaternion aimDirection)
         {
         }
 
-        void ISeaTruckArmHandler.Reset()
+        void ISeatruckArm.ResetArm()
         {
             animator.SetBool("use_tool", false);
         }
 
         private bool TryShoot(out float cooldownDuration, bool verbose)
         {
-            TorpedoType[] torpedoTypes = Main.graphics.TorpedoTypes;
+            TorpedoType[] torpedoTypes = TorpedoTypes;
             TorpedoType torpedoType = null;
 
             for (int i = 0; i < torpedoTypes.Length; i++)
@@ -188,7 +197,7 @@ namespace SeaTruckArms.InternalArmHandlers
         private void UpdateVisuals()
         {
             int num = 0;
-            TorpedoType[] torpedoTypes = Main.graphics.TorpedoTypes;
+            TorpedoType[] torpedoTypes = TorpedoTypes;
 
             for (int i = 0; i < torpedoTypes.Length; i++)
             {
@@ -239,25 +248,30 @@ namespace SeaTruckArms.InternalArmHandlers
             handTarget.onHandClick.RemoveListener(OnOpenTorpedoStorage);
         }
 
-        bool ISeaTruckArmHandler.HasClaw()
+        bool ISeatruckArm.HasClaw()
         {
             return false;
         }
 
-        bool ISeaTruckArmHandler.HasDrill()
+        bool ISeatruckArm.HasDrill()
         {
             return false;
         }
 
-        void ISeaTruckArmHandler.SetRotation(SeaTruckArm arm, bool isDocked)
+        bool ISeatruckArm.HasPropCannon()
         {
-            if (isDocked)
+            return false;
+        }
+
+        void ISeatruckArm.SetRotation(SeatruckArm arm, bool isDocked)
+        {
+            if (isDocked && !seatruck.seatruckHelper.TruckDockable.isInTransition)
             {
-                BaseRoot baseRoot = TruckHelper.MainCab.GetComponentInParent<BaseRoot>();
+                BaseRoot baseRoot = seatruck.seatruckHelper.MainCab.GetComponentInParent<BaseRoot>();
 
                 if (baseRoot.isBase)
                 {
-                    if (arm == SeaTruckArm.Right)
+                    if (arm == SeatruckArm.Right)
                     {
                         transform.localRotation = Quaternion.Euler(20, 6, 0);
                     }
@@ -269,7 +283,7 @@ namespace SeaTruckArms.InternalArmHandlers
             }
             else
             {
-                if (arm == SeaTruckArm.Right)
+                if (arm == SeatruckArm.Right)
                 {
                     transform.localRotation = Quaternion.Euler(0, 0, 0);
                 }
@@ -280,11 +294,18 @@ namespace SeaTruckArms.InternalArmHandlers
             }
         }
 
-        float ISeaTruckArmHandler.GetEnergyCost()
+        float ISeatruckArm.GetEnergyCost()
         {
             return 0;
         }
 
+        bool ISeatruckArm.GetCustomUseText(out string customText)
+        {
+            customText = string.Empty;
+            return false;
+        }
+
+        /*
         private TechType[] GetTorpedoTypes()
         {
             TechType[] techTypes = new TechType[Main.graphics.TorpedoTypes.Length];
@@ -296,5 +317,6 @@ namespace SeaTruckArms.InternalArmHandlers
 
             return techTypes;
         }
+        */
     }
 }

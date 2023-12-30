@@ -8,6 +8,7 @@ SeatruckScanner_FullUnpoweredText:Státusz: Kabin és Szkenner energia nélkül!
 SeatruckScanner_ScannerReadyText:Státusz: Készenlét
 SeatruckScanner_PilotScannerModule:Szkenner modul vezetése
 SeatruckScanner_PowerSwitch:Főkapcsoló
+SeatruckScanner_PowerSwitchDocked:Dokkolt állapotban nem használható
 SeaTruckScannerHUDChip:Szkenner modul szemmagasságú kijelző chipje
 Tooltip_SeaTruckScannerHUDChip:Adatokat közvetít a szkenner modulból a szemmagasságú kijelzőre.
 SeaTruckScannerHUDChipUpgrade:Szkenner modul szemmagasságú kijelző chip fejlesztés.

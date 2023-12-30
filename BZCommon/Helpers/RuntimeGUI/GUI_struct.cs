@@ -15,6 +15,9 @@ namespace BZCommon.Helpers.RuntimeGUI
         public bool hasCloseButton;
         public bool hasToolTipButton;
         public bool hasTimeInTitle;
+        public WindowControlHandler controlHandler;
+        public WindowCloseHandler closeHandler;
+
 
         public Window
             (
@@ -26,7 +29,9 @@ namespace BZCommon.Helpers.RuntimeGUI
             bool hasMinimizeButton = true,
             bool hasCloseButton = true,
             bool hasToolTipButton = false,
-            bool hasTimeInTitle = false
+            bool hasTimeInTitle = false,
+            WindowControlHandler controlHandler = null,
+            WindowCloseHandler closeHandler = null
             )
         {
             this.windowID = windowID;
@@ -38,6 +43,8 @@ namespace BZCommon.Helpers.RuntimeGUI
             this.hasCloseButton = hasCloseButton;
             this.hasToolTipButton = hasToolTipButton;
             this.hasTimeInTitle = hasTimeInTitle;
+            this.controlHandler = controlHandler;
+            this.closeHandler = closeHandler;
         }
     }
 
@@ -121,6 +128,11 @@ namespace BZCommon.Helpers.RuntimeGUI
         public int GetTotalRows()
         {
             return (int)Math.Ceiling(itemsContent.Count / (float)columns);
+        }
+
+        public int GetGroupWindowID()
+        {
+            return windowID;
         }
     }
 

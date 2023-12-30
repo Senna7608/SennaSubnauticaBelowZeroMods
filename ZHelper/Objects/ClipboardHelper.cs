@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿using BZCommon;
+using BZHelper;
+using UnityEngine;
+using ZHelper.VisualHelpers;
 
-namespace Zhelper.Objects
+namespace ZHelper.Objects
 {
     public static class ClipboardHelper
     {
@@ -14,10 +17,11 @@ namespace Zhelper.Objects
 
             tempObject.SetActive(false);
 
-            var dob = tempObject.GetComponentInChildren<DrawObjectBounds>(true);
-            dob.gameObject.SetActive(false);
-
-            UnityEngine.Object.Destroy(dob.gameObject);
+            if (tempObject.TryGetComponentInChildren(out DrawObjectBounds dob))
+            {
+                dob.transform.parent.gameObject.SetActive(false);
+                UnityEngine.Object.Destroy(dob.transform.parent.gameObject);
+            }           
 
             gameObject.SetActive(true);
         }

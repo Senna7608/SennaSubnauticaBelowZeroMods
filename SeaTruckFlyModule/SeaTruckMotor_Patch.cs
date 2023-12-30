@@ -30,7 +30,7 @@ namespace SeaTruckFlyModule
         {
             if (__instance.TryGetComponent(out FlyManager manager))
             {
-                if (manager.altitude > 0)
+                if (manager.telemetry.altitude > 0)
                 {                    
                     return false;
                 }
@@ -67,7 +67,7 @@ namespace SeaTruckFlyModule
         {
             if (__instance.TryGetComponent(out FlyManager manager))
             {
-                if (manager.altitude > 0)
+                if (manager.telemetry.altitude > 0)
                 {
                     return false;
                 }
@@ -85,7 +85,7 @@ namespace SeaTruckFlyModule
         {
             if (__instance.TryGetComponent(out FlyManager manager))
             {
-                if (manager.altitude > 0 && manager.isFlying.value)
+                if (manager.telemetry.altitude > 0 && manager.isFlying.value)
                 {
                     ErrorMessage.AddDebug("Cannot leave Seatruck while flying!");
                     __result = false;

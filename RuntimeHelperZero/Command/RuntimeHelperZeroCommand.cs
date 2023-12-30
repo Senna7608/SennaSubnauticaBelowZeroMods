@@ -1,4 +1,4 @@
-﻿using BZCommon;
+﻿using BZHelper;
 using UnityEngine;
 
 namespace RuntimeHelperZero.Command
@@ -10,6 +10,7 @@ namespace RuntimeHelperZero.Command
         public void Awake()
         {                       
             DevConsole.RegisterConsoleCommand(this, "rhzero", false, false);
+            
         }        
 
         public void OnConsoleCommand_rhzero(NotificationCenter.Notification n)
@@ -28,6 +29,7 @@ namespace RuntimeHelperZero.Command
                 {
                     GameObject rhz_command_go = new GameObject("rhz_command_go");
                     Instance = rhz_command_go.AddComponent<RHZCommand>();
+                    rhz_command_go.AddComponent<Indestructible>();
                 }
             }            
         }

@@ -13,18 +13,25 @@ namespace BZCommon.Helpers.RuntimeGUI
         private List<GUI_window> guiWindows = new List<GUI_window>();
 
         private List<GUI_group> guiGroups = new List<GUI_group>();
+
+        public event GUIEventHandler gUIEventControl;
                 
+        public Action update;
+
         private void Awake()
         {
             main = this;            
 
-            iGUI = gameObject.GetComponent<IGUI>();
-
-            iGUI.WakeUp();
+            iGUI = gameObject.GetComponent<IGUI>();            
 
             CreateWindows();
 
-            CreateGroups();
+            CreateGroups();            
+        }
+
+        private void Start()
+        {                       
+            iGUI.WakeUp();
         }
 
         private void OnGUI()
@@ -33,6 +40,11 @@ namespace BZCommon.Helpers.RuntimeGUI
             {
                 guiWindow.DrawWindow();
             }
+        }
+
+        private void Update()
+        {
+            update?.Invoke();
         }
 
         private void ControlHandler(int windowID)
@@ -53,6 +65,7 @@ namespace BZCommon.Helpers.RuntimeGUI
 
         private void EventControl(GUI_event guiEvent)
         {
+            gUIEventControl?.Invoke(guiEvent);
             iGUI.GUIEvent(guiEvent);
         }        
 
@@ -64,7 +77,7 @@ namespace BZCommon.Helpers.RuntimeGUI
 
             foreach (Window window in windows)
             {
-                guiWindows.Add(new GUI_window(this, window, ControlHandler, CloseHandler));
+                guiWindows.Add(new GUI_window(this, window, window.controlHandler ?? ControlHandler, window.closeHandler ?? CloseHandler));
             }
         }
 
@@ -86,8 +99,7 @@ namespace BZCommon.Helpers.RuntimeGUI
                     case GUI_Group_type.Scroll:
                         guiGroups.Add(new GUI_scrollView(thisWindow, group, thisWindow.RemainDrawableArea, EventControl));
                         break;
-                }
-                
+                }                
             }
         }
 
@@ -104,8 +116,21 @@ namespace BZCommon.Helpers.RuntimeGUI
             return null;
         }
 
-        public void RefreshGroup(int windowID, int groupID)
+        public GUI_group GetGroupByID(int windowID, int groupID)
         {
+            foreach (GUI_group group in guiGroups)
+            {
+                if (group.windowID == windowID && group.groupID == groupID)
+                {
+                    return group;
+                }
+            }
+
+            return null;
+        }
+
+        public void RefreshGroup(int windowID, int groupID)
+        {            
             foreach (GUI_group group in guiGroups)
             {                
                 if (group.windowID == windowID && group.groupID == groupID)

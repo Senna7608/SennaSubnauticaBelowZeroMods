@@ -8,9 +8,9 @@ namespace CheatManagerZero
 {
     public class CMZ_InfoBar : MonoBehaviour
     {
-        private static Rect windowRect = new Rect(0, 0, Screen.width - (Screen.width / CmZConfig.ASPECT) - 2 , Screen.height / 45);
+        private static Rect windowRect = new Rect(0, 0, Screen.width - (Screen.width / CMZ_Config.ASPECT) - 2 , Screen.height / 45);
         private Rect drawRect;
-        internal bool isShow;
+        
         private Int3 currentBatch = new Int3();
         private string currentBiome = "";
         private int day = 0;
@@ -43,15 +43,14 @@ namespace CheatManagerZero
 
         private Vector3 PlayerLastPosition = Vector3.zero;
         private float speed;
-
+        private Vector3 currVel;
         private float timeCount = 0.0f;
 
         public void Awake()
         {   
             useGUILayout = false;            
             DontDestroyOnLoad(this);
-            drawRect = new Rect(windowRect.x + 5, windowRect.y, windowRect.width, windowRect.height);
-            isShow = true;
+            drawRect = new Rect(windowRect.x + 5, windowRect.y, windowRect.width, windowRect.height);            
         }
 
         public void Start()
@@ -66,9 +65,14 @@ namespace CheatManagerZero
 
         public void Update()
         {
+            if (!CMZ_Config.isInfoBarEnabled)
+            {
+                return;
+            }
+
             UpdateFPS();
 
-            if (Player.main != null && isShow)
+            if (Player.main != null && CMZ_Config.isInfoBarEnabled)
             {
                 timeCount += Time.deltaTime;
 
@@ -135,7 +139,7 @@ namespace CheatManagerZero
 
         public void OnGUI()
         {
-            if (!isShow)
+            if (!CMZ_Config.isInfoBarEnabled)
             {
                 return;
             }
@@ -143,24 +147,30 @@ namespace CheatManagerZero
             SNWindow.CreateWindow(windowRect, null);
             GUI.Label(drawRect, infoText, SNStyles.GetGuiItemStyle(GuiItemType.LABEL, textColor: GuiColor.Green, textAnchor: TextAnchor.MiddleLeft));
         }
-        
-        private void LateUpdate()
-        {
-            if (Player.main != null)
-            {
-                speed = (((Player.main.transform.position - PlayerLastPosition).magnitude) / Time.deltaTime);
-                //speed = Player.main.rigidBody.velocity.magnitude * 3.6f;
-            }
-        }
 
         private void FixedUpdate()
         {
-            numFixedUpdates++;            
-            
+            if (!CMZ_Config.isInfoBarEnabled)
+            {
+                return;
+            }
+
             if (Player.main != null)
             {
-                PlayerLastPosition = Player.main.transform.position;                
-            }            
+                if (Player.main.GetVehicle() != null)
+                {
+                    speed = Player.main.GetVehicle().useRigidbody.velocity.magnitude * 3.6f;
+                }                
+                else
+                {
+                    currVel = (Player.main.transform.position - PlayerLastPosition) / Time.fixedDeltaTime;
+                    speed = currVel.magnitude * 3.6f;
+                }
+
+                PlayerLastPosition = Player.main.transform.position;
+            }
+
+            numFixedUpdates++;
         }
 
         private void UpdateFPS()
@@ -226,6 +236,5 @@ namespace CheatManagerZero
             numAccumulatedFrames = 0;
             accumulatedFrameTime = 0f;
         }        
-        
     }
 }

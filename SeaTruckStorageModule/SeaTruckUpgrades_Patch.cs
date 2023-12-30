@@ -1,18 +1,21 @@
-﻿using BZCommon;
+﻿using BZHelper;
 using HarmonyLib;
 
 namespace SeaTruckStorage
 {
     [HarmonyPatch(typeof(SeaTruckUpgrades))]
-    [HarmonyPatch("Start")]
-    public class SeaTruckUpgrades_Start_Patch
+    [HarmonyPatch("Awake")]
+    public class SeaTruckUpgrades_Awake_Patch
     {
-        [HarmonyPostfix]
+        [HarmonyPostfix]       
         public static void Postfix(SeaTruckUpgrades __instance)
-        {            
-            __instance.gameObject.EnsureComponent<SeaTruckStorageManager>();
+        {
+            if (__instance.gameObject != null)
+            {
+                __instance.gameObject?.EnsureComponent<SeaTruckStorageManager>();
 
-            BZLogger.Debug($"Storage Manager added in SeaTruckUpgrades.Start -> Postfix Patch. ID: {__instance.gameObject.GetInstanceID()}");
+                BZLogger.Debug($"HarmonyPatch: SeaTruckUpgrades, Method: Awake, Mode: Prefix, Priority: Normal, Component: SeaTruckStorageManager, ID: {__instance.gameObject.GetInstanceID()}");
+            }            
         }
     }
 

@@ -19,11 +19,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\..\..\..\Program Files\Epic Games\SubnauticaBelowZero\QMods\ZHelper\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,7 +57,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
-	<Reference Include="Unity.ResourceManager">
+    <Reference Include="Unity.ResourceManager">
       <HintPath>C:\Program Files\Epic Games\SubnauticaBelowZero\SubnauticaZero_Data\Managed\Unity.ResourceManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -115,33 +115,37 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseMethods.cs" />
     <Compile Include="Components\ComponentHelper.cs" />
     <Compile Include="Components\TransformsHelper.cs" />
-    <Compile Include="Groups.cs" />
+    <Compile Include="FileHelper\WindowsFileDialog.cs" />
+    <Compile Include="FileHelper\UnityFileDialog.cs" />
+    <Compile Include="Messages.cs" />
+    <Compile Include="RaycastMode.cs" />
+    <Compile Include="Windows\ComponentInfoWindow.cs" />
+    <Compile Include="Windows\ComponentWindow.cs" />
+    <Compile Include="Windows\RendererWindow.cs" />
+    <Compile Include="ZHelper_Groups.cs" />
     <Compile Include="Helpers\SceneHelper.cs" />
     <Compile Include="Helpers\Structs.cs" />
-    <Compile Include="IGUI_Test.cs" />
+    <Compile Include="ZHelper_Handlers.cs" />
+    <Compile Include="ZHelper_IGUI.cs" />
     <Compile Include="Logger\ZLogger.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="ModdedSupplyCrateManager.cs" />
     <Compile Include="Objects\ClipboardHelper.cs" />
     <Compile Include="Objects\FieldHelper.cs" />
     <Compile Include="Objects\PropertyHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\RendererHelper.cs" />
     <Compile Include="Renderers\ShaderHelper.cs" />
-    <Compile Include="Variables.cs" />
+    <Compile Include="ZHelper_Variables.cs" />
     <Compile Include="VisualHelpers\ColliderHelper.cs" />
     <Compile Include="VisualHelpers\ContainerHelper.cs" />
     <Compile Include="VisualHelpers\DrawColliderBounds.cs" />
-    <Compile Include="VisualHelpers\DrawColliderControl.cs" />
     <Compile Include="VisualHelpers\DrawObjectBounds.cs" />
     <Compile Include="VisualHelpers\LineHelper.cs" />
     <Compile Include="VisualHelpers\PointerHelper.cs" />
-    <Compile Include="Windows\OutputWindow.cs" />
-    <Compile Include="ZhelperCommand.cs" />
-    <Compile Include="ScriptableGUITest.cs" />
+    <Compile Include="Windows\MessageWindow.cs" />
+    <Compile Include="ZHelper_Command.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json">
@@ -150,5 +154,6 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\BZCommon\BZCommon.projitems" Label="Shared" />
+  <Import Project="..\BZHelper\BZHelper.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,34 +1,31 @@
-﻿using System.Collections.Generic;
-using BZCommon.Helpers.SMLHelpers;
-using SeaTruckArms.API;
-using SMLHelper.V2.Crafting;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using SeaTruckArms.ArmHandlerRequesters;
+using ModdedArmsHelperBZ.API;
+using Nautilus.Crafting;
+using BZHelper.NautilusHelpers;
 
 namespace SeaTruckArms.ArmPrefabs
 {
-    internal class SeaTruckTorpedoArm_Prefab : CraftableSeaTruckArm
+    internal class SeatruckTorpedoArm_Prefab : CraftableModdedArm
     {
-        public static TechType TechTypeID { get; private set; }
-
-        internal SeaTruckTorpedoArm_Prefab(SeaTruckArmFragment fragment)
+        internal SeatruckTorpedoArm_Prefab(SpawnableArmFragment fragment)
             : base(
-                  techTypeName: "SeaTruckTorpedoArmModule",
+                  techTypeName: "SeaTruckTorpedoArm",
                   friendlyName: "SeaTruck torpedo arm",
-                  description: "A standard payload delivery system adapted to fire torpedoes.",                  
+                  description: "A standard payload delivery system adapted to fire torpedoes.",
+                  armType: ArmType.SeatruckArm,
                   armTemplate: ArmTemplate.TorpedoArm,
-                  requiredForUnlock: TechType.None,
+                  requiredForUnlock: TechType.ExosuitTorpedoArmModule,
                   fragment: fragment
                   )
         {
         }
 
-        protected override void PrePatch()
+        protected override RegisterArmRequest RegisterArm()
         {
-            TechTypeID = TechType;
-        }
-
-        protected override void PostPatch()
-        {
+            return new RegisterArmRequest(this, new TorpedoArmModdingRequest());
         }
 
         protected override RecipeData GetRecipe()
@@ -50,12 +47,19 @@ namespace SeaTruckArms.ArmPrefabs
             return null;
         }
 
-        protected override void PostModify()
+        protected override void SetCustomLanguageText()
+        {
+        }
+
+        protected override IEnumerator ModifyGameObjectAsync(IOut<bool> success)
         {
             SeamothStorageContainer container = PrefabClone.GetComponent<SeamothStorageContainer>();
 
             container.width = 4;
             container.height = 4;
+
+            success.Set(true);
+            yield break;
         }
 
         protected override Sprite GetItemSprite()

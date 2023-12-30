@@ -93,7 +93,7 @@ namespace RuntimeHelperZero
                 RemoveFirstLogEntry();
             }
 
-            RHZLogger.RHZ_Log(message);
+            RHZLogger.Log(message);
         }
 
         private void Write(string message, LogType type)
@@ -109,7 +109,7 @@ namespace RuntimeHelperZero
                 RemoveFirstLogEntry();
             }
 
-            RHZLogger.RHZ_Log(message, type);
+            RHZLogger.Log(message, type);
         }
 
         private void Write(string message, params object[] arg)
@@ -125,7 +125,7 @@ namespace RuntimeHelperZero
                 RemoveFirstLogEntry();
             }
 
-            RHZLogger.RHZ_Log(message, arg);
+            RHZLogger.Log(message, arg);
         }
 
         private void Write(string message, LogType type, params object[] arg)
@@ -141,7 +141,7 @@ namespace RuntimeHelperZero
                 RemoveFirstLogEntry();
             }
 
-            RHZLogger.RHZ_Log(message, type, arg);
+            RHZLogger.Log(message, type, arg);
         }        
 
         private void RemoveFirstLogEntry()

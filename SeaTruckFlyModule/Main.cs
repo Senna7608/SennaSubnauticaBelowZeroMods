@@ -122,13 +122,14 @@ namespace SeaTruckFlyModule
             HUD.enabled = false;
 
             HUD.root.SetActive(true);
-            
-            /*
-            for (int i = -1; i < 32; i++)
+
+            BZLogger.Log("Listing layers...");
+
+            for (int i = 0; i < 32; i++)
             {
                 BZLogger.Log($"Layer [{i}], name: {LayerMask.LayerToName(i)}");
             }
-            */
+            
 
         }
     }

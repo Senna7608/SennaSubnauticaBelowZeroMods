@@ -161,11 +161,11 @@ namespace RuntimeHelperZero
 
         public void ListPrefabDatabase()
         {
-            RHZLogger.RHZ_Log("Listing PrefabdataBase prefabFiles Dictionary:");
+            RHZLogger.Log("Listing PrefabdataBase prefabFiles Dictionary:");
 
             foreach (KeyValuePair<string, string> kvp in PrefabDatabase.prefabFiles)
             {
-                RHZLogger.RHZ_Log($"prefabFile: {kvp.Value}");                
+                RHZLogger.Log($"prefabFile: {kvp.Value}");                
             }
         }
     }

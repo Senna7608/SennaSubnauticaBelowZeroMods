@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using UnityEngine;
 using SlotExtenderZero.Configuration;
-using BZCommon;
+using BZHelper;
 
 namespace SlotExtenderZero
 {
     internal static class SlotHelper
     {
-        public static string[] SessionSeatruckSlotIDs { get; private set; }
+        public static string[] SessionSeatruckSlotIDs;        
         public static string[] SessionExosuitSlotIDs { get; private set; }
         public static string[] NewChipSlotIDs { get; private set; }
         public static string[] NewHoverbikeSlotIDs { get; private set; }
@@ -142,58 +142,22 @@ namespace SlotExtenderZero
             new SlotData(slotStringCache[SlotName.SeaTruckArmLeft], SlotConfigID.SeaTruckArmLeft, ArmSlotPos[0], SlotType.CloneArmLeft),
             new SlotData(slotStringCache[SlotName.SeaTruckArmRight], SlotConfigID.SeaTruckArmRight, ArmSlotPos[1], SlotType.CloneArmRight)
         };
-          
-        /*
-        public static IEnumerable<string> SessionNewSeatruckSlotIDs
-        {
-            get
-            {
-                foreach (SlotData slotData in SessionSeatruckSlots)
-                {
-                    if (slotData.SlotType != SlotType.OriginalNormal)
-                    {
-                        yield return slotData.SlotID;
-                    }
-                }
-            }
-        }
-        */
-        /*
-        public static IEnumerable<string> SessionNewExosuitSlotIDs
-        {
-            get
-            {
-                foreach (SlotData slotData in SessionExosuitSlots)
-                {
-                    if (slotData.SlotType == SlotType.CloneNormal)
-                    {
-                        yield return slotData.SlotID;
-                    }
-                }
-            }
-        }
-        */
-        /*
-        public static IEnumerable<string> SessionNewChipSlotIDs
-        {
-            get
-            {
-                foreach (SlotData slotData in NewChipSlots)
-                {                    
-                   yield return slotData.SlotID;                    
-                }
-            }
-        }
-        */
 
         public static void InitSlotIDs()
         {
-            BZLogger.Debug("Method call: SlotHelper.InitSlotIDs()");
+            BZLogger.Trace("SlotHelper.InitSlotIDs()");            
 
             for (int i = 0; i < SEzConfig.EXTRASLOTS; i++)
             {
-                SessionSeatruckSlots.Add(NewSeatruckSlots[i]);
-                SessionExosuitSlots.Add(NewExosuitSlots[i]);
+                if (!SessionSeatruckSlots.Contains(NewSeatruckSlots[i]))
+                {
+                    SessionSeatruckSlots.Add(NewSeatruckSlots[i]);
+                }
+
+                if (!SessionExosuitSlots.Contains(NewExosuitSlots[i]))
+                {
+                    SessionExosuitSlots.Add(NewExosuitSlots[i]);
+                }
             }
 
             if (SEzConfig.isSeatruckArmsExists)
@@ -204,7 +168,10 @@ namespace SlotExtenderZero
 
                     if (slotType == SlotType.CloneArmLeft || slotType == SlotType.CloneArmRight)
                     {
-                        SessionSeatruckSlots.Add(slotData);
+                        if (!SessionSeatruckSlots.Contains(slotData))
+                        {
+                            SessionSeatruckSlots.Add(slotData);
+                        }
                     }
                 }
             }
@@ -242,21 +209,27 @@ namespace SlotExtenderZero
 
         public static void ExpandSlotMapping()
         {
-            BZLogger.Debug("Method call: SlotHelper.ExpandSlotMapping()");
+            BZLogger.Trace("SlotHelper.ExpandSlotMapping()");
 
             foreach (SlotData slotData in NewChipSlots)
             {
-                Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.Chip);
+                if (!Equipment.slotMapping.ContainsKey(slotData.SlotID))
+                {
+                    Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.Chip);
+                }
             }
 
             foreach (SlotData slotData in ScannerModuleBatterySlots)
             {
-                Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.BatteryCharger);
+                if (!Equipment.slotMapping.ContainsKey(slotData.SlotID))
+                {
+                    Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.BatteryCharger);
+                }
             }
 
             foreach (SlotData slotData in NewHoverbikeSlots)
             {
-                if (slotData.SlotType == SlotType.CloneNormal)
+                if (slotData.SlotType == SlotType.CloneNormal && !Equipment.slotMapping.ContainsKey(slotData.SlotID))
                 {
                     Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.HoverbikeModule);
                 }
@@ -264,7 +237,7 @@ namespace SlotExtenderZero
 
             foreach (SlotData slotData in SessionExosuitSlots)
             {
-                if (slotData.SlotType == SlotType.CloneNormal)
+                if (slotData.SlotType == SlotType.CloneNormal && !Equipment.slotMapping.ContainsKey(slotData.SlotID))
                 {
                     Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.ExosuitModule);
                 }
@@ -275,12 +248,19 @@ namespace SlotExtenderZero
                 switch (slotData.SlotType)
                 {                    
                     case SlotType.CloneNormal:
-                        Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.SeaTruckModule);
+                        if (!Equipment.slotMapping.ContainsKey(slotData.SlotID))
+                        {
+                            Equipment.slotMapping.Add(slotData.SlotID, EquipmentType.SeaTruckModule);
+                        }
                         break;
 
                     case SlotType.CloneArmLeft:
                     case SlotType.CloneArmRight:
-                        Equipment.slotMapping.Add(slotData.SlotID, (EquipmentType)ModdedEquipmentType.SeatruckArm);
+                        if (!Equipment.slotMapping.ContainsKey(slotData.SlotID))
+                        {
+                            Equipment.slotMapping.Add(slotData.SlotID, (EquipmentType)ModdedEquipmentType.SeatruckArm);
+                        }
+
                         break;
                 }
             }
@@ -290,7 +270,7 @@ namespace SlotExtenderZero
 
         public static bool IsExtendedSlot(string slotName)
         {
-            BZLogger.Debug($"Method call: SlotHelper.IsExtendedSlot({slotName})");
+            BZLogger.Trace($"SlotHelper.IsExtendedSlot({slotName})");
             
             if (ALLSLOTS.TryGetValue(slotName, out SlotData slotData))
             {
@@ -310,19 +290,24 @@ namespace SlotExtenderZero
 
         public static bool IsSeatruckArmSlot(string slotName)
         {
-            BZLogger.Debug($"Method call: SlotHelper.IsSeatruckArmSlot({slotName})");
+            BZLogger.Trace($"SlotHelper.IsSeatruckArmSlot({slotName})");
 
             return slotName.Equals(slotStringCache[SlotName.SeaTruckArmLeft]) || slotName.Equals(slotStringCache[SlotName.SeaTruckArmRight]) ? true : false;
         }
 
         public static void InitSessionAllSlots()
         {
-            BZLogger.Debug($"Method call: SlotHelper.InitSessionAllSlots()");
+            BZLogger.Trace($"SlotHelper.InitSessionAllSlots()");
 
             ALLSLOTS.Clear();
 
             foreach (SlotData slotData in SessionSeatruckSlots)
             {
+                if (ALLSLOTS.ContainsKey(slotData.SlotID))
+                {
+                    continue;
+                }
+
                 SEzConfig.SLOTKEYBINDINGS.TryGetValue(slotData.SlotConfigID, out string result);
                 slotData.KeyCodeName = result;
                 ALLSLOTS.Add(slotData.SlotID, slotData);
@@ -330,12 +315,17 @@ namespace SlotExtenderZero
 
             foreach (SlotData slotData in SessionExosuitSlots)
             {
+                if (ALLSLOTS.ContainsKey(slotData.SlotID))
+                {
+                    continue;
+                }
+
                 SEzConfig.SLOTKEYBINDINGS.TryGetValue(slotData.SlotConfigID, out string result);
                 slotData.KeyCodeName = result;
                 ALLSLOTS.Add(slotData.SlotID, slotData);
             }
 
-            DebugAllSlots();
+            TraceAllSlots();
         }
 
         public static int GetSeatruckSlotInt(SlotConfigID slotID)
@@ -360,14 +350,14 @@ namespace SlotExtenderZero
             }
         }
 
-        [Conditional("DEBUG")]
-        private static void DebugAllSlots()
+        [Conditional("TRACE")]
+        private static void TraceAllSlots()
         {
-            BZLogger.Debug("Listing Dictionary: ALLSLOTS...");
+            BZLogger.Trace("Listing Dictionary: ALLSLOTS...");
 
             foreach (KeyValuePair<string, SlotData> kvp in ALLSLOTS)
             {
-                BZLogger.Debug(
+                BZLogger.Trace(
                     $"SlotID: {kvp.Value.SlotID}" +
                     $", InternalSlotID: {kvp.Value.SlotConfigIDName}" +
                     $", SlotPOS: {kvp.Value.SlotPos}" +

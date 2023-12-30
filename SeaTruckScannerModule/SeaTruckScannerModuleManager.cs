@@ -2,11 +2,15 @@
 using UnityEngine;
 using TMPro;
 using UWE;
+using BZHelper;
 
 namespace SeaTruckScannerModule
 {
     public class SeaTruckScannerModuleManager : MonoBehaviour
     {
+        public TransitDockListener transitDockListener = null;        
+
+        public bool isInTransit;
         public GameObject powerSystemRoot;
         public GameObject powerBtn, powerButtON, powerButtOFF;
         public GameObject list;
@@ -25,9 +29,9 @@ namespace SeaTruckScannerModule
 
         private const float baseScanTime = 7f;
 
-        private const float powerPerSecond = 0.8f;
+        private const float powerPerSecond = 0.2f;
 
-        private const float idlePowerPerSecond = 0.1f;        
+        private const float idlePowerPerSecond = 0.05f;        
 
         private readonly List<ResourceTrackerDatabase.ResourceInfo> resourceNodes = new List<ResourceTrackerDatabase.ResourceInfo>();        
 
@@ -46,10 +50,13 @@ namespace SeaTruckScannerModule
         private string fullUnpoweredText = string.Empty;
         private string scannerReadyText = string.Empty;        
         private string powerSwitchOnlineText = string.Empty;
+        private string powerSwitchDockedText = string.Empty;
 
         public FMOD_CustomEmitter powerButtonSound;
         public FMODAsset powerButtonON, powerButtonOff;
         private Vector3 startPosition = Vector3.zero;
+
+        public List<IPowerInterface> powerInterfaces;
 
         private bool onScanning = false;
         public bool OnScanning
@@ -92,7 +99,6 @@ namespace SeaTruckScannerModule
             } 
         }
 
-
         private void Awake()
         {
             powerSystemRoot = transform.parent.Find("powerSystemRoot").gameObject;
@@ -127,6 +133,9 @@ namespace SeaTruckScannerModule
             powerButtonOff.path = "event:/bz/ui/options_screen/slider_click_off";
 
             powerButtonSound = powerBtn.AddComponent<FMOD_CustomEmitter>();
+
+            transitDockListener = UWE.Utils.GetEntityRoot(gameObject).GetComponent<TransitDockListener>();
+            transitDockListener.onTransitDocked += OnTransitDocked;
         }
 
         private void Start()
@@ -142,18 +151,21 @@ namespace SeaTruckScannerModule
             mainUnpoweredText = Language.main.Get("SeatruckScanner_MainUnpoweredText");
             fullUnpoweredText = Language.main.Get("SeatruckScanner_FullUnpoweredText");
             scannerReadyText = Language.main.Get("SeatruckScanner_ScannerReadyText");
-            powerSwitchOnlineText = Language.main.Get("SeatruckScanner_PowerSwitch");            
+            powerSwitchOnlineText = Language.main.Get("SeatruckScanner_PowerSwitch");
+            powerSwitchDockedText = Language.main.Get("SeatruckScanner_PowerSwitchDocked");
 
-            Main.scannerModules.Add(this);            
+            SeaTruckScannerModule_Main.scannerModules.Add(this);            
 
             list.SetActive(false);
             uiUnpoweredText.text = unPoweredText;
             uiUnpowered.SetActive(true);
-            OnScannerOn = false;
+            OnScannerOn = false;                      
         }        
 
         private void OnPowerLevelChanged(bool isCabinPowered, bool isMainPowered)
         {
+            BZLogger.Debug($"OnPowerLevelChanged called with {isCabinPowered} and {isMainPowered} parameter!");
+
             if (!isCabinPowered && !isMainPowered)
             {                
                 uiUnpoweredText.text = fullUnpoweredText;
@@ -181,6 +193,11 @@ namespace SeaTruckScannerModule
                 mainUI.OnCancelScan();
             }
 
+            if (scanActive && !isInTransit)
+            {
+                mainUI.OnCancelScan();
+            }
+
             if (list.activeSelf && !powered)
             {
                 list.SetActive(powered);
@@ -200,6 +217,13 @@ namespace SeaTruckScannerModule
         public void OnModHandHover(HandTargetEventData data)
         {
             HandReticle main = HandReticle.main;
+            
+            if (isInTransit)
+            {
+                main.SetIcon(HandReticle.IconType.HandDeny, 1f);
+                main.SetText(HandReticle.TextType.Hand, powerSwitchDockedText, true, GameInput.Button.LeftHand);
+                return;
+            }
 
             main.SetIcon(HandReticle.IconType.Hand, 1f);
 
@@ -218,6 +242,9 @@ namespace SeaTruckScannerModule
             if (!powered)
                 return;
 
+            if (isInTransit)
+                return;
+            
             powerButtonState = !powerButtonState;
 
             if (powerButtonState)
@@ -230,8 +257,7 @@ namespace SeaTruckScannerModule
                 list.SetActive(true);                                
             }
             else
-            {
-                
+            {                
                 powerButtonSound.SetAsset(powerButtonOff);
                 powerButtonSound.Play();
                 OnScannerOn = false;
@@ -255,13 +281,36 @@ namespace SeaTruckScannerModule
 
         private void Update()
         {
-            if (powerButtonState && powered)
+            if (powerButtonState && powered && !isInTransit)
             {
                 if (!OnScannerOn)
                     OnScannerOn = true;
 
                 UpdateScanning();
             }
+
+            if (isInTransit)
+            {
+                powerButtonSound.SetAsset(powerButtonOff);
+                
+                OnScannerOn = false;
+
+                if (scanActive)
+                {
+                    mainUI.OnCancelScan();
+                }
+
+                if (list.activeSelf)
+                {
+                    list.SetActive(false);
+                }
+
+                uiUnpoweredText.text = scannerReadyText;
+                uiUnpowered.SetActive(true);
+                powerButtON.SetActive(false);
+                powerButtOFF.SetActive(true);
+            }
+
         }        
 
         public void OnResourceDiscovered(ResourceTrackerDatabase.ResourceInfo info)
@@ -380,8 +429,7 @@ namespace SeaTruckScannerModule
                 timeLastScan = timePassed;
 
                 if (Vector3.Distance(startPosition, transform.position) > 75f)
-                {
-                    //print("Distance refresh triggered!");
+                {                    
                     ObtainResourceNodes(typeToScan);
                     startPosition = transform.position;
                 }
@@ -402,8 +450,37 @@ namespace SeaTruckScannerModule
                 mainPowerSystem.ConsumePower(scanActive ? powerPerSecond : idlePowerPerSecond);                
                 timeLastPowerDrain = Time.time;
             }            
+        }        
+
+        private void OnTransitDocked(bool isInTransition)
+        {
+            BZLogger.Debug($"OnTransitDocked called with {isInTransition} parameter!");
+
+            isInTransit = isInTransition;
+
+            if (isInTransition)
+            {
+                powerInterfaces = mainPowerSystem.powerRelay.GetPowerSources();
+
+                foreach (IPowerInterface powerInterface in powerInterfaces)
+                {
+                    GameObject _base = powerInterface.GetGameObject();
+
+                    BZLogger.Debug($"powerinterface: {_base.name}");
+
+                    if (_base.TryGetComponent(out Base baseComponent))
+                    {
+                        mainPowerSystem.InvokeRepeating("ChargePower", 0, 2f);
+                    }
+                }                
+            }
+            else
+            {
+                mainPowerSystem.CancelInvoke("ChargePower");
+                //powerInterfaces.Clear();
+            }
         }
-        
+
         private void OnDestroy()
         {
             if (GameApplication.isQuitting)
@@ -414,8 +491,8 @@ namespace SeaTruckScannerModule
             ResourceTrackerDatabase.onResourceDiscovered -= OnResourceDiscovered;
             ResourceTrackerDatabase.onResourceRemoved -= OnResourceRemoved;
             mainPowerSystem.onPowerLevelChanged -= OnPowerLevelChanged;
-
-            Main.scannerModules.Remove(this);
+            
+            SeaTruckScannerModule_Main.scannerModules.Remove(this);
         }        
     }
 }
